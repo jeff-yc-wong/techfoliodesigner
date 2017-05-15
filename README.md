@@ -2,19 +2,33 @@ TechFolio Designer is a desktop app written using [Electron](http://electron.ato
 
 ## Initial requirements
 
-* The Designer need only manage portfolios hosted in the *username*.github.io repository. While TechFolios can be hosted in any repository, this constraint simplifies things for both the system and the user.  If a user wants to build a TechFolio in a different directory, then they presumably have the expertise to use a regular editor.
+* Manage portfolios hosted in the *username*.github.io repository. While a TechFolio can technically be hosted in any repository, this constraint simplifies things for both the system and the user.  If a user wants to build a TechFolio in a different directory, then they presumably have the expertise to use a regular editor.
 
-* The Designer can be used to develop portfolios from scratch, or can be pointed at an existing *username*.github.io repository in order to manage a pre-existing portfolio. 
+* Support development of portfolios from scratch, or manage a pre-existing portfolio. 
 
-* The Designer should make it impossible for the user to commit a syntactically invalid bio.json file. 
+* Make it impossible to commit a syntactically invalid bio.json file. 
 
-* The Designer should use the [Semantic UI](http://semantic-ui.com/) CSS framework. 
+* Use the [Semantic UI](http://semantic-ui.com/) CSS framework. 
 
-* The Designer can assume that the user has already created a GitHub account.  Once the user has logged in to GitHub through the Designer, the designer can check to see if a *username*.github.io repository exists. If so, it should assume that this repository is a TechFolio repo and attempt to download it.   If not, it should ask the user if it's OK to proceed to create a *username*.github.io account. If confirmed, then the system should fork the TechFolio/template, then rename it to *username*.github.io per the QuickStart.
+* Create and initialize a new *username*.github.io repo if one does not already exist, or clone the existing repo if it exists. 
+
+* Provide a page to allow specification of home page (name, interests, social network links, etc.)
+
+* Provide pages to support creation/editing of projects. Make it easy to unpublish/delete sample projects.
+
+* Provide pages to support creation/editing of essays. Make it easy to unpublish/delete the sample essays.
+
+* Provide a page to edit/update bio content.
+
+* Provide a page to change themes and otherwise edit the _config.yml.
+
+* Provide a local preview option. 
+
+* Provide a way to easily manage images and other assets (PDF reports, etc.).
 
 ## Pain points addressed by Designer
 
-* Removing the "sample" projects should be easier.
+* Removing the "sample" projects and essays should be easier.
 
 * It should be impossible to commit a project or essay date in YYYY-MM-D format.
 
