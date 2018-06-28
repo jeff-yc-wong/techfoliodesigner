@@ -45,4 +45,32 @@ This version adds support for image management:
 * Spell checking of essay and project text.
 * Uploading of non-square images for using in project page or home page image.
 
+## Package explanations
+
+Useful:
+
+* electron-prebuilt-compile: Support for React, Less, ES7.
+* front-matter: Parse YAML
+* fs-extra: drop-in replacement for fs; provides async/await support
+* jimp: image processing library
+* marked: parses markdown into HTML
+* nodegit: git commands in node
+* octonode: github authentication and manipulation
+* react-datepicker: datepicker
+* electron-oauth-github: (Not currently used) electron module for authenticating your Electron app with GitHub.
+
+Questionable:
+
+* html-react-parser: converts an HTML string to a React element.
+* html-tidy2: clean up poorly formatted HTML 
+* superagent: HTTP GET, PUT, etc.
+
+
+## Other resources
+
+* [GitHub Authentication for Electron](https://medium.com/linagora-engineering/using-oauth-in-an-electron-application-abb0376c2ae0)
+
+## Code notes
+
+* secret.js needs to be converte
 
