@@ -1,45 +1,48 @@
 TechFolio Designer is a desktop app written using [Electron](http://electron.atom.io/) to simplify the development of professional portfolios using TechFolios.
 
-## Initial requirements
+## Version 1.0: Local editor
 
-* Manage portfolios hosted in the *username*.github.io repository. While a TechFolio can technically be hosted in any repository, this constraint simplifies things for both the system and the user.  If a user wants to build a TechFolio in a different directory, then they presumably have the expertise to use a regular editor.
+Version 1.0 is simply a "Techfolio-aware" text editor.  It is the responsibility of the user to clone the techfolio repository from GitHub, and push local changes back to GitHub. 
 
-* Support development of portfolios from scratch, or manage a pre-existing portfolio. 
+Basic design:
 
-* Make it impossible to commit a syntactically invalid bio.json file. 
+* App menu has Settings, Bio, Projects, and Essays.
+* Settings menu allows the user to specify the directory containing the Techfolio.
+* Once specified, directory is parsed and Projects and Essays menus are populated with current file names.
+* Menus also have an "New Project" and "New Essay" item for creating a new file.
 
-* Use the [Semantic UI](http://semantic-ui.com/) CSS framework. 
+Selecting a file or Bio section presents the data. 
 
-* Create and initialize a new *username*.github.io repo if one does not already exist, or clone the existing repo if it exists. 
+Issues: 
+* how to delete a project or essay?
+* what to do when YAML can't be parsed?
+* what to do with merge conflicted files?  
 
-* Provide a page to allow specification of home page (name, interests, social network links, etc.)
+## Version 2.0: GitHub management
 
-* Provide pages to support creation/editing of projects. Make it easy to unpublish/delete sample projects.
+Version 2.00 adds support for GitHub.
 
-* Provide pages to support creation/editing of essays. Make it easy to unpublish/delete the sample essays.
+* The user can tell Designer their GitHub username and the name of the remote repo.
+* The user can authenticate against GitHub.
+* The user can pull and push changes. 
+* Merge conflicts must be dealt with somehow. 
+* It would be good to indicate when the remote repo is out of sync with the local files (such as when the user is using two computers to edit their portfolio).
 
-* Provide a page to edit/update bio content.
+## Version 3.0: Image management
 
-* Provide a page to change themes and otherwise edit the _config.yml.
+This version adds support for image management:
 
-* Provide a local preview option. 
-
-* Provide a way to easily manage images and other assets (PDF reports, etc.).
-
-## Pain points addressed by Designer
+* Image cropping.
+* Image compression.
+ 
+## Current user problems that Designer should help solve:
 
 * Removing the "sample" projects and essays should be easier.
-
-* It should be impossible to commit a project or essay date in YYYY-MM-D format.
-
+* It should be impossible to commit a project or essay date that is not in YYYY-MM-DD format.
 * No file names containing spaces.
-
 * Easier understanding of how to rename the URL to retrieve a project or essay.
-
 * Easier use of markdown.  Prevent problems like `##Title` that do not display correctly when formatted.
-
 * Spell checking of essay and project text.
-
 * Uploading of non-square images for using in project page or home page image.
 
 
