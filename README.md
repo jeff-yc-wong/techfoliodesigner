@@ -3,7 +3,7 @@ TechFolio Designer is a desktop app written using [Electron](http://electron.ato
 ## Developer Guide
 
 * Install a recent version of [NodeJS](https://nodejs.org/en/) (10.5 or above).
-* Install [electron forge](https://electronforge.io/).
+* Install [electron forge](https://electronforge.io/). (I used `sudo npm install -g electron-forge --allow-root` successfully, but it's probably much better to use [nvm](https://docs.npmjs.com/getting-started/installing-node#using-a-version-manager-to-install-nodejs-and-npm).)
 * cd into the app directory:
     * `npm install`
     * `electron-forge run`
