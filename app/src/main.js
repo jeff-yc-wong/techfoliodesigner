@@ -1,6 +1,10 @@
 import { app, BrowserWindow } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
+import TechFolioFiles from './TechFolioFiles';
+import buildMainMenu from './MainMenu';
+
+const myDir = '/Users/philipjohnson/github/philipmjohnson/philipmjohnson.github.io';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -13,8 +17,10 @@ if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1080,
+    minWidth: 680,
+    height: 840,
+    title: 'TechFolio Designer',
   });
 
   // and load the index.html of the app.
@@ -33,6 +39,8 @@ const createWindow = async () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  buildMainMenu(myDir);
 };
 
 // This method will be called when Electron has finished
@@ -59,3 +67,4 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+

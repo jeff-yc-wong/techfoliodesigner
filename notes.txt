@@ -1,0 +1,8 @@
+Issues:
+
+* On startup, need to get the path to the techfolio directory.  Then I need to scan the directory to find:
+  - The bio.json file
+  - All of the project files.
+  - All of the essay files.
+
+Then: initialize the Toolbar
