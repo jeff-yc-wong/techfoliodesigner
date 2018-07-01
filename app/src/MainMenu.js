@@ -1,11 +1,25 @@
 import TechFolioFiles from './TechFolioFiles';
 
-const { Menu } = require('electron');
+const { Menu, dialog } = require('electron');
 const electron = require('electron');
 
 const app = electron.app;
 
-const template = [
+let template = [];
+
+function buildMainMenu(directory) {
+  const techFolioFiles = new TechFolioFiles(directory);
+  const projectFiles = techFolioFiles.projectFileNames();
+  const projectsSubMenu = projectFiles.map(file => ({ label: file }));
+  template[5].submenu = projectsSubMenu;
+  const essayFiles = techFolioFiles.essayFileNames();
+  const essaysSubMenu = essayFiles.map(file => ({ label: file }));
+  template[6].submenu = essaysSubMenu;
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
+template = [
   {
     label: 'Edit',
     submenu: [
@@ -50,6 +64,19 @@ const template = [
     submenu: [
       { role: 'minimize' },
       { role: 'close' },
+    ],
+  },
+  {
+    label: 'Config',
+    submenu: [
+      { label: 'Set Techfolio Directory',
+        click() {
+          dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
+            if (files) {
+              buildMainMenu(files[0]);
+            }
+          });
+        } },
     ],
   },
   {
@@ -121,18 +148,6 @@ if (process.platform === 'darwin') {
     { type: 'separator' },
     { label: 'Bring All to Front', role: 'front' },
   ];
-}
-
-function buildMainMenu(directory) {
-  const techFolioFiles = new TechFolioFiles(directory);
-  const projectFiles = techFolioFiles.projectFileNames();
-  const projectsSubMenu = projectFiles.map(file => ({ label: file }));
-  template[5].submenu = projectsSubMenu;
-  const essayFiles = techFolioFiles.essayFileNames();
-  const essaysSubMenu = essayFiles.map(file => ({ label: file }));
-  template[6].submenu = essaysSubMenu;
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
 }
 
 export default buildMainMenu;

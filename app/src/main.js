@@ -1,7 +1,6 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
-import TechFolioFiles from './TechFolioFiles';
 import buildMainMenu from './MainMenu';
 
 const myDir = '/Users/philipjohnson/github/philipmjohnson/philipmjohnson.github.io';
@@ -67,4 +66,16 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+// Request the techfolio directory from user, then build menus by parsing it.
+ipcMain.on('open-file-dialog', (event) => {
+  dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] },
+    (files) => {
+      if (files) {
+        event.sender.send('selected-directory', files);
+        console.log(files);
+        buildMainMenu(files);
+      }
+    });
+});
 
