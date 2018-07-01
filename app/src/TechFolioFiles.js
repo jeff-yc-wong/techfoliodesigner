@@ -12,6 +12,9 @@ class TechFolioFiles {
     this.directory = directory;
   }
 
+  validate() {
+  }
+
   /**
    * @returns An array of all .md files in the essays/ directory.
    */

@@ -1,8 +1,15 @@
-Issues:
+Next step:
 
-* On startup, need to get the path to the techfolio directory.  Then I need to scan the directory to find:
-  - The bio.json file
-  - All of the project files.
-  - All of the essay files.
+Finish the menubar initialization:
+  * On startup, don't automatically initialize menu to my directory.
+  * import https://www.npmjs.com/package/is-directory.
+  * implement the validate() method for TechFolioFiles.
+  * Add a dialog box for when a non-techfolio directory is selected.
+  * Add a separator and "New Project", "New Essay" menu item.
+  * Test:
+    - on startup, should have blank Menu items for Projects etc.
+    - Selecting the techfolio directory should to the right thing.
+    - Selecting a bad directory should pop up a dialog to inform the user of that.
 
-Then: initialize the Toolbar
+Implement editor:
+  - Selecting a file from the menu creates a new window in which to edit it.
