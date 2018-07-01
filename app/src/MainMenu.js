@@ -1,20 +1,24 @@
+import electron, { Menu, dialog } from 'electron';
+import { _ } from 'underscore';
 import TechFolioFiles from './TechFolioFiles';
-
-const { Menu, dialog } = require('electron');
-const electron = require('electron');
 
 const app = electron.app;
 
 let template = [];
 
+function indexOfMenuItem(label) {
+  // console.log(label, template);
+  return _.findIndex(template, element => element.label && element.label.toUpperCase() === label.toUpperCase());
+}
+
 function buildMainMenu(directory) {
   const techFolioFiles = new TechFolioFiles(directory);
   const projectFiles = techFolioFiles.projectFileNames();
   const projectsSubMenu = projectFiles.map(file => ({ label: file }));
-  template[5].submenu = projectsSubMenu;
+  template[indexOfMenuItem('Projects')].submenu = projectsSubMenu;
   const essayFiles = techFolioFiles.essayFileNames();
   const essaysSubMenu = essayFiles.map(file => ({ label: file }));
-  template[6].submenu = essaysSubMenu;
+  template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
