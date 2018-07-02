@@ -1,4 +1,5 @@
 import { _ } from 'underscore';
+import isDirectory from 'is-directory';
 
 const path = require('path');
 const fs = require('fs-extra');
@@ -12,7 +13,27 @@ class TechFolioFiles {
     this.directory = directory;
   }
 
-  validate() {
+  /**
+   * Validate that the chosen TechFolio directory is in fact a TechFolio directory.
+   * @returns False if it's a TechFolio directory, a string indicating the problem if not.
+   */
+  isInvalidDirectory() {
+    if (!isDirectory.sync(this.directory)) {
+      return `${this.directory} is not a valid directory`;
+    }
+    const projectsDir = path.join(this.directory, 'projects');
+    if (!fs.existsSync(projectsDir)) {
+      return `${projectsDir} does not exist, so not a Techfolio directory.`;
+    }
+    const essaysDir = path.join(this.directory, 'essays');
+    if (!fs.existsSync(essaysDir)) {
+      return `${essaysDir} does not exist, so not a Techfolio directory.`;
+    }
+    const gitDir = path.join(this.directory, '.git');
+    if (!fs.existsSync(gitDir)) {
+      return `${gitDir} does not exist, so this directory is not under git control.`;
+    }
+    return false;
   }
 
   /**

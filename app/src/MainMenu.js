@@ -12,13 +12,29 @@ function indexOfMenuItem(label) {
 }
 
 function buildMainMenu(directory) {
-  const techFolioFiles = new TechFolioFiles(directory);
-  const projectFiles = techFolioFiles.projectFileNames();
-  const projectsSubMenu = projectFiles.map(file => ({ label: file }));
-  template[indexOfMenuItem('Projects')].submenu = projectsSubMenu;
-  const essayFiles = techFolioFiles.essayFileNames();
-  const essaysSubMenu = essayFiles.map(file => ({ label: file }));
-  template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
+  if (directory) {
+    const techFolioFiles = new TechFolioFiles(directory);
+    const invalidDirectoryMessage = techFolioFiles.isInvalidDirectory();
+    if (invalidDirectoryMessage) {
+      dialog.showErrorBox('Invalid Directory', invalidDirectoryMessage);
+      template[indexOfMenuItem('Bio')].submenu = [];
+      template[indexOfMenuItem('Projects')].submenu = [];
+      template[indexOfMenuItem('Essays')].submenu = [];
+    } else {
+      const projectFiles = techFolioFiles.projectFileNames();
+      const projectsSubMenu = projectFiles.map(file => ({ label: file }));
+      projectsSubMenu.push({ type: 'separator' });
+      projectsSubMenu.push({ label: 'New Project' });
+      template[indexOfMenuItem('Projects')].submenu = projectsSubMenu;
+      const essayFiles = techFolioFiles.essayFileNames();
+      const essaysSubMenu = essayFiles.map(file => ({ label: file }));
+      essaysSubMenu.push({ type: 'separator' });
+      essaysSubMenu.push({ label: 'New Essay' });
+      template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
+      const bioSubMenu = [{ label: 'bio.json' }];
+      template[indexOfMenuItem('Bio')].submenu = bioSubMenu;
+    }
+  }
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
@@ -85,17 +101,7 @@ template = [
   },
   {
     label: 'Bio',
-    submenu: [
-      { label: 'Basics' },
-      { label: 'Location' },
-      { label: 'Profiles' },
-      { label: 'Work' },
-      { label: 'Volunteer' },
-      { label: 'Education' },
-      { label: 'Skills' },
-      { label: 'Interests' },
-      { label: 'References' },
-    ],
+    submenu: [],
   },
   {
     label: 'Projects',

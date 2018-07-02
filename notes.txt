@@ -1,10 +1,6 @@
 Next step:
 
 Finish the menubar initialization:
-  * On startup, don't automatically initialize menu to my directory.
-  * import https://www.npmjs.com/package/is-directory.
-  * implement the validate() method for TechFolioFiles.
-  * Add a dialog box for when a non-techfolio directory is selected.
   * Add a separator and "New Project", "New Essay" menu item.
   * Test:
     - on startup, should have blank Menu items for Projects etc.

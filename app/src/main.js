@@ -3,7 +3,7 @@ import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-insta
 import { enableLiveReload } from 'electron-compile';
 import buildMainMenu from './MainMenu';
 
-const myDir = '/Users/philipjohnson/github/philipmjohnson/philipmjohnson.github.io';
+/// const myDir = '/Users/philipjohnson/github/philipmjohnson/philipmjohnson.github.io';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -39,7 +39,7 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  buildMainMenu(myDir);
+  buildMainMenu();
 };
 
 // This method will be called when Electron has finished
@@ -68,12 +68,10 @@ app.on('activate', () => {
 // code. You can also put them in separate files and import them here.
 
 // Request the techfolio directory from user, then build menus by parsing it.
-ipcMain.on('open-file-dialog', (event) => {
+ipcMain.on('open-file-dialog', () => {
   dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] },
     (files) => {
       if (files) {
-        event.sender.send('selected-directory', files);
-        console.log(files);
         buildMainMenu(files);
       }
     });
