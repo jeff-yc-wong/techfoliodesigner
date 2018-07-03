@@ -1,11 +1,29 @@
 Next step:
 
-Finish the menubar initialization:
-  * Add a separator and "New Project", "New Essay" menu item.
-  * Test:
-    - on startup, should have blank Menu items for Projects etc.
-    - Selecting the techfolio directory should to the right thing.
-    - Selecting a bad directory should pop up a dialog to inform the user of that.
-
 Implement editor:
-  - Selecting a file from the menu creates a new window in which to edit it.
+  - Selecting a file from the menu creates a new window.
+  - Make the window title the name of the file.
+  -
+
+Code Mirror:
+  - electron-code-editor: https://github.com/davidmather/electronCodeEditor
+  - https://medium.freecodecamp.org/heres-how-i-created-a-markdown-app-with-electron-and-react-1e902f8601ca
+      - react-codemirror,
+  - https://medium.com/@rcwestlake/building-a-desktop-app-with-electron-codemirror-93b681237e60
+  - https://github.com/hokein/electron-sample-apps/blob/master/mini-code-editor/editor.js
+  - https://github.com/phase/text-editor
+
+Misc stuff:
+  - electron-store for config https://github.com/sindresorhus/electron-store
+  - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs
+
+
+Issue: How to send info upon browserwindow creation? Add params to URL and read them:
+
+  - https://github.com/atom/atom/blob/72dbbd8d22d90b808a00f2095dff3b429b6cc351/src/main-process/atom-window.coffee#L83-L88
+  - You can add query parameters in the URL when you call loadURL on BrowserWindow. Then the window can read those params. So for your case it would be ?id=17. You could then create a single preload script that reads these params from window.location and then sets them as globals on global (or window).
+
+Issue: global state
+
+  - It looks like we can set up global state by attaching properties to the 'app' object. Then we can access them from renderer via:
+    const app = require('electron').remote.app
