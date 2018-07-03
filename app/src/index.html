@@ -10,14 +10,25 @@
 <script type="text/jsx">
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AppContainer} from 'react-hot-loader';
+import { AppContainer } from 'react-hot-loader';
+import queryString from 'query-string';
+const app = require('electron').remote.app
+
+// Get the parameters to the App
+const queryObject = queryString.parse(window.location.search);
+const fileType = queryObject.fileType || 'unknown';
+const fileName = queryObject.fileName  || 'unknown';
+const techFolioDir = app.techFolioDir || 'unknown';
 
 const render = () => {
   const App = require('./App').default;
-  ReactDOM.render(<AppContainer><App /></AppContainer>, document.getElementById('App'));
+  ReactDOM.render(
+    <AppContainer>
+      <App techFolioDir={techFolioDir} fileType={fileType} fileName = {fileName}/>
+    </AppContainer>, document.getElementById('App'));
 }
-
 render();
+
 if (module.hot) {
   module.hot.accept(render);
 }
