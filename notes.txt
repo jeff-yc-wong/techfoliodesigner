@@ -1,17 +1,10 @@
 Next steps:
 
 ## Persist configuration.
-
   - Use electron store to persist the choice of directory. it's lame to have to always select it.
   - electron-store for config https://github.com/sindresorhus/electron-store
 
-## Use code mirror
-
-  - Need to get CSS from node modules:
-    https://github.com/chentsulin/electron-react-boilerplate/issues/352
-
-
-Code Mirror:
+## Learn about Code Mirror:
   - electron-code-editor: https://github.com/davidmather/electronCodeEditor
   - https://medium.freecodecamp.org/heres-how-i-created-a-markdown-app-with-electron-and-react-1e902f8601ca
       - react-codemirror,
@@ -19,6 +12,14 @@ Code Mirror:
   - https://github.com/hokein/electron-sample-apps/blob/master/mini-code-editor/editor.js
   - https://github.com/phase/text-editor
 
-Misc stuff:
+## Implement editing
+  - indicate modified in window title.
+  - write out file on save.
+  - check for modified on window close event.
 
+## Implement new project file, new editor file.
+
+## Implement bio.json processing.
+
+## Misc stuff:
   - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs

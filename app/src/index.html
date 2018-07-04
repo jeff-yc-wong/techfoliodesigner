@@ -20,13 +20,13 @@ const app = require('electron').remote.app
 const queryObject = queryString.parse(window.location.search);
 const fileType = queryObject.fileType || 'unknown';
 const fileName = queryObject.fileName  || 'unknown';
-const techFolioDir = app.techFolioDir || 'unknown';
+const directory = app.techFolioWindowManager.getDirectory() || 'unknown';
 
 const render = () => {
   const App = require('./App').default;
   ReactDOM.render(
     <AppContainer>
-      <App techFolioDir={techFolioDir} fileType={fileType} fileName = {fileName}/>
+      <App directory={directory} fileType={fileType} fileName={fileName}/>
     </AppContainer>, document.getElementById('App'));
 }
 render();

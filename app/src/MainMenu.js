@@ -14,6 +14,7 @@ function indexOfMenuItem(label) {
 
 function buildMainMenu(directory) {
   if (directory) {
+    app.techFolioWindowManager.setDirectory(directory);
     const techFolioFiles = new TechFolioFiles(directory);
     const invalidDirectoryMessage = techFolioFiles.isInvalidDirectory();
     if (invalidDirectoryMessage) {
@@ -98,9 +99,9 @@ template = [
         click: () => {
           dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
             if (files) {
-              const techFolioDir = files[0];
-              app.techFolioDir = techFolioDir;
-              buildMainMenu(techFolioDir);
+              const directory = files[0];
+              app.techFolioWindowManager.setDirectory(directory);
+              buildMainMenu(directory);
             }
           });
         } },

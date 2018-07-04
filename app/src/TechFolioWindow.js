@@ -1,36 +1,39 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-import techFolioWindowManager from './TechFolioWindowManager';
+import fs from 'fs-extra';
+import path from 'path';
 
 async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
-  // Create the browser window.
-  const window = new BrowserWindow({
-    width: 1080,
-    minWidth: 680,
-    height: 840,
-    title: 'TechFolio Designer',
-  });
+  const directory = app.techFolioWindowManager.getDirectory();
+  const filePath = path.join(directory, fileType, fileName);
+  if (fs.existsSync(filePath)) {
+    // Create the browser window.
+    const window = new BrowserWindow({
+      width: 1080,
+      minWidth: 680,
+      height: 840,
+      title: 'TechFolio Designer',
+    });
 
-  // Unique string representing this file.
-  // It's possible to have both an essay and a project with the same file name.
-  const fileID = `${fileType}-${fileName}`;
+    // Tell the window manager that this window has been created.
+    app.techFolioWindowManager.addWindow(fileType, fileName, window);
 
-  // Add a global reference.
-  techFolioWindowManager.addWindow(fileID, window);
+    // Load the index.html of the app.
+    window.loadURL(`file://${__dirname}/index.html?fileType=${fileType}&fileName=${fileName}`);
 
-  // Load the index.html of the app.
-  window.loadURL(`file://${__dirname}/index.html?fileType=${fileType}&fileName=${fileName}`);
+    // Install DevTools
+    if (isDevMode) {
+      await installExtension(REACT_DEVELOPER_TOOLS);
+      // mainWindow.webContents.openDevTools();
+    }
 
-  // Install DevTools
-  if (isDevMode) {
-    await installExtension(REACT_DEVELOPER_TOOLS);
-    // mainWindow.webContents.openDevTools();
+    window.on('closed', () => {
+      // Dereference the window object.
+      app.techFolioWindowManager.removeWindow(fileType, fileName);
+    });
+  } else {
+    console.log(`createTechFolioWindow called with nonexisting file: ${filePath}`);
   }
-
-  window.on('closed', () => {
-    // Dereference the window object.
-    techFolioWindowManager.removeWindow(fileID);
-  });
 }
 
 export default createTechFolioWindow;

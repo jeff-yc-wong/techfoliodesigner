@@ -10,9 +10,8 @@ export default class App extends React.Component {
   render() {
     const window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     window.setTitle(this.props.fileName);
-    const filePath = path.join(this.props.techFolioDir, this.props.fileType, this.props.fileName);
+    const filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     const value = fs.readFileSync(filePath, 'utf8');
-    console.log('about to render code mirror');
     const options = { lineWrapping: true };
     return (
       <div>
@@ -23,7 +22,7 @@ export default class App extends React.Component {
 }
 
 App.propTypes = {
-  techFolioDir: PropTypes.string.isRequired,
+  directory: PropTypes.string.isRequired,
   fileType: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
 };
