@@ -6,7 +6,7 @@ import path from 'path';
 async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();
   const filePath = path.join(directory, fileType, fileName);
-  if (fs.existsSync(filePath)) {
+  if (!app.techFolioWindowManager.getWindow(fileType, fileName) && fs.existsSync(filePath)) {
     // Create the browser window.
     const window = new BrowserWindow({
       width: 1080,
@@ -31,8 +31,6 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
       // Dereference the window object.
       app.techFolioWindowManager.removeWindow(fileType, fileName);
     });
-  } else {
-    console.log(`createTechFolioWindow called with nonexisting file: ${filePath}`);
   }
 }
 
