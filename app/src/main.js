@@ -2,14 +2,14 @@ import { app } from 'electron';
 import { enableLiveReload } from 'electron-compile';
 import buildMainMenu from './MainMenu';
 import techFolioWindowManager from './TechFolioWindowManager';
-import createTechFolioWindow from './TechFolioWindow';
+import createSplashWindow from './SplashWindow';
 
 // Development mode utilities.
 const isDevMode = process.execPath.match(/[\\/]electron/);
 if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 
 // Create an initial window and display the TechFolio menubar.
-app.on('ready', () => { createTechFolioWindow({ isDevMode }); buildMainMenu(); });
+app.on('ready', () => { createSplashWindow(); buildMainMenu(); });
 
 // Quit when all windows are closed, except on MacOS.
 app.on('window-all-closed', () => {
@@ -21,10 +21,6 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On OS X, create a window in the app when the dock icon is clicked and there are no other windows open.
   if (techFolioWindowManager.noWindows()) {
-    createTechFolioWindow({ isDevMode });
+    createSplashWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
-

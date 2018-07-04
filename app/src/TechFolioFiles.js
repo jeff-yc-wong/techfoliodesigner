@@ -1,8 +1,7 @@
 import { _ } from 'underscore';
 import isDirectory from 'is-directory';
-
-const path = require('path');
-const fs = require('fs-extra');
+import path from 'path';
+import fs from 'fs-extra';
 
 class TechFolioFiles {
   /**

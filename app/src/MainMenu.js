@@ -22,18 +22,16 @@ function buildMainMenu(directory) {
       template[indexOfMenuItem('Projects')].submenu = [];
       template[indexOfMenuItem('Essays')].submenu = [];
     } else {
-      let fileType = 'projects';
       const projectFiles = techFolioFiles.projectFileNames();
       const projectsSubMenu = projectFiles.map(
-        fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType, fileName }) }));
+        fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
       projectsSubMenu.push({ type: 'separator' });
       projectsSubMenu.push({ label: 'New Project' });
       template[indexOfMenuItem('Projects')].submenu = projectsSubMenu;
 
-      fileType = 'essays';
       const essayFiles = techFolioFiles.essayFileNames();
       const essaysSubMenu = essayFiles.map(
-        fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType, fileName }) }));
+        fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
       essaysSubMenu.push({ type: 'separator' });
       essaysSubMenu.push({ label: 'New Essay' });
       template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
