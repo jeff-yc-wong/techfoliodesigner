@@ -1,22 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
-import 'brace/mode/markdown';
-import 'brace/theme/github';
-import 'brace/ext/language_tools';
 import path from 'path';
 import fs from 'fs-extra';
+import CodeMirror from 'react-codemirror';
+
+// require('');
 
 export default class App extends React.Component {
   render() {
-    const window = require('electron').remote.getCurrentWindow();
+    const window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     window.setTitle(this.props.fileName);
-    const aceOptions = { resize: true };
     const filePath = path.join(this.props.techFolioDir, this.props.fileType, this.props.fileName);
     const value = fs.readFileSync(filePath, 'utf8');
+    console.log('about to render code mirror');
+    const options = { lineWrapping: true };
     return (
-      <div style={{ width: '100%', height: '100%' }}>
-        <AceEditor mode="markdown" theme="github" name="editor" fontSize={12} setOptions={aceOptions} value={value}/>
+      <div>
+        <CodeMirror value={value} onChange={this.updateCode} options={options} />
       </div>
     );
   }

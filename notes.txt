@@ -1,9 +1,15 @@
-Next step:
+Next steps:
 
-Implement editor:
-  - Selecting a file from the menu creates a new window.
-  - Make the window title the name of the file.
-  -
+## Persist configuration.
+
+  - Use electron store to persist the choice of directory. it's lame to have to always select it.
+  - electron-store for config https://github.com/sindresorhus/electron-store
+
+## Use code mirror
+
+  - Need to get CSS from node modules:
+    https://github.com/chentsulin/electron-react-boilerplate/issues/352
+
 
 Code Mirror:
   - electron-code-editor: https://github.com/davidmather/electronCodeEditor
@@ -14,16 +20,5 @@ Code Mirror:
   - https://github.com/phase/text-editor
 
 Misc stuff:
-  - electron-store for config https://github.com/sindresorhus/electron-store
+
   - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs
-
-
-Issue: How to send info upon browserwindow creation? Add params to URL and read them:
-
-  - https://github.com/atom/atom/blob/72dbbd8d22d90b808a00f2095dff3b429b6cc351/src/main-process/atom-window.coffee#L83-L88
-  - You can add query parameters in the URL when you call loadURL on BrowserWindow. Then the window can read those params. So for your case it would be ?id=17. You could then create a single preload script that reads these params from window.location and then sets them as globals on global (or window).
-
-Issue: global state
-
-  - It looks like we can set up global state by attaching properties to the 'app' object. Then we can access them from renderer via:
-    const app = require('electron').remote.app
