@@ -1,9 +1,5 @@
 Next steps:
 
-## Persist configuration.
-  - Use electron store to persist the choice of directory. it's lame to have to always select it.
-  - electron-store for config https://github.com/sindresorhus/electron-store
-
 ## Learn about Code Mirror:
   - electron-code-editor: https://github.com/davidmather/electronCodeEditor
   - https://medium.freecodecamp.org/heres-how-i-created-a-markdown-app-with-electron-and-react-1e902f8601ca
