@@ -20,7 +20,6 @@ class TechFolioWindowManager {
     this.projects = [];
     this.essays = [];
     this.store = new Store({ name: 'TechFolioWindowManager', defaults: { projects: [], essays: [], directory: '' } });
-    console.log('recovered essays', this.store.get('essays'));
   }
 
   setDirectory(directory) {
@@ -41,7 +40,6 @@ class TechFolioWindowManager {
     const fileNames = this.store.get(fileType);
     if (!_.find(fileNames, theName => theName === fileName)) {
       fileNames.push(fileName);
-      console.log('about to store', fileType, fileNames);
       this.store.set(fileType, fileNames);
     }
   }
