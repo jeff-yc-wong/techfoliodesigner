@@ -6,14 +6,15 @@ import path from 'path';
 async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();
   const filePath = path.join(directory, fileType, fileName);
-  if (!app.techFolioWindowManager.getWindow(fileType, fileName) && fs.existsSync(filePath)) {
+  const currWindow = app.techFolioWindowManager.getWindow(fileType, fileName);
+  if (currWindow) {
+    console.log('showing window', currWindow);
+    currWindow.show();
+  } else if (fs.existsSync(filePath)) {
     // Create the browser window.
-    const x = app.techFolioWindowManager.getXOffset();
-    const y = app.techFolioWindowManager.getYOffset();
-    console.log(x, y);
     const window = new BrowserWindow({
-      x,
-      y,
+      x: app.techFolioWindowManager.getXOffset(),
+      y: app.techFolioWindowManager.getYOffset(),
       width: 1080,
       minWidth: 680,
       height: 840,

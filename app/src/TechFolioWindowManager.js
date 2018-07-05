@@ -69,7 +69,8 @@ class TechFolioWindowManager {
 
   getWindow(fileType, fileName) {
     const fileNameWindowPairs = this[fileType];
-    return _.find(fileNameWindowPairs, obj => obj.fileName === fileName);
+    const pair = _.find(fileNameWindowPairs, obj => obj.fileName === fileName);
+    return pair && pair.window;
   }
 
   getFileNames(fileType) {
