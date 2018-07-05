@@ -16,10 +16,22 @@ import Store from 'electron-store';
  */
 class TechFolioWindowManager {
   constructor() {
+    this.xOffset = 0;
+    this.yOffset = 0;
     this.beforeQuit = false;
     this.projects = [];
     this.essays = [];
     this.store = new Store({ name: 'TechFolioWindowManager', defaults: { projects: [], essays: [], directory: '' } });
+  }
+
+  getXOffset() {
+    this.xOffset += 25;
+    return this.xOffset;
+  }
+
+  getYOffset() {
+    this.yOffset += 25;
+    return this.yOffset;
   }
 
   setDirectory(directory) {

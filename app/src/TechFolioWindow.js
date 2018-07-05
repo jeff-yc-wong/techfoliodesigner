@@ -8,7 +8,12 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
   const filePath = path.join(directory, fileType, fileName);
   if (!app.techFolioWindowManager.getWindow(fileType, fileName) && fs.existsSync(filePath)) {
     // Create the browser window.
+    const x = app.techFolioWindowManager.getXOffset();
+    const y = app.techFolioWindowManager.getYOffset();
+    console.log(x, y);
     const window = new BrowserWindow({
+      x,
+      y,
       width: 1080,
       minWidth: 680,
       height: 840,
