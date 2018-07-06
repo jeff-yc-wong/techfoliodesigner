@@ -14,8 +14,12 @@ export default class TechFolioEditor extends React.Component {
     window.setTitle(this.props.fileName);
     const filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     const value = fs.readFileSync(filePath, 'utf8');
-    const mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'javascript';
+    const mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
     const options = { lineNumbers: true, lineWrapping: true, mode };
+    if (mode === 'javascript') {
+      options.gutters = ['CodeMirror-lint-markers'];
+      options.lint = true;
+    }
     return (
       <div>
         <CodeMirror value={value} onChange={this.updateCode} options={options} />

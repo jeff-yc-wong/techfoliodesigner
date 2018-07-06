@@ -37,7 +37,8 @@ function buildMainMenu(directory) {
       essaysSubMenu.push({ label: 'New Essay' });
       template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
 
-      const bioSubMenu = [{ label: 'bio.json' }];
+      const fileName = 'bio.json';
+      const bioSubMenu = [{ label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) }];
       template[indexOfMenuItem('Bio')].submenu = bioSubMenu;
     }
   }

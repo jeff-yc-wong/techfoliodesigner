@@ -21,7 +21,9 @@ class TechFolioWindowManager {
     this.beforeQuit = false;
     this.projects = [];
     this.essays = [];
-    this.store = new Store({ name: 'TechFolioWindowManager', defaults: { projects: [], essays: [], directory: '' } });
+    this._data = []; //eslint-disable-line
+    this.store = new Store({ name: 'TechFolioWindowManager',
+      defaults: { projects: [], essays: [], _data: [], directory: '' } });
   }
 
   getXOffset() {

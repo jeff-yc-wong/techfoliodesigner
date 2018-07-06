@@ -20,6 +20,8 @@ function initializeWindows() {
       .map(fileName => createTechFolioWindow({ fileType: 'projects', fileName }));
     techFolioWindowManager.getFileNames('essays')
       .map(fileName => createTechFolioWindow({ fileType: 'essays', fileName }));
+    techFolioWindowManager.getFileNames('_data')
+      .map(fileName => createTechFolioWindow({ fileType: '_data', fileName }));
   } else {
     buildMainMenu();
     createSplashWindow();

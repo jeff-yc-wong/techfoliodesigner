@@ -1,13 +1,5 @@
 Next steps:
 
-## Learn about Code Mirror:
-  - electron-code-editor: https://github.com/davidmather/electronCodeEditor
-  - https://medium.freecodecamp.org/heres-how-i-created-a-markdown-app-with-electron-and-react-1e902f8601ca
-      - react-codemirror,
-  - https://medium.com/@rcwestlake/building-a-desktop-app-with-electron-codemirror-93b681237e60
-  - https://github.com/hokein/electron-sample-apps/blob/master/mini-code-editor/editor.js
-  - https://github.com/phase/text-editor
-
 ## Implement editing
   - indicate modified in window title.
   - write out file on save.
@@ -19,3 +11,5 @@ Next steps:
 
 ## Misc stuff:
   - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs
+
+## Code Mirror Spell Checker

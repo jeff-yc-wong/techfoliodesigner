@@ -49,6 +49,10 @@ class TechFolioFiles {
     return _.filter(fs.readdirSync(path.join(this.directory, 'projects')), fileName => fileName.endsWith('.md'));
   }
 
+  bioJsonFile() {
+    return fs.readdirSync(path.join(this.directory, '_data', 'bio.json'));
+  }
+
   /**
    * Returns the text of the file in the associated directory.
    * @param dir The directory (typically "_data", "essays", or "projects")
