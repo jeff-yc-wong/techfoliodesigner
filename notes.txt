@@ -13,3 +13,4 @@ Next steps:
   - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs
 
 ## Code Mirror Spell Checker
+  - https://jsfiddle.net/edemaine/jreeyvd2/

@@ -2,27 +2,48 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
 import fs from 'fs-extra';
-import CodeMirror from 'react-codemirror';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
+require('codemirror/addon/lint/lint');
 
 export default class TechFolioEditor extends React.Component {
-  render() {
-    const window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
-    window.setTitle(this.props.fileName);
-    const filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
-    const value = fs.readFileSync(filePath, 'utf8');
-    const mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
-    const options = { lineNumbers: true, lineWrapping: true, mode };
-    if (mode === 'javascript') {
-      options.gutters = ['CodeMirror-lint-markers'];
-      options.lint = true;
+  constructor(props) {
+    super(props);
+    this.onBeforeChange = this.onBeforeChange.bind(this);
+    this.setWindowTitle = this.setWindowTitle.bind(this);
+    this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
+    this.window.setTitle(this.props.fileName);
+    this.codeMirrorRef = null;
+    this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
+    this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
+      fileChangedMarker: '' };
+    this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
+    this.options = { lineNumbers: true, lineWrapping: true, mode: this.mode };
+    if (this.mode === 'application/json') {
+      this.options.gutters = ['CodeMirror-lint-markers'];
+      this.options.lint = true;
     }
+  }
+
+  onBeforeChange(editor, data, value) {
+    this.setState({ value });
+    if (this.state.fileChangedMarker === '') { //eslint-disable-line
+      this.setState({ fileChangedMarker: '* ' });
+      this.setWindowTitle();
+    }
+  }
+
+  setWindowTitle() {
+    this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
+  }
+
+  render() {
     return (
       <div>
-        <CodeMirror value={value} onChange={this.updateCode} options={options} />
+        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} />
       </div>
     );
   }
