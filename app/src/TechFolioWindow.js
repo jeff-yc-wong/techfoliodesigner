@@ -8,7 +8,6 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = app.techFolioWindowManager.getWindow(fileType, fileName);
   if (currWindow) {
-    console.log('showing window', currWindow);
     currWindow.show();
   } else if (fs.existsSync(filePath)) {
     // Create the browser window.
