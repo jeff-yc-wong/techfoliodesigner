@@ -18,3 +18,11 @@ Next steps:
 
 ## Code Mirror Spell Checker
   - https://jsfiddle.net/edemaine/jreeyvd2/
+
+## ICS 491 project ideas
+
+  - markdown previewer
+  - image processing
+  - "style" checker for markdown
+  - spelling checker
+  - JSON checker
