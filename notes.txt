@@ -4,7 +4,7 @@ Next steps:
   - Test and debug code.
 
 ## Implement sanity check on file save
-  - Is YAML OK? 
+  - Is YAML OK?
 
 ## Implement bio.json processing.
 
@@ -13,7 +13,8 @@ Next steps:
 ## Markdown preview mode?
 
 ## Misc stuff:
-  - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs
+  - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)
+  - https://dzone.com/articles/learning-electron-4-things-i-wish-i-knew-sooner
 
 ## Code Mirror Spell Checker
   - https://jsfiddle.net/edemaine/jreeyvd2/
