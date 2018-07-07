@@ -1,6 +1,10 @@
 Next steps:
 
 ## Implement new project file, new editor file.
+  - Test and debug code.
+
+## Implement sanity check on file save
+  - Is YAML OK? 
 
 ## Implement bio.json processing.
 
