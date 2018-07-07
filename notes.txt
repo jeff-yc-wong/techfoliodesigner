@@ -1,29 +1,26 @@
 Next steps:
 
-## Implement new project file, new editor file.
-  - Test and debug code.
-
-## Implement sanity check on file save
-  - Is YAML OK?
-
 ## Implement bio.json processing.
 
 ## Implement github
 
-## Markdown preview mode?
+## Implement CI with package build for releases.
+
+## Implement sanity check on file save
+  - Parse YAML, make sure fields are OK.
 
 ## Misc stuff:
   - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)
   - https://dzone.com/articles/learning-electron-4-things-i-wish-i-knew-sooner
 
 ## Code Mirror Spell Checker
-  - https://jsfiddle.net/edemaine/jreeyvd2/
+  -
 
 ## ICS 491 project ideas
 
   - markdown previewer
   - image processing
-  - "style" checker for markdown
+  - "style" checker for markdown (https://jsfiddle.net/edemaine/jreeyvd2/)
   - spelling checker
   - JSON checker
   - configure text size and light/dark theme
