@@ -3,9 +3,9 @@
   "productName": "TechFolio Designer",
   "version": "1.0.0",
   "description": "Desktop application to support development of techfolios.",
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/techfolios/designer.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/techfolios/designer.git"
   },
   "main": "src/main.js",
   "scripts": {
@@ -15,7 +15,6 @@
     "publish": "electron-forge publish",
     "lint": "eslint --cache --color --ext .jsx,.js src"
   },
-
   "keywords": [],
   "author": "philipjohnson",
   "license": "MIT",
@@ -55,9 +54,11 @@
     "codemirror": "^5.39.0",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
+    "electron-prompt": "^1.0.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^2.0.0",
     "is-directory": "^0.3.1",
+    "moment": "^2.22.2",
     "query-string": "^6.1.0",
     "react": "^15.6.2",
     "react-codemirror2": "^5.1.0",

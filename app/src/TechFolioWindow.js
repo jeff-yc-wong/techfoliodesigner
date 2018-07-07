@@ -2,8 +2,11 @@ import { BrowserWindow, app, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import fs from 'fs-extra';
 import path from 'path';
+import prompt from 'electron-prompt';
+import moment from 'moment';
+import buildMainMenu from './MainMenu';
 
-async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
+export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = app.techFolioWindowManager.getWindow(fileType, fileName);
@@ -32,28 +35,6 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
       // mainWindow.webContents.openDevTools();
     }
 
-    // window.onbeforeunload = (e) => {
-    //   console.log('I do not want to be closed');
-    //   e.returnValue = false;
-    //   return false;
-    //
-    //   // if (window.getTitle().startsWith('*')) {
-    //   //   const options = {
-    //   //     type: 'info',
-    //   //     title: 'Do you really want to close this window?',
-    //   //     message: 'This window has unsaved changes. Close anyway?',
-    //   //     buttons: ['No', 'Yes, lose my changes'],
-    //   //   };
-    //   //   dialog.showMessageBox(options), (index) => {  //eslint-disable-line
-    //   //     if (true) {
-    //   //       e.returnValue = true;
-    //   //     } else {
-    //   //       window.close();
-    //   //     }
-    //   //   };
-    //   // }
-    // };
-
     window.on('close', (e) => {
       e.preventDefault();
       if (window.getTitle().startsWith('*')) {
@@ -71,7 +52,6 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
       }
     });
 
-
     window.on('closed', () => {
       // Dereference the window object.
       app.techFolioWindowManager.removeWindow(fileType, fileName);
@@ -79,4 +59,61 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
   }
 }
 
-export default createTechFolioWindow;
+function validFileName(fileName, fileType) {
+  if (!fileName) {
+    return false;
+  }
+  if (fileName.length <= 3) {
+    return false;
+  }
+  if (fileName.startsWith('.')) {
+    return false;
+  }
+  if (!fileName.endsWith('.md')) {
+    return false;
+  }
+  if (fileName.indexOf(' ') >= 0) {
+    return false;
+  }
+  if (app.techFolioFiles.fileNames(fileType).includes(fileName)) {
+    return false;
+  }
+  return true;
+}
+
+const templateProject = `---
+layout: project
+type: project
+image: images/micromouse.jpg
+title: My Sample Project Title
+date: ${moment().format('YYYY-MM-DD')}
+labels:
+  - Robotics
+summary: My team developed a robotic mouse that won first place in the 2015 UH Micromouse competition.
+---`;
+
+const templateEssay = `---
+layout: essay
+type: essay
+title: My sample Project Title
+date: ${moment().format('YYYY-MM-DD')}
+labels:
+  - Engineering
+---`;
+
+
+export async function newTechFolioWindow({ fileType }) {
+  const fileName = await prompt({
+    title: `Create new ${fileType.slice(0, -1)}`,
+    label: 'File name:',
+    value: 'samplefile.md',
+    inputAttrs: { type: 'text', required: 'true' },
+  });
+  if (!validFileName(fileName, fileType)) {
+    dialog.showErrorBox('Bad file name',
+      'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
+  }
+  app.techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
+    () => { buildMainMenu(); createTechFolioWindow({ fileType, fileName }); });
+}
+

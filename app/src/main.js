@@ -3,7 +3,7 @@ import { enableLiveReload } from 'electron-compile';
 import buildMainMenu from './MainMenu';
 import techFolioWindowManager from './TechFolioWindowManager';
 import createSplashWindow from './SplashWindow';
-import createTechFolioWindow from './TechFolioWindow';
+import { createTechFolioWindow } from './TechFolioWindow';
 
 // Development mode utilities.
 const isDevMode = process.execPath.match(/[\\/]electron/);

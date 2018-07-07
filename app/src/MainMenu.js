@@ -1,7 +1,7 @@
 import electron, { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
 import TechFolioFiles from './TechFolioFiles';
-import createTechFolioWindow from './TechFolioWindow';
+import { createTechFolioWindow, newTechFolioWindow } from './TechFolioWindow';
 
 const app = electron.app;
 
@@ -16,6 +16,7 @@ function buildMainMenu(directory) {
   if (directory) {
     app.techFolioWindowManager.setDirectory(directory);
     const techFolioFiles = new TechFolioFiles(directory);
+    app.techFolioFiles = techFolioFiles;
     const invalidDirectoryMessage = techFolioFiles.isInvalidDirectory();
     if (invalidDirectoryMessage) {
       dialog.showErrorBox('Invalid Directory', invalidDirectoryMessage);
@@ -27,14 +28,14 @@ function buildMainMenu(directory) {
       const projectsSubMenu = projectFiles.map(
         fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
       projectsSubMenu.push({ type: 'separator' });
-      projectsSubMenu.push({ label: 'New Project' });
+      projectsSubMenu.push({ label: 'New Project', click: () => newTechFolioWindow({ fileType: 'projects' }) });
       template[indexOfMenuItem('Projects')].submenu = projectsSubMenu;
 
       const essayFiles = techFolioFiles.essayFileNames();
       const essaysSubMenu = essayFiles.map(
         fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
       essaysSubMenu.push({ type: 'separator' });
-      essaysSubMenu.push({ label: 'New Essay' });
+      essaysSubMenu.push({ label: 'New Essay', click: () => newTechFolioWindow({ fileType: 'essays' }) });
       template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
 
       const fileName = 'bio.json';

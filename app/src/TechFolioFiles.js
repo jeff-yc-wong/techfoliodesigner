@@ -35,6 +35,10 @@ class TechFolioFiles {
     return false;
   }
 
+  fileNames(fileType) {
+    return _.filter(fs.readdirSync(path.join(this.directory, fileType)), fileName => fileName.endsWith('.md'));
+  }
+
   /**
    * @returns An array of all .md files in the essays/ directory.
    */
@@ -51,6 +55,15 @@ class TechFolioFiles {
 
   bioJsonFile() {
     return fs.readdirSync(path.join(this.directory, '_data', 'bio.json'));
+  }
+
+  writeFile(fileType, fileName, contents, successCallback) {
+    const filePath = path.join(this.directory, fileType, fileName);
+    fs.writeFile(filePath, contents, 'utf8', (err) => {
+      if (err) throw err;
+      console.log(`${filePath} written.`);
+      successCallback();
+    });
   }
 
   /**
