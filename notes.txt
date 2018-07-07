@@ -5,6 +5,7 @@ Next steps:
 ## Implement github
 
 ## Implement CI with package build for releases.
+  - change repo name to techfolio-designer
 
 ## Implement sanity check on file save
   - Parse YAML, make sure fields are OK.
