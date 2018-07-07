@@ -1,13 +1,12 @@
 Next steps:
 
-## Implement editing
-  - indicate modified in window title.
-  - write out file on save.
-  - check for modified on window close event.
-
 ## Implement new project file, new editor file.
 
 ## Implement bio.json processing.
+
+## Implement github
+
+## Markdown preview mode?
 
 ## Misc stuff:
   - electron-util (macOS should run in app folder? https://github.com/sindresorhus/electron-util)xs

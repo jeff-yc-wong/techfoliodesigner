@@ -14,6 +14,7 @@ export default class TechFolioEditor extends React.Component {
     super(props);
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
+    this.saveFile = this.saveFile.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
     this.codeMirrorRef = null;
@@ -21,7 +22,15 @@ export default class TechFolioEditor extends React.Component {
     this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '' };
     this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
-    this.options = { lineNumbers: true, lineWrapping: true, mode: this.mode };
+    const extraKeys = {};
+    const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
+    extraKeys[saveKeyBinding] = () => this.saveFile();
+    this.options = {
+      lineNumbers: true,
+      lineWrapping: true,
+      mode: this.mode,
+      extraKeys,
+    };
     if (this.mode === 'application/json') {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
@@ -38,6 +47,19 @@ export default class TechFolioEditor extends React.Component {
 
   setWindowTitle() {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
+  }
+
+  saveFile() {
+    console.log('saveFile called');
+    fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
+      if (err) {
+        throw err;
+      } else {
+        console.log(`File ${this.filePath} has been saved.`);
+        this.setState({ fileChangedMarker: '' });
+        this.setWindowTitle();
+      }
+    });
   }
 
   render() {

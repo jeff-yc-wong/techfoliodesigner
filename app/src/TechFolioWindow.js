@@ -1,4 +1,4 @@
-import { BrowserWindow, app } from 'electron';
+import { BrowserWindow, app, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import fs from 'fs-extra';
 import path from 'path';
@@ -31,6 +31,46 @@ async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName
       await installExtension(REACT_DEVELOPER_TOOLS);
       // mainWindow.webContents.openDevTools();
     }
+
+    // window.onbeforeunload = (e) => {
+    //   console.log('I do not want to be closed');
+    //   e.returnValue = false;
+    //   return false;
+    //
+    //   // if (window.getTitle().startsWith('*')) {
+    //   //   const options = {
+    //   //     type: 'info',
+    //   //     title: 'Do you really want to close this window?',
+    //   //     message: 'This window has unsaved changes. Close anyway?',
+    //   //     buttons: ['No', 'Yes, lose my changes'],
+    //   //   };
+    //   //   dialog.showMessageBox(options), (index) => {  //eslint-disable-line
+    //   //     if (true) {
+    //   //       e.returnValue = true;
+    //   //     } else {
+    //   //       window.close();
+    //   //     }
+    //   //   };
+    //   // }
+    // };
+
+    window.on('close', (e) => {
+      e.preventDefault();
+      if (window.getTitle().startsWith('*')) {
+        const options = {
+          type: 'info',
+          title: 'Do you really want to close this window?',
+          message: 'This window has unsaved changes. Close anyway?',
+          buttons: ['No', 'Yes, lose my changes'],
+        };
+        dialog.showMessageBox(options, (index) => {
+          if (index === 1) {
+            window.destroy();
+          }
+        });
+      }
+    });
+
 
     window.on('closed', () => {
       // Dereference the window object.
