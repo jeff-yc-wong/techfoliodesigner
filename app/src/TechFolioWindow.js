@@ -49,6 +49,8 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
             window.destroy();
           }
         });
+      } else {
+        window.destroy();
       }
     });
 
@@ -85,35 +87,48 @@ const templateProject = `---
 layout: project
 type: project
 image: images/micromouse.jpg
-title: My Sample Project Title
+title: "My Sample Project Title"
 date: ${moment().format('YYYY-MM-DD')}
 labels:
   - Robotics
 summary: My team developed a robotic mouse that won first place in the 2015 UH Micromouse competition.
----`;
+---
+Project description goes here.`;
 
 const templateEssay = `---
 layout: essay
 type: essay
-title: My sample Project Title
+title: "My Sample Essay Title"
 date: ${moment().format('YYYY-MM-DD')}
 labels:
   - Engineering
----`;
+---
+Essay goes here.`;
 
 
 export async function newTechFolioWindow({ fileType }) {
-  const fileName = await prompt({
-    title: `Create new ${fileType.slice(0, -1)}`,
-    label: 'File name:',
-    value: 'samplefile.md',
-    inputAttrs: { type: 'text', required: 'true' },
-  });
+  let fileName = null;
+  try {
+    fileName = await prompt({
+      title: `Create new ${fileType.slice(0, -1)}`,
+      label: 'File name:',
+      value: 'samplefile.md',
+      inputAttrs: { type: 'text', required: 'true' },
+    });
+  } catch (e) {
+    console.log('error in newTechFolioWindow dialog', e);
+    return null;
+  }
+  if (fileName === null) {
+    return null;
+  }
   if (!validFileName(fileName, fileType)) {
     dialog.showErrorBox('Bad file name',
       'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
+    return null;
   }
   app.techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
-    () => { buildMainMenu(); createTechFolioWindow({ fileType, fileName }); });
+    () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(app.techFolioWindowManager.getDirectory()); });
+  return null;
 }
 

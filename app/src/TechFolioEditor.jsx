@@ -8,6 +8,7 @@ require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
+require('./autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -29,6 +30,7 @@ export default class TechFolioEditor extends React.Component {
       lineNumbers: true,
       lineWrapping: true,
       mode: this.mode,
+      autoRefresh: { force: true },
       extraKeys,
     };
     if (this.mode === 'application/json') {
