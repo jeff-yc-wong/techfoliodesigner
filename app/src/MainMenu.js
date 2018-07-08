@@ -2,6 +2,7 @@ import electron, { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
 import TechFolioFiles from './TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from './TechFolioWindow';
+import createSimpleBioEditorWindow from './SimpleBioEditorWindow';
 
 const app = electron.app;
 
@@ -39,7 +40,10 @@ function buildMainMenu(directory) {
       template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
 
       const fileName = 'bio.json';
-      const bioSubMenu = [{ label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) }];
+      const bioSubMenu = [
+        { label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) },
+        { label: 'Simple Bio Editor', click: () => createSimpleBioEditorWindow() },
+      ];
       template[indexOfMenuItem('Bio')].submenu = bioSubMenu;
     }
   }
