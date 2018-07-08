@@ -1,6 +1,11 @@
 Next steps:
 
 ## Implement bio.json processing.
+  - npm add uniforms
+  - Look at opq/app/imports/ui/pages/ManageBox/EditBoxPage.jsx
+  - Create schema and page
+  - Need to convert bio.json file into object (JSON.parse), then write out as JSON.stringify.
+  - Do some simple error checking on schema values. 
 
 ## Implement github
 
