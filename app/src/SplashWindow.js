@@ -11,8 +11,8 @@ async function createSplashWindow() {
   // Add a global reference so window doesn't get garbage collected.
   app.splashWindow = window;
 
-  // Load splash.html.
-  window.loadURL(`file://${__dirname}/SplashWindow.html`);
+  // Load SplashPage.html.
+  window.loadURL(`file://${__dirname}/SplashPage.html`);
 
   window.on('closed', () => {
     // Dereference the window object.

@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="../node_modules/semantic-ui-css/semantic.css">
 </head>
 <body>
-<div id="Splash"></div>
+<div id="SimpleBioEditorPage"></div>
 </body>
 
 <script type="text/jsx">
@@ -21,15 +21,11 @@
     ReactDOM.render(
       <Grid style={{padding: "20px"}}>
         <Grid.Column textAlign="center">
-        <Header as="h1">Welcome to TechFolio Designer</Header>
-          {directory ?
-            <p>Your local TechFolio directory is: {directory}</p> :
-            <p>You have not yet specified your local TechFolio directory.</p>
-            }
-          <p>You can select or change your TechFolio directory using the Config menubar item.</p>
+        <Header as="h1">Simple Bio Editor</Header>
+          <p>Bio Editor goes here.</p>
         </Grid.Column>
       </Grid>,
-      document.getElementById('Splash'));
+      document.getElementById('SimpleBioEditorPage'));
   }
   render();
 </script>

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body style="background-color: rgba(0,0,0,0); margin: 0" >
-  <div id="App"></div>
+  <div id="TechFolioPage"></div>
 </body>
 
 <script type="text/jsx">
@@ -28,7 +28,7 @@ const render = () => {
   ReactDOM.render(
     <AppContainer>
       <TechFolioEditor directory={directory} fileType={fileType} fileName={fileName}/>
-    </AppContainer>, document.getElementById('App'));
+    </AppContainer>, document.getElementById('TechFolioPage'));
 }
 render();
 

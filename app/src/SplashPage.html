@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="../node_modules/semantic-ui-css/semantic.css">
+</head>
+<body>
+<div id="SplashPage"></div>
+</body>
+
+<script type="text/jsx">
+  import React from 'react';
+  import ReactDOM from 'react-dom';
+  import { Grid, Header } from 'semantic-ui-react';
+  const app = require('electron').remote.app
+
+  // Get the parameters to the App
+  const directory = app.techFolioWindowManager.getDirectory();
+
+  const render = () => {
+    ReactDOM.render(
+      <Grid style={{padding: "20px"}}>
+        <Grid.Column textAlign="center">
+        <Header as="h1">Welcome to TechFolio Designer</Header>
+          {directory ?
+            <p>Your local TechFolio directory is: {directory}</p> :
+            <p>You have not yet specified your local TechFolio directory.</p>
+            }
+          <p>You can select or change your TechFolio directory using the Config menubar item.</p>
+        </Grid.Column>
+      </Grid>,
+      document.getElementById('SplashPage'));
+  }
+  render();
+</script>
+</html>
+
