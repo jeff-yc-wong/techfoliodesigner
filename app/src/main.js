@@ -17,11 +17,11 @@ function initializeWindows() {
   if (directory) {
     buildMainMenu(directory);
     // Restore any windows that were open at time of last exit.
-    techFolioWindowManager.getFileNames('projects')
+    techFolioWindowManager.getSavedFileNames('projects')
       .map(fileName => createTechFolioWindow({ fileType: 'projects', fileName }));
-    techFolioWindowManager.getFileNames('essays')
+    techFolioWindowManager.getSavedFileNames('essays')
       .map(fileName => createTechFolioWindow({ fileType: 'essays', fileName }));
-    techFolioWindowManager.getFileNames('_data')
+    techFolioWindowManager.getSavedFileNames('_data')
       .map(fileName => createTechFolioWindow({ fileType: '_data', fileName }));
     // If no windows were restored, then display the splash window.
     if (techFolioWindowManager.noWindows()) {

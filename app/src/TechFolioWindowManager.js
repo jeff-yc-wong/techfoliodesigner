@@ -75,7 +75,7 @@ class TechFolioWindowManager {
     return pair && pair.window;
   }
 
-  getFileNames(fileType) {
+  getSavedFileNames(fileType) {
     return this.store.get(fileType);
   }
 

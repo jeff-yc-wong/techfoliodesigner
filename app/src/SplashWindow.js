@@ -12,7 +12,7 @@ async function createSplashWindow() {
   app.splashWindow = window;
 
   // Load splash.html.
-  window.loadURL(`file://${__dirname}/splash.html`);
+  window.loadURL(`file://${__dirname}/SplashWindow.html`);
 
   window.on('closed', () => {
     // Dereference the window object.
