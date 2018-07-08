@@ -27,7 +27,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     app.techFolioWindowManager.addWindow(fileType, fileName, window);
 
     // Load the index.html of the app.
-    window.loadURL(`file://${__dirname}/TechFolioPage.html?fileType=${fileType}&fileName=${fileName}`);
+    window.loadURL(`file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}`);
 
     // Install DevTools
     if (isDevMode) {

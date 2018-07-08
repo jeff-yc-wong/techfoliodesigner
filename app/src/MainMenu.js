@@ -1,7 +1,7 @@
 import electron, { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
 import TechFolioFiles from './TechFolioFiles';
-import { createTechFolioWindow, newTechFolioWindow } from './TechFolioWindow';
+import { createTechFolioWindow, newTechFolioWindow } from './TechFolioEditorWindow';
 import createSimpleBioEditorWindow from './SimpleBioEditorWindow';
 
 const app = electron.app;
