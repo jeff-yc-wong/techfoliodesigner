@@ -30,3 +30,4 @@ Next steps:
   - spelling checker
   - JSON checker
   - configure text size and light/dark theme
+  - implement custom validation to make simple bio editor more intelligent about acceptable field values.
