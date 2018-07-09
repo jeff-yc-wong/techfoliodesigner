@@ -1,34 +1,25 @@
 import React from 'react';
-import SimpleSchema from 'simpl-schema';
-
+import { Tab } from 'semantic-ui-react';
+import { getBioAsJson } from './SimpleBioEditorWindow';
+import SimpleBioEditorTabBasics from './SimpleBioEditorTabBasics';
 
 export default class SimpleBioEditor extends React.Component {
 
-  submit(data) {
-    console.log('submit', data);
-  }
-
   render() {
-    const formSchema = new SimpleSchema({
-      name: String,
-      label: String,
-      picture: String,
-      email: String,
-      phone: String,
-      website: String,
-      summary: String,
-      address: String,
-      city: String,
-      countryCode: String,
-      region: String,
-      githubUsername: String,
-      githubUrl: String,
-      linkedinUsername: String,
-      linkedInUrl: String,
-    });
+    const bio = getBioAsJson();
+    const panes = [
+      { menuItem: 'Basics', render: () => <Tab.Pane><SimpleBioEditorTabBasics bio={bio} /></Tab.Pane> },
+      { menuItem: 'Networks', render: () => <Tab.Pane>Networks</Tab.Pane> },
+      { menuItem: 'Education', render: () => <Tab.Pane>Education</Tab.Pane> },
+      { menuItem: 'Work', render: () => <Tab.Pane>Work</Tab.Pane> },
+      { menuItem: 'Skills', render: () => <Tab.Pane>Skills</Tab.Pane> },
+      { menuItem: 'Interests', render: () => <Tab.Pane>Interests</Tab.Pane> },
+      { menuItem: 'Awards', render: () => <Tab.Pane>Awards</Tab.Pane> },
+      { menuItem: 'Activities', render: () => <Tab.Pane>Activities</Tab.Pane> },
+    ];
     return (
       <div>
-        <p>bio editor goes here.</p>
+        <Tab panes={panes} />
       </div>
     );
   }
