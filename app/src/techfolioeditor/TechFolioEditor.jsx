@@ -8,7 +8,7 @@ require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
-require('./autorefresh.ext');
+require('../lib/autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {

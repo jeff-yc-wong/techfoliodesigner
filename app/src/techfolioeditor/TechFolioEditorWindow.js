@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import prompt from 'electron-prompt';
 import moment from 'moment';
-import buildMainMenu from './MainMenu';
+import buildMainMenu from '../MainMenu';
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();
