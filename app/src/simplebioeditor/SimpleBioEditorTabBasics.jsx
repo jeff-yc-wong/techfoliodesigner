@@ -7,7 +7,7 @@ import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import LongTextField from 'uniforms-semantic/LongTextField';
 import { Grid } from 'semantic-ui-react';
-import { writeBioFile, readBioFile } from './BioFileIO';
+import { writeBioFile } from './BioFileIO';
 
 export default class SimpleBioEditorTabBasics extends React.Component {
   constructor(props) {
@@ -28,11 +28,10 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     this.state.model.countryCode = this.props.bio.basics.location.countryCode;
   }
 
-  submit(data) { //eslint-disable-line
+  submit(data) {
     const
       { name, label, picture, email, phone, website, summary, address, postalCode, city, countryCode, region } = data;
-    // get most recently saved version of bio.json, just to be safe.
-    const bio = readBioFile();
+    const bio = this.props.bio;
     bio.basics.name = name || '';
     bio.basics.label = label || '';
     bio.basics.picture = picture || '';
@@ -46,6 +45,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     if (region && bio.basics.location) bio.basics.location.region = region;
     if (countryCode && bio.basics.location) bio.basics.location.countryCode = countryCode;
     writeBioFile(bio, 'Updated basics section of bio.');
+    this.props.handleBioChange(bio);
   }
 
   render() {
@@ -130,4 +130,5 @@ export default class SimpleBioEditorTabBasics extends React.Component {
 
 SimpleBioEditorTabBasics.propTypes = {
   bio: PropTypes.shape({ basics: React.PropTypes.object }).isRequired,
+  handleBioChange: PropTypes.func.isRequired,
 };

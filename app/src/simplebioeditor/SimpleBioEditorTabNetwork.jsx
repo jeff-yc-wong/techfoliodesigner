@@ -6,7 +6,8 @@ import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Grid } from 'semantic-ui-react';
-import { writeBioFile, readBioFile } from './BioFileIO';
+import { writeBioFile } from './BioFileIO';
+import updateArray from './ArrayUpdater';
 
 export default class SimpleBioEditorTabNetwork extends React.Component {
   constructor(props) {
@@ -25,45 +26,18 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     this.state.model.url3 = profiles[2] && profiles[2].url;
   }
 
-  submit(data) { //eslint-disable-line
+  submit(data) {
     const
       { network1, network2, network3, username1, username2, username3, url1, url2, url3 } = data;
-    // get most recently saved version of bio.json, just to be safe.
-    const bio = readBioFile();
-    let profiles = bio.basics.profiles;
+    const bio = this.props.bio;
     const entry1 = network1 && { network: network1, username: username1, url: url1 };
     const entry2 = network2 && { network: network2, username: username2, url: url2 };
     const entry3 = network3 && { network: network3, username: username3, url: url3 };
-    // ensure that profiles is an array if we're going to put stuff into it.
-    if (entry1 || entry2 || entry3) {
-      if (!profiles) {
-        profiles = [];
-      }
-    }
-    // Update just the first three elements of profiles if available. Remember there may be more than three,
-    // So must leave elements 4, 5, etc alone.
-    if (entry1) {
-      if (profiles.length > 0) {
-        profiles[0] = entry1;
-      } else {
-        profiles.push(entry1);
-      }
-    }
-    if (entry2) {
-      if (profiles.length > 1) {
-        profiles[1] = entry2;
-      } else {
-        profiles.push(entry2);
-      }
-    }
-    if (entry3) {
-      if (profiles.length > 2) {
-        profiles[2] = entry3;
-      } else {
-        profiles.push(entry3);
-      }
-    }
+    bio.basics.profiles = updateArray(bio.basics.profiles, entry1, 0);
+    bio.basics.profiles = updateArray(bio.basics.profiles, entry2, 1);
+    bio.basics.profiles = updateArray(bio.basics.profiles, entry3, 2);
     writeBioFile(bio, 'Updated network section of bio.');
+    this.props.handleBioChange(bio);
   }
 
   render() {
@@ -135,4 +109,5 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
 
 SimpleBioEditorTabNetwork.propTypes = {
   bio: PropTypes.shape({ basics: React.PropTypes.object }).isRequired,
+  handleBioChange: PropTypes.func.isRequired,
 };
