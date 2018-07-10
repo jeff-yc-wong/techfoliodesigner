@@ -1,8 +1,6 @@
 import { BrowserWindow, app, dialog } from 'electron';
 import fs from 'fs-extra';
 import path from 'path';
-import Notify from 'notifyjs';
-
 
 export function writeBioAsJson(bio) {
   const app = require('electron').remote.app; //eslint-disable-line

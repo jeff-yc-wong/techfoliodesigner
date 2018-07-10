@@ -7,28 +7,7 @@ import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import LongTextField from 'uniforms-semantic/LongTextField';
 import { Grid } from 'semantic-ui-react';
-import Notify from 'notifyjs';
-import fs from 'fs-extra';
-import path from 'path';
-import { getBioAsJson } from './SimpleBioEditorWindow';
-
-export function writeBioAsJson(bio) {
-  const app = require('electron').remote.app; //eslint-disable-line
-  const directory = app.techFolioWindowManager.getDirectory();
-  const fileType = '_data';
-  const fileName = 'bio.json';
-  const filePath = path.join(directory, fileType, fileName);
-  const bioString = JSON.stringify(bio, null, 2);
-  fs.writeFile(filePath, bioString, 'utf8', (err) => {
-    const body = (err) ? `File write error: ${err}` : 'File saved.';
-    const notification = new Notify('bio.json', { body, renotify: true, tag: 'bio.json' });
-    if (!Notify.needsPermission) {
-      notification.show();
-    } else if (Notify.isSupported()) {
-      Notify.requestPermission(() => notification.show(), () => console.log('notification denied'));
-    }
-  });
-}
+import { writeBioFile, readBioFile } from './BioFileIO';
 
 export default class SimpleBioEditorTabBasics extends React.Component {
   constructor(props) {
@@ -53,8 +32,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     const
       { name, label, picture, email, phone, website, summary, address, postalCode, city, countryCode, region } = data;
     // get most recently saved version of bio.json, just to be safe.
-    const app = require('electron').remote.app; //eslint-disable-line
-    const bio = getBioAsJson(app);
+    const bio = readBioFile();
     bio.basics.name = name || '';
     bio.basics.label = label || '';
     bio.basics.picture = picture || '';
@@ -67,7 +45,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     if (city && bio.basics.location) bio.basics.location.city = city;
     if (region && bio.basics.location) bio.basics.location.region = region;
     if (countryCode && bio.basics.location) bio.basics.location.countryCode = countryCode;
-    writeBioAsJson(bio);
+    writeBioFile(bio, 'Updated basics section of bio.');
   }
 
   render() {
