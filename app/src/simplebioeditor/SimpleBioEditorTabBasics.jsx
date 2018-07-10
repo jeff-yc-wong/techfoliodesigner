@@ -5,7 +5,8 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Segment } from 'semantic-ui-react';
+import LongTextField from 'uniforms-semantic/LongTextField';
+import { Grid } from 'semantic-ui-react';
 import { getBioAsJson } from './SimpleBioEditorWindow';
 
 export default class SimpleBioEditorTabBasics extends React.Component {
@@ -59,22 +60,60 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     });
     return (
       <div>
-        <AutoForm schema={formSchema} onSubmit={this.submit}>
-          <Segment>
-            <AutoField name="name" />
-            <AutoField name="label" />
-            <AutoField name="picture" />
-            <AutoField name="email" />
-            <AutoField name="phone" />
-            <AutoField name="website" />
-            <AutoField name="summary" />
-            <AutoField name="address" />
-            <AutoField name="postalCode" />
-            <AutoField name="city" />
-            <AutoField name="countryCode" />
-            <SubmitField value="Submit" />
-            <ErrorsField />
-          </Segment>
+        <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
+          <Grid>
+            <Grid.Row columns={3}>
+              <Grid.Column>
+                <AutoField name="name" />
+              </Grid.Column>
+              <Grid.Column>
+                <AutoField name="label" />
+              </Grid.Column>
+              <Grid.Column>
+                <AutoField name="email" />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={2}>
+              <Grid.Column>
+                <AutoField name="picture" />
+              </Grid.Column>
+              <Grid.Column>
+                <AutoField name="website" />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                <LongTextField name="summary" />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column width={4}>
+                <AutoField name="phone" />
+              </Grid.Column>
+              <Grid.Column width={4}>
+                <AutoField name="address" />
+              </Grid.Column>
+              <Grid.Column width={4}>
+                <AutoField name="city" />
+              </Grid.Column>
+              <Grid.Column width={2}>
+                <AutoField name="postalCode" />
+              </Grid.Column>
+              <Grid.Column width={2}>
+                <AutoField name="countryCode" />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                <SubmitField value="Submit" />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                <ErrorsField />
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         </AutoForm>
       </div>
     );
@@ -82,5 +121,5 @@ export default class SimpleBioEditorTabBasics extends React.Component {
 }
 
 SimpleBioEditorTabBasics.propTypes = {
-  bio: PropTypes.shape({ basics: {} }).isRequired,
+  bio: PropTypes.object.isRequired,
 };

@@ -51,6 +51,10 @@
     }
   },
   "dependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
     "codemirror": "^5.39.0",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
@@ -72,10 +76,6 @@
     "uniforms-semantic": "^1.25.0-rc.3"
   },
   "devDependencies": {
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-es2015-classes": "^6.24.1",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
     "electron-forge": "^5.2.2",
     "electron-prebuilt-compile": "2.0.3",
     "eslint": "^3.19.0",

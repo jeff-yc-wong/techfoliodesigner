@@ -1,12 +1,13 @@
 import React from 'react';
 import { Tab } from 'semantic-ui-react';
-import { getBioAsJson } from './SimpleBioEditorWindow';
 import SimpleBioEditorTabBasics from './SimpleBioEditorTabBasics';
+import { getBioAsJson } from './SimpleBioEditorWindow';
 
 export default class SimpleBioEditor extends React.Component {
 
   render() {
-    const bio = getBioAsJson();
+    const app = require('electron').remote.app; //eslint-disable-line
+    const bio = getBioAsJson(app);
     const panes = [
       { menuItem: 'Basics', render: () => <Tab.Pane><SimpleBioEditorTabBasics bio={bio} /></Tab.Pane> },
       { menuItem: 'Networks', render: () => <Tab.Pane>Networks</Tab.Pane> },

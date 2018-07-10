@@ -4,9 +4,11 @@ import path from 'path';
 
 /**
  * Returns the bio.json file as an object if it exists and is parsable, null otherwise.
+ * @param Pass in app if you are calling this function from the renderer side.
  */
-export function getBioAsJson() {
-  const directory = app.techFolioWindowManager.getDirectory();
+export function getBioAsJson(appVal) {
+  const theApp = appVal || app;
+  const directory = theApp.techFolioWindowManager.getDirectory();
   const fileType = '_data';
   const fileName = 'bio.json';
   const filePath = path.join(directory, fileType, fileName);
