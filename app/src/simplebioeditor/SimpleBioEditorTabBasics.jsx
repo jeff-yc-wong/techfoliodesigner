@@ -113,7 +113,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
             </Grid.Row>
             <Grid.Row>
               <Grid.Column>
-                <SubmitField value="Submit" />
+                <SubmitField value="Save" />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>

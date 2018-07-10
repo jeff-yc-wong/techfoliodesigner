@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tab } from 'semantic-ui-react';
 import SimpleBioEditorTabBasics from './SimpleBioEditorTabBasics';
+import SimpleBioEditorTabNetwork from './SimpleBioEditorTabNetwork';
 import { getBioAsJson } from './SimpleBioEditorWindow';
 
 export default class SimpleBioEditor extends React.Component {
@@ -10,7 +11,7 @@ export default class SimpleBioEditor extends React.Component {
     const bio = getBioAsJson(app);
     const panes = [
       { menuItem: 'Basics', render: () => <Tab.Pane><SimpleBioEditorTabBasics bio={bio} /></Tab.Pane> },
-      { menuItem: 'Networks', render: () => <Tab.Pane>Networks</Tab.Pane> },
+      { menuItem: 'Networks', render: () => <Tab.Pane><SimpleBioEditorTabNetwork bio={bio} /></Tab.Pane> },
       { menuItem: 'Education', render: () => <Tab.Pane>Education</Tab.Pane> },
       { menuItem: 'Work', render: () => <Tab.Pane>Work</Tab.Pane> },
       { menuItem: 'Skills', render: () => <Tab.Pane>Skills</Tab.Pane> },
