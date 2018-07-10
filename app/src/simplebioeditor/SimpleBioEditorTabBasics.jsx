@@ -7,7 +7,28 @@ import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import LongTextField from 'uniforms-semantic/LongTextField';
 import { Grid } from 'semantic-ui-react';
+import Notify from 'notifyjs';
+import fs from 'fs-extra';
+import path from 'path';
 import { getBioAsJson } from './SimpleBioEditorWindow';
+
+export function writeBioAsJson(bio) {
+  const app = require('electron').remote.app; //eslint-disable-line
+  const directory = app.techFolioWindowManager.getDirectory();
+  const fileType = '_data';
+  const fileName = 'bio.json';
+  const filePath = path.join(directory, fileType, fileName);
+  const bioString = JSON.stringify(bio, null, 2);
+  fs.writeFile(filePath, bioString, 'utf8', (err) => {
+    const body = (err) ? `File write error: ${err}` : 'File saved.';
+    const notification = new Notify('bio.json', { body, renotify: true, tag: 'bio.json' });
+    if (!Notify.needsPermission) {
+      notification.show();
+    } else if (Notify.isSupported()) {
+      Notify.requestPermission(() => notification.show(), () => console.log('notification denied'));
+    }
+  });
+}
 
 export default class SimpleBioEditorTabBasics extends React.Component {
   constructor(props) {
@@ -24,24 +45,29 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     this.state.model.address = this.props.bio.basics.location.address;
     this.state.model.postalCode = this.props.bio.basics.location.postalCode;
     this.state.model.city = this.props.bio.basics.location.city;
+    this.state.model.region = this.props.bio.basics.location.region;
     this.state.model.countryCode = this.props.bio.basics.location.countryCode;
   }
 
   submit(data) { //eslint-disable-line
-    const { name, label, picture, email, phone, website, summary, address, postalCode, city, countryCode } = data;
+    const
+      { name, label, picture, email, phone, website, summary, address, postalCode, city, countryCode, region } = data;
     // get most recently saved version of bio.json, just to be safe.
-    const bio = getBioAsJson();
+    const app = require('electron').remote.app; //eslint-disable-line
+    const bio = getBioAsJson(app);
     bio.basics.name = name || '';
     bio.basics.label = label || '';
     bio.basics.picture = picture || '';
     bio.basics.email = email || '';
-    bio.basics.phone = phone || '';
     bio.basics.website = website || '';
     bio.basics.summary = summary || '';
-    bio.basics.location.address = address || '';
-    bio.basics.location.postalCode = postalCode || '';
-    bio.basics.location.city = city || '';
-    bio.basics.location.countryCode = countryCode || '';
+    if (phone) bio.basics.phone = phone;
+    if (address && bio.basics.location) bio.basics.location.address = address;
+    if (postalCode && bio.basics.location) bio.basics.location.postalCode = postalCode;
+    if (city && bio.basics.location) bio.basics.location.city = city;
+    if (region && bio.basics.location) bio.basics.location.region = region;
+    if (countryCode && bio.basics.location) bio.basics.location.countryCode = countryCode;
+    writeBioAsJson(bio);
   }
 
   render() {
@@ -56,6 +82,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
       address: { type: String, optional: true },
       postalCode: { type: String, optional: true, label: 'Zip Code' },
       city: { type: String, optional: true },
+      region: { type: String, optional: true, label: 'State' },
       countryCode: { type: String, optional: true, label: 'Country' },
     });
     return (
@@ -87,14 +114,17 @@ export default class SimpleBioEditorTabBasics extends React.Component {
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
-              <Grid.Column width={4}>
+              <Grid.Column width={3}>
                 <AutoField name="phone" />
               </Grid.Column>
               <Grid.Column width={4}>
                 <AutoField name="address" />
               </Grid.Column>
-              <Grid.Column width={4}>
+              <Grid.Column width={3}>
                 <AutoField name="city" />
+              </Grid.Column>
+              <Grid.Column width={2}>
+                <AutoField name="region" />
               </Grid.Column>
               <Grid.Column width={2}>
                 <AutoField name="postalCode" />
@@ -121,5 +151,5 @@ export default class SimpleBioEditorTabBasics extends React.Component {
 }
 
 SimpleBioEditorTabBasics.propTypes = {
-  bio: PropTypes.object.isRequired,
+  bio: PropTypes.shape({ basics: React.PropTypes.object }).isRequired,
 };
