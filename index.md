@@ -50,9 +50,7 @@ Third, cd into the app directory and run:
   
 If successful, the following window should appear:
 
-![](https://github.com/techfolios/designer/raw/master/doc/splash-page.png)
-
-<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/splash-page.png" width="600" >
+<img src="https://github.com/techfolios/designer/raw/master/doc/splash-page.png" width="600" >
 
 As instructed, you can use the Config menubar to select the directory containing your (previously cloned) TechFolio directory. Currently, TechFolio Designer does not integrate support for cloning and pushing to GitHub.
 
@@ -72,11 +70,11 @@ Project files are edited in a similar fashion.
 
 For the bio.json file, two options are available in the "Bio" menu. You can edit the JSON file directly:
 
-![](https://github.com/techfolios/designer/raw/master/doc/json-editor.png)
+<img src="https://github.com/techfolios/designer/raw/master/doc/json-editor.png" width="600" >
 
 Or you can use a form editor:
 
-![](https://github.com/techfolios/designer/raw/master/doc/json-form.png)
+<img src="https://github.com/techfolios/designer/raw/master/doc/json-form.png" width="600" >
 
 The latter implements restrictions on what you can do (for example, only three Work Experiences can be listed), but the benefit is that it guarantees that the JSON syntax will be preserved.
 
