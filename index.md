@@ -44,9 +44,89 @@ First, install a recent version of [NodeJS](https://nodejs.org/en/) (10.5 or abo
 
 Second, install [electron forge](https://electronforge.io/). (I used `sudo npm install -g electron-forge --allow-root` successfully, but it might be better to use [nvm](https://docs.npmjs.com/getting-started/installing-node#using-a-version-manager-to-install-nodejs-and-npm).)
 
-Third, cd into the app directory and run:
-  * `npm install`
-  * `electron-forge run`
+Third, cd into the app directory and run `npm install`:
+
+```
+npm install
+
+> fs-xattr@0.1.17 install /Users/philipjohnson/github/techfolios/techfoliodesigner/app/node_modules/fs-xattr
+> node-gyp rebuild
+
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+
+  CXX(target) Release/obj.target/xattr/src/async.o
+../src/async.cc:35:15: warning: 'Call' is deprecated [-Wdeprecated-declarations]
+    callback->Call(1, argv);
+              ^
+../../nan/nan.h:1617:3: note: 'Call' has been explicitly marked deprecated here
+  NAN_DEPRECATED inline v8::Local<v8::Value>
+  ^
+../../nan/nan.h:98:40: note: expanded from macro 'NAN_DEPRECATED'
+# define NAN_DEPRECATED __attribute__((deprecated))
+                                       ^
+../src/async.cc:129:15: warning: 'Call' is deprecated [-Wdeprecated-declarations]
+    callback->Call(2, argv);
+              ^
+../../nan/nan.h:1617:3: note: 'Call' has been explicitly marked deprecated here
+  NAN_DEPRECATED inline v8::Local<v8::Value>
+  ^
+../../nan/nan.h:98:40: note: expanded from macro 'NAN_DEPRECATED'
+# define NAN_DEPRECATED __attribute__((deprecated))
+                                       ^
+../src/async.cc:186:15: warning: 'Call' is deprecated [-Wdeprecated-declarations]
+    callback->Call(2, argv);
+              ^
+../../nan/nan.h:1617:3: note: 'Call' has been explicitly marked deprecated here
+  NAN_DEPRECATED inline v8::Local<v8::Value>
+  ^
+../../nan/nan.h:98:40: note: expanded from macro 'NAN_DEPRECATED'
+# define NAN_DEPRECATED __attribute__((deprecated))
+                                       ^
+3 warnings generated.
+  CXX(target) Release/obj.target/xattr/src/error.o
+  CXX(target) Release/obj.target/xattr/src/sync.o
+  CXX(target) Release/obj.target/xattr/src/util.o
+  CXX(target) Release/obj.target/xattr/src/xattr.o
+  SOLINK_MODULE(target) Release/xattr.node
+
+> macos-alias@0.2.11 install /Users/philipjohnson/github/techfolios/techfoliodesigner/app/node_modules/macos-alias
+> node-gyp rebuild
+
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+
+  CXX(target) Release/obj.target/volume/src/volume.o
+  SOLINK_MODULE(target) Release/volume.node
+
+> electron-forge@5.2.2 install /Users/philipjohnson/github/techfolios/techfoliodesigner/app/node_modules/electron-forge
+> node tabtab-install.js
+
+
+> spawn-sync@1.0.15 postinstall /Users/philipjohnson/github/techfolios/techfoliodesigner/app/node_modules/spawn-sync
+> node postinstall
+
+
+> electron@2.0.3 postinstall /Users/philipjohnson/github/techfolios/techfoliodesigner/app/node_modules/electron-prebuilt-compile/node_modules/electron
+> node install.js
+
+added 1135 packages from 1664 contributors and audited 10286 packages in 24.359s
+found 20 vulnerabilities (4 low, 15 moderate, 1 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+  
+```
+
+Fourth, run `electron-forge start`:
+
+```
+electron-forge start
+✔ Checking your system
+✔ Locating Application
+✔ Preparing native dependencies
+✔ Launching Application
+```
   
 If successful, the following window should appear:
 
