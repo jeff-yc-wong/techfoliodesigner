@@ -12,20 +12,20 @@ import updateArray from './ArrayUpdater';
 
 /* eslint max-len: 0 */
 
-export default class SimpleBioEditorTabSkills extends React.Component {
+export default class SimpleBioEditorTabInterests extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const skills = this.props.bio.skills;
-    this.state.model.name1 = skills[0] && skills[0].name;
-    this.state.model.name2 = skills[1] && skills[1].name;
-    this.state.model.keywords1a = skills[0] && skills[0].keywords && skills[0].keywords[0];
-    this.state.model.keywords1b = skills[0] && skills[0].keywords && skills[0].keywords[1];
-    this.state.model.keywords1c = skills[0] && skills[0].keywords && skills[0].keywords[2];
-    this.state.model.keywords2a = skills[1] && skills[1].keywords && skills[1].keywords[0];
-    this.state.model.keywords2b = skills[1] && skills[1].keywords && skills[1].keywords[1];
-    this.state.model.keywords2c = skills[1] && skills[1].keywords && skills[1].keywords[2];
+    const interests = this.props.bio.interests;
+    this.state.model.name1 = interests[0] && interests[0].name;
+    this.state.model.name2 = interests[1] && interests[1].name;
+    this.state.model.keywords1a = interests[0] && interests[0].keywords && interests[0].keywords[0];
+    this.state.model.keywords1b = interests[0] && interests[0].keywords && interests[0].keywords[1];
+    this.state.model.keywords1c = interests[0] && interests[0].keywords && interests[0].keywords[2];
+    this.state.model.keywords2a = interests[1] && interests[1].keywords && interests[1].keywords[0];
+    this.state.model.keywords2b = interests[1] && interests[1].keywords && interests[1].keywords[1];
+    this.state.model.keywords2c = interests[1] && interests[1].keywords && interests[1].keywords[2];
   }
 
   submit(data) {
@@ -40,16 +40,16 @@ export default class SimpleBioEditorTabSkills extends React.Component {
       keywords: _.compact([keywords2a, keywords2b, keywords2c]),
     };
 
-    bio.skills = updateArray(bio.skills, entry1, 0);
-    bio.skills = updateArray(bio.skills, entry2, 1);
-    writeBioFile(bio, 'Updated skills section of bio.');
+    bio.interests = updateArray(bio.interests, entry1, 0);
+    bio.interests = updateArray(bio.interests, entry2, 1);
+    writeBioFile(bio, 'Updated interests section of bio.');
     this.props.handleBioChange(bio);
   }
 
   render() {
     const formSchema = new SimpleSchema({
-      name1: { type: String, optional: true, label: 'Skill' },
-      name2: { type: String, optional: true, label: 'Skill' },
+      name1: { type: String, optional: true, label: 'Interest' },
+      name2: { type: String, optional: true, label: 'Interest' },
       keywords1a: { type: String, optional: true, label: 'Keyword' },
       keywords1b: { type: String, optional: true, label: 'Keyword' },
       keywords1c: { type: String, optional: true, label: 'Keyword' },
@@ -107,7 +107,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
   }
 }
 
-SimpleBioEditorTabSkills.propTypes = {
-  bio: PropTypes.shape({ skills: React.PropTypes.array }).isRequired,
+SimpleBioEditorTabInterests.propTypes = {
+  bio: PropTypes.shape({ interests: React.PropTypes.array }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
 };

@@ -5,6 +5,7 @@ import SimpleBioEditorTabNetwork from './SimpleBioEditorTabNetwork';
 import SimpleBioEditorTabWork from './SimpleBioEditorTabWork';
 import SimpleBioEditorTabEducation from './SimpleBioEditorTabEducation';
 import SimpleBioEditorTabSkills from './SimpleBioEditorTabSkills';
+import SimpleBioEditorTabInterests from './SimpleBioEditorTabInterests';
 import { getBioAsJson } from './SimpleBioEditorWindow';
 
 /* eslint max-len: 0 */
@@ -29,7 +30,7 @@ export default class SimpleBioEditor extends React.Component {
       { menuItem: 'Education', render: () => <Tab.Pane><SimpleBioEditorTabEducation bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Work', render: () => <Tab.Pane><SimpleBioEditorTabWork bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Skills', render: () => <Tab.Pane><SimpleBioEditorTabSkills bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
-      { menuItem: 'Interests', render: () => <Tab.Pane>Interests</Tab.Pane> },
+      { menuItem: 'Interests', render: () => <Tab.Pane><SimpleBioEditorTabInterests bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Awards', render: () => <Tab.Pane>Awards</Tab.Pane> },
       { menuItem: 'Activities', render: () => <Tab.Pane>Activities</Tab.Pane> },
     ];
