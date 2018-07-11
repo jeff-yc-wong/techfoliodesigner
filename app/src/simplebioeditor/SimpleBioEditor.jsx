@@ -2,6 +2,7 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react';
 import SimpleBioEditorTabBasics from './SimpleBioEditorTabBasics';
 import SimpleBioEditorTabNetwork from './SimpleBioEditorTabNetwork';
+import SimpleBioEditorTabWork from './SimpleBioEditorTabWork';
 import { getBioAsJson } from './SimpleBioEditorWindow';
 
 /* eslint max-len: 0 */
@@ -24,7 +25,7 @@ export default class SimpleBioEditor extends React.Component {
       { menuItem: 'Basics', render: () => <Tab.Pane><SimpleBioEditorTabBasics bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Networks', render: () => <Tab.Pane><SimpleBioEditorTabNetwork bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Education', render: () => <Tab.Pane>Education</Tab.Pane> },
-      { menuItem: 'Work', render: () => <Tab.Pane>Work</Tab.Pane> },
+      { menuItem: 'Work', render: () => <Tab.Pane><SimpleBioEditorTabWork bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Skills', render: () => <Tab.Pane>Skills</Tab.Pane> },
       { menuItem: 'Interests', render: () => <Tab.Pane>Interests</Tab.Pane> },
       { menuItem: 'Awards', render: () => <Tab.Pane>Awards</Tab.Pane> },
