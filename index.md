@@ -4,7 +4,9 @@
 
 TechFolio Designer is a desktop app written using [Electron](http://electron.atom.io/) to simplify the development of professional portfolios using TechFolios.  
 
-Many of the students who attempt to build their professional portfolio using TechFolio do not have any prior experience with GitHub, Markdown, JSON, or even HTML. Worse, GitHub typically provides no error messages when an incorrectly formatted TechFolio file is committed and thus cannot be built by Jekyll. In this case, GitHub silently fails to rebuild the site. This makes it extremely difficult for a beginning TechFolio user to figure out what went wrong. Some of the common problems that students encounter during initial development of their TechFolio include: 
+Many of the students who attempt to build their professional portfolio using TechFolio do not have any prior experience with GitHub, Markdown, JSON, or even HTML. Worse, GitHub typically provides no error messages when an incorrectly formatted TechFolio file is committed and thus cannot be built by Jekyll. In this case, GitHub silently fails to rebuild the site. This makes it extremely difficult for a beginning TechFolio user to figure out what went wrong. 
+
+Some of the common problems that students encounter during initial development of their TechFolio include: 
 
 * Committing a bio.json file that is not in legal JSON format.
 * Failure to remove the "sample" projects and essays from the template.
