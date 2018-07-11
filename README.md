@@ -48,7 +48,7 @@ Third, cd into the app directory and run:
   
 If successful, the following window should appear:
 
-![](https://raw.githubusercontent.com/ics-software-engineering/meteor-application-template-react/master/doc/landing-page.png)
+![](https://github.com/techfolios/designer/raw/master/doc/splash-page.png)
 
 ## Current user problems that Designer should help solve:
 
