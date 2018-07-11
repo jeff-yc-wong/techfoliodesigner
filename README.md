@@ -50,6 +50,8 @@ If successful, the following window should appear:
 
 ![](https://github.com/techfolios/designer/raw/master/doc/splash-page.png)
 
+<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/splash-page.png" width="600" />
+
 As instructed, you can use the Config menubar to select the directory containing your (previously cloned) TechFolio directory. Currently, TechFolio Designer does not integrate support for cloning and pushing to GitHub.
 
 Once you have specified the directory containing your local copy of your TechFolio github.io repo, the "Bio", "Projects", and "Essays" menus should provide access to the associated TechFolio files.
@@ -60,7 +62,7 @@ Once you have specified the directory containing your local copy of your TechFol
 
 Currently, TechFolio Design provides just basic editing facilities. For example, here is the Markdown-aware editor that appears when editing an essay:
 
-![](https://github.com/techfolios/designer/raw/master/doc/essay-editor.png)
+<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" />
 
 After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file. 
 
