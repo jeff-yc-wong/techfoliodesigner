@@ -161,6 +161,8 @@ The latter implements restrictions on what you can do (for example, only three W
 
 ## Ongoing development
 
+Please see the [Summer 2018 Project Page](https://github.com/techfolios/techfoliodesigner/projects/1) for a list of tasks. 
+
 
 
 
