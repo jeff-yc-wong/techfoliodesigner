@@ -1,11 +1,9 @@
 Next steps:
 
 ## Implement bio.json processing.
-  - npm add uniforms
-  - Look at opq/app/imports/ui/pages/ManageBox/EditBoxPage.jsx
-  - Create schema and page
-  - Need to convert bio.json file into object (JSON.parse), then write out as JSON.stringify.
-  - Do some simple error checking on schema values.
+  - Implement on submit, write out JSON file. Provide a (native) notification.
+  - Might want to change submit button color on edit?
+  - implement remaining sections.
 
 ## Implement github
 
@@ -37,3 +35,4 @@ Next steps:
   - configure text size and light/dark theme
   - implement custom validation to make simple bio editor more intelligent about acceptable field values.
   - allow bio json editor and simple editor to be open simultaneously.
+  - profile and improve performance.
