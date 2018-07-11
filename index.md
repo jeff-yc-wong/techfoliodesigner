@@ -2,7 +2,7 @@
 
 TechFolio Designer is a desktop app written using [Electron](http://electron.atom.io/) to simplify the development of professional portfolios using TechFolios.  
 
-Many of the students who attempt to build their professional portfolio using TechFolio do not have any prior experience with GitHub, Markdown, JSON, or even HTML. Worse, GitHub typically provides no error messages when an incorrectly formatted TechFolio file is committed. Instead, it simply fails to build the site, which means the prior version fails to be updated. This makes it extremely difficult for a beginning TechFolio user to debug the problem. Some of the common problems that students encounter during initial development of their TechFolio include: 
+Many of the students who attempt to build their professional portfolio using TechFolio do not have any prior experience with GitHub, Markdown, JSON, or even HTML. Worse, GitHub typically provides no error messages when an incorrectly formatted TechFolio file is committed and thus cannot be built by Jekyll. In this case, GitHub silently fails to rebuild the site. This makes it extremely difficult for a beginning TechFolio user to figure out what went wrong. Some of the common problems that students encounter during initial development of their TechFolio include: 
 
 * Committing a bio.json file that is not in legal JSON format.
 * Failure to remove the "sample" projects and essays from the template.
@@ -13,7 +13,9 @@ Many of the students who attempt to build their professional portfolio using Tec
 * Spelling errors in projects and essays.
 * Non-square images associated with project summary and home pages.
 
-These problems are currently difficult to address since, during initial development, students use the browser-based interface to GitHub to create, delete, and edit files.  The goal of TechFolio Designer is to provide a desktop application that is specialized to the needs of TechFolio development, and suitable for use by students with no prior exposure to GitHub, Markdown, JSON and HTML. 
+These problems are difficult for beginners to address since they typically use the browser-based interface to GitHub to create, delete, and edit files.  
+
+The goal of TechFolio Designer is to provide a desktop application that is specialized to the needs of beginning TechFolio development, and suitable for use by students with no prior exposure to GitHub, Markdown, JSON and HTML. 
 
 ## Workflow
 
@@ -50,7 +52,7 @@ If successful, the following window should appear:
 
 ![](https://github.com/techfolios/designer/raw/master/doc/splash-page.png)
 
-<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/splash-page.png" width="600" />
+<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/splash-page.png" width="600" >
 
 As instructed, you can use the Config menubar to select the directory containing your (previously cloned) TechFolio directory. Currently, TechFolio Designer does not integrate support for cloning and pushing to GitHub.
 
@@ -62,7 +64,7 @@ Once you have specified the directory containing your local copy of your TechFol
 
 Currently, TechFolio Design provides just basic editing facilities. For example, here is the Markdown-aware editor that appears when editing an essay:
 
-<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" />
+<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" >
 
 After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file. 
 
