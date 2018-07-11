@@ -1,3 +1,5 @@
+<img src="https://github.com/techfolios/designer/raw/master/doc/header-image.png">
+
 ## Motivation
 
 TechFolio Designer is a desktop app written using [Electron](http://electron.atom.io/) to simplify the development of professional portfolios using TechFolios.  
@@ -144,7 +146,7 @@ Currently, TechFolio Design provides just basic editing facilities. For example,
 
 <img src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" >
 
-After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file. 
+After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file and remove the asterix until you edit the file again.
 
 Project files are edited in a similar fashion.
 
