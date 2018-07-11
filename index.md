@@ -64,7 +64,7 @@ Once you have specified the directory containing your local copy of your TechFol
 
 Currently, TechFolio Design provides just basic editing facilities. For example, here is the Markdown-aware editor that appears when editing an essay:
 
-<img style={border: "1px"} src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" >
+<img src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" >
 
 After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file. 
 
