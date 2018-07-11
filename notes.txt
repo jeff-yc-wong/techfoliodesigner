@@ -22,6 +22,11 @@ Next steps:
 ## Code Mirror Spell Checker
   -
 
+
+## Implement file deletion.
+
+## Implement yaml file editing.
+
 ## ICS 491 project ideas
 
   - markdown previewer
