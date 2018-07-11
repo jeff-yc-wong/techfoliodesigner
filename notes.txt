@@ -36,3 +36,33 @@ Next steps:
   - implement custom validation to make simple bio editor more intelligent about acceptable field values.
   - allow bio json editor and simple editor to be open simultaneously.
   - profile and improve performance.
+
+
+## Notes about initial version of designer:
+
+Useful packages:
+
+* electron-prebuilt-compile: Support for React, Less, ES7.
+* front-matter: Parse YAML
+* fs-extra: drop-in replacement for fs; provides async/await support
+* jimp: image processing library
+* marked: parses markdown into HTML
+* nodegit: git commands in node
+* octonode: github authentication and manipulation
+* react-datepicker: datepicker
+* electron-oauth-github: (Not currently used) electron module for authenticating your Electron app with GitHub.
+
+Questionable packages
+
+* html-react-parser: converts an HTML string to a React element.
+* html-tidy2: clean up poorly formatted HTML
+* superagent: HTTP GET, PUT, etc.
+
+Other resources
+
+* [GitHub Authentication for Electron](https://medium.com/linagora-engineering/using-oauth-in-an-electron-application-abb0376c2ae0)
+
+Code notes
+
+* secret.js needs to be dealt with somehow.
+

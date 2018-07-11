@@ -50,36 +50,35 @@ If successful, the following window should appear:
 
 ![](https://github.com/techfolios/designer/raw/master/doc/splash-page.png)
 
-## Current user problems that Designer should help solve:
+As instructed, you can use the Config menubar to select the directory containing your (previously cloned) TechFolio directory. Currently, TechFolio Designer does not integrate support for cloning and pushing to GitHub.
+
+Once you have specified the directory containing your local copy of your TechFolio github.io repo, the "Bio", "Projects", and "Essays" menus should provide access to the associated TechFolio files.
+
+*Important Note: TechFolio Designer sometimes exhibits a lag of 3-4 seconds when creating windows. Be patient. If the contents of a window has not appeared within 3-4 seconds, then you can use the View window to open the Developer Tools pane to see if an error has occurred.*
+
+## Using TechFolio Designer
+
+Currently, TechFolio Design provides just basic editing facilities. For example, here is the Markdown-aware editor that appears when editing an essay:
+
+![](https://github.com/techfolios/designer/raw/master/doc/essay-editor.png)
+
+After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file. 
+
+Project files are edited in a similar fashion.
+
+For the bio.json file, two options are available in the "Bio" menu. You can edit the JSON file directly:
+
+![](https://github.com/techfolios/designer/raw/master/doc/json-editor.png)
+
+Or you can use a form editor:
+
+![](https://github.com/techfolios/designer/raw/master/doc/json-form.png)
+
+The latter implements restrictions on what you can do (for example, only three Work Experiences can be listed), but the benefit is that it guarantees that the JSON syntax will be preserved.
+
+
+## Ongoing development
 
 
 
-## Package explanations
-
-Useful:
-
-* electron-prebuilt-compile: Support for React, Less, ES7.
-* front-matter: Parse YAML
-* fs-extra: drop-in replacement for fs; provides async/await support
-* jimp: image processing library
-* marked: parses markdown into HTML
-* nodegit: git commands in node
-* octonode: github authentication and manipulation
-* react-datepicker: datepicker
-* electron-oauth-github: (Not currently used) electron module for authenticating your Electron app with GitHub.
-
-Questionable:
-
-* html-react-parser: converts an HTML string to a React element.
-* html-tidy2: clean up poorly formatted HTML 
-* superagent: HTTP GET, PUT, etc.
-
-
-## Other resources
-
-* [GitHub Authentication for Electron](https://medium.com/linagora-engineering/using-oauth-in-an-electron-application-abb0376c2ae0)
-
-## Code notes
-
-* secret.js needs to be dealt with somehow.
 
