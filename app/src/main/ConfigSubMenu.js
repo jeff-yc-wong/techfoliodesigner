@@ -20,8 +20,12 @@ function unsetLocalDirectory() {
   buildMainMenu();
 }
 
-function gitHubLogin() {
+function loginToGitHub() {
   console.log('login to Github');
+}
+
+function logoutFromGitHub() {
+  console.log('logout from Github');
 }
 
 function specifyRemoteRepo() {
@@ -38,7 +42,13 @@ function push() {
 
 
 function buildAuthenticationSubMenu() {
-  return { label: 'Authentication', submenu: [{ label: 'Login to GitHub', click: gitHubLogin }] };
+  const token = app.techFolioGitHubManager.get('token');
+  const username = token && app.techFolioGitHubManager.get('username');
+  const firstItem = { label: username || 'Not authenticated to github', enabled: false };
+  const secondItem = username ?
+    { label: 'Logout from GitHub', click: logoutFromGitHub } :
+    { label: 'Login to GitHub', click: loginToGitHub };
+  return { label: 'Authentication', submenu: [firstItem, secondItem] };
 }
 
 function buildRemoteRepoSubMenu() {
