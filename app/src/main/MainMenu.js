@@ -3,175 +3,77 @@ import { _ } from 'underscore';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
+import makeMenuTemplate from './MenuTemplate';
+import buildConfigSubMenu from './ConfigSubMenu';
 
 const app = electron.app;
 
-let template = [];
-
-function indexOfMenuItem(label) {
-  // console.log(label, template);
+/** Helper function to return the index of the element in template with the passed label. */
+function indexOfMenuItem(template, label) {
   return _.findIndex(template, element => element.label && element.label.toUpperCase() === label.toUpperCase());
 }
 
-function buildMainMenu(directory) {
+/* eslint no-param-reassign: 0 */
+/** If the user specifies a directory that does not contain TechFolio files, then we tell them and clear menus. */
+function processInvalidDirectory(template) {
+  dialog.showErrorBox('Invalid Directory', app.techFolioFiles.isInvalidDirectory());
+  template[indexOfMenuItem(template, 'Bio')].submenu = [];
+  template[indexOfMenuItem(template, 'Projects')].submenu = [];
+  template[indexOfMenuItem(template, 'Essays')].submenu = [];
+}
+
+function buildProjectsMenu(template) {
+  const projectFiles = app.techFolioFiles.projectFileNames();
+  const projectsSubMenu = projectFiles.map(
+    fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
+  projectsSubMenu.push({ type: 'separator' });
+  projectsSubMenu.push({ label: 'New Project', click: () => newTechFolioWindow({ fileType: 'projects' }) });
+  template[indexOfMenuItem(template, 'Projects')].submenu = projectsSubMenu;
+}
+
+function buildEssaysMenu(template) {
+  const essayFiles = app.techFolioFiles.essayFileNames();
+  const essaysSubMenu = essayFiles.map(
+    fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
+  essaysSubMenu.push({ type: 'separator' });
+  essaysSubMenu.push({ label: 'New Essay', click: () => newTechFolioWindow({ fileType: 'essays' }) });
+  template[indexOfMenuItem(template, 'Essays')].submenu = essaysSubMenu;
+}
+
+function buildBioMenu(template) {
+  const fileName = 'bio.json';
+  const bioSubMenu = [
+    { label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) },
+    { label: 'Simple Bio Editor', click: () => createSimpleBioEditorWindow() },
+  ];
+  template[indexOfMenuItem(template, 'Bio')].submenu = bioSubMenu;
+}
+
+function buildConfigMenu(template) {
+  template[indexOfMenuItem(template, 'Config')].submenu = buildConfigSubMenu();
+}
+
+/**
+ * Builds (or rebuilds) the application menu based upon the current state of the application.
+ * Application state is held in app.techFolioWindowManager and app.techFolioGitHubManager.
+ */
+function buildMainMenu() {
+  const template = makeMenuTemplate();
+  buildConfigMenu(template);
+  const directory = app.techFolioWindowManager.getDirectory();
   if (directory) {
-    app.techFolioWindowManager.setDirectory(directory);
-    const techFolioFiles = new TechFolioFiles(directory);
-    app.techFolioFiles = techFolioFiles;
-    const invalidDirectoryMessage = techFolioFiles.isInvalidDirectory();
-    if (invalidDirectoryMessage) {
-      dialog.showErrorBox('Invalid Directory', invalidDirectoryMessage);
-      template[indexOfMenuItem('Bio')].submenu = [];
-      template[indexOfMenuItem('Projects')].submenu = [];
-      template[indexOfMenuItem('Essays')].submenu = [];
+    app.techFolioFiles = new TechFolioFiles(directory);
+    if (app.techFolioFiles.isInvalidDirectory()) {
+      processInvalidDirectory(template);
     } else {
-      const projectFiles = techFolioFiles.projectFileNames();
-      const projectsSubMenu = projectFiles.map(
-        fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
-      projectsSubMenu.push({ type: 'separator' });
-      projectsSubMenu.push({ label: 'New Project', click: () => newTechFolioWindow({ fileType: 'projects' }) });
-      template[indexOfMenuItem('Projects')].submenu = projectsSubMenu;
-
-      const essayFiles = techFolioFiles.essayFileNames();
-      const essaysSubMenu = essayFiles.map(
-        fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
-      essaysSubMenu.push({ type: 'separator' });
-      essaysSubMenu.push({ label: 'New Essay', click: () => newTechFolioWindow({ fileType: 'essays' }) });
-      template[indexOfMenuItem('Essays')].submenu = essaysSubMenu;
-
-      const fileName = 'bio.json';
-      const bioSubMenu = [
-        { label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) },
-        { label: 'Simple Bio Editor', click: () => createSimpleBioEditorWindow() },
-      ];
-      template[indexOfMenuItem('Bio')].submenu = bioSubMenu;
+      buildProjectsMenu(template);
+      buildEssaysMenu(template);
+      buildBioMenu(template);
     }
   }
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
 
-template = [
-  {
-    label: 'Edit',
-    submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      { type: 'separator' },
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      { role: 'pasteandmatchstyle' },
-      { role: 'delete' },
-      { role: 'selectall' },
-    ],
-  },
-  {
-    label: 'View',
-    submenu: [
-      {
-        label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
-        click(item, focusedWindow) {
-          if (focusedWindow) focusedWindow.reload();
-        },
-      },
-      {
-        label: 'Toggle Developer Tools',
-        accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-        click(item, focusedWindow) {
-          if (focusedWindow) focusedWindow.webContents.toggleDevTools();
-        },
-      },
-      { type: 'separator' },
-      { role: 'resetzoom' },
-      { role: 'zoomin' },
-      { role: 'zoomout' },
-      { type: 'separator' },
-      { role: 'togglefullscreen' },
-    ],
-  },
-  {
-    role: 'window',
-    submenu: [
-      { role: 'minimize' },
-      { role: 'close' },
-    ],
-  },
-  {
-    label: 'Config',
-    submenu: [
-      { label: 'Set Techfolio Directory',
-        click: () => {
-          dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
-            if (files) {
-              const directory = files[0];
-              app.techFolioWindowManager.setDirectory(directory);
-              buildMainMenu(directory);
-            }
-          });
-        } },
-    ],
-  },
-  {
-    label: 'Bio',
-    submenu: [],
-  },
-  {
-    label: 'Projects',
-    submenu: [],
-  },
-  {
-    label: 'Essays',
-    submenu: [],
-  },
-  {
-    role: 'help',
-    submenu: [
-      {
-        label: 'Learn More',
-        click() {
-          require('electron').shell.openExternal('http://electron.atom.io'); //eslint-disable-line
-        },
-      },
-    ],
-  },
-];
-
-if (process.platform === 'darwin') {
-  const name = app.getName();
-  template.unshift({
-    label: name,
-    submenu: [
-      { role: 'about' },
-      { type: 'separator' },
-      { role: 'services', submenu: [] },
-      { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideothers' },
-      { role: 'unhide' },
-      { type: 'separator' },
-      { role: 'quit' },
-    ],
-  });
-  // Edit menu.
-  template[1].submenu.push(
-    { type: 'separator' },
-    { label: 'Speech',
-      submenu: [
-        { role: 'startspeaking' },
-        { role: 'stopspeaking' },
-      ],
-    },
-  );
-  // Window menu.
-  template[3].submenu = [
-    { label: 'Close', accelerator: 'CmdOrCtrl+W', role: 'close' },
-    { label: 'Minimize', accelerator: 'CmdOrCtrl+M', role: 'minimize' },
-    { label: 'Zoom', role: 'zoom' },
-    { type: 'separator' },
-    { label: 'Bring All to Front', role: 'front' },
-  ];
-}
 
 export default buildMainMenu;

@@ -2,6 +2,7 @@ import { app } from 'electron';
 import { enableLiveReload } from 'electron-compile';
 import buildMainMenu from './MainMenu';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
+import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import createSplashWindow from '../splash/SplashWindow';
 import { createTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 
@@ -9,13 +10,13 @@ import { createTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow'
 const isDevMode = process.execPath.match(/[\\/]electron/);
 if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 
-// add the techFolioWindowManager to app so it is available everywhere.
+// add window and github managers to app so they are available everywhere.
 app.techFolioWindowManager = techFolioWindowManager;
+app.techFolioGitHubManager = techFolioGitHubManager;
 
 function initializeWindows() {
-  const directory = techFolioWindowManager.getDirectory();
-  if (directory) {
-    buildMainMenu(directory);
+  buildMainMenu();
+  if (techFolioWindowManager.getDirectory()) {
     // Restore any windows that were open at time of last exit.
     techFolioWindowManager.getSavedFileNames('projects')
       .map(fileName => createTechFolioWindow({ fileType: 'projects', fileName }));
@@ -23,12 +24,9 @@ function initializeWindows() {
       .map(fileName => createTechFolioWindow({ fileType: 'essays', fileName }));
     techFolioWindowManager.getSavedFileNames('_data')
       .map(fileName => createTechFolioWindow({ fileType: '_data', fileName }));
-    // If no windows were restored, then display the splash window.
-    if (techFolioWindowManager.noWindows()) {
-      createSplashWindow();
-    }
-  } else {
-    buildMainMenu();
+  }
+  // If no windows were restored, then display the splash window.
+  if (techFolioWindowManager.noWindows()) {
     createSplashWindow();
   }
 }
@@ -37,7 +35,9 @@ function initializeWindows() {
 app.on('ready', () => initializeWindows());
 
 // Indicate that application is starting to shut down, so window close events shouldn't update cache.
-app.on('before-quit', () => { app.techFolioWindowManager.setBeforeQuit(); });
+app.on('before-quit', () => {
+  app.techFolioWindowManager.setBeforeQuit();
+});
 
 // Quit when all windows are closed, except on MacOS.
 app.on('window-all-closed', () => {

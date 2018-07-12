@@ -128,7 +128,7 @@ export async function newTechFolioWindow({ fileType }) {
     return null;
   }
   app.techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
-    () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(app.techFolioWindowManager.getDirectory()); });
+    () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(); });
   return null;
 }
 
