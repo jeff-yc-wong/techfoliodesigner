@@ -162,6 +162,18 @@ Or you can use a form editor:
 
 The latter implements restrictions on what you can do (for example, only three Work Experiences can be listed), but the benefit is that it guarantees that the JSON syntax will be preserved.
 
+## Source code organization
+
+The source for TechFolioDesigner is located in the src/ directory, and is organized into the following subdirectories:
+
+* **css**.  This directory contains the file style.css, which contains global style information. 
+* **lib**. This directory contains third party libraries. The autorefresh.ext.js is a library that ensures that when a CodeMirror editor instance is created, the entire contents of the file being edited is displayed.  Due to some issue with CodeMirror, unless this extension is loaded, not all of the contents of a file is initially displayed until the window is clicked.
+* **main**. This directory contains code that runs only in the main process. That includes the main.js file and the MainMenu.js code for constructing the native menu. 
+* **shared**. This directory contains code for data structures that are available on both the main process and any browser (renderer) processes.  This is accomplished by adding instances of the data structures to the `app` instance.  These data structures are TechFolioFiles and TechFolioWindowManager.
+* **simplebioeditor**. This directory contains the implementation of the Simple Bio Editor, the forms-based editor for the bio.json file. It contains code that runs in the main process (SimpleBioEditorWindow.js) as well as code that runs in the renderer process (all of the other files).
+* **splash**. This directory contains the implementation of the "Splash" window that appears when no other window is displayed. 
+* **techfolioeditor*.  This directory contains the implementation of the TechFolioEditor for editing the Project and Essay markdown files, as well as the JSON formatted bio.json file.
+
 
 ## Ongoing development
 
