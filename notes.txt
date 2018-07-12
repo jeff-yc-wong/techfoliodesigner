@@ -1,10 +1,5 @@
 Next steps:
 
-## Implement bio.json processing.
-  - Implement on submit, write out JSON file. Provide a (native) notification.
-  - Might want to change submit button color on edit?
-  - implement remaining sections.
-
 ## Implement github
 
 ## Implement CI with package build for releases.
