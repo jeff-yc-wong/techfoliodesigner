@@ -1,9 +1,9 @@
 import { app } from 'electron';
 import { enableLiveReload } from 'electron-compile';
 import buildMainMenu from './MainMenu';
-import techFolioWindowManager from './TechFolioWindowManager';
-import createSplashWindow from './splash/SplashWindow';
-import { createTechFolioWindow } from './techfolioeditor/TechFolioEditorWindow';
+import techFolioWindowManager from '../shared/TechFolioWindowManager';
+import createSplashWindow from '../splash/SplashWindow';
+import { createTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 
 // Development mode utilities.
 const isDevMode = process.execPath.match(/[\\/]electron/);
