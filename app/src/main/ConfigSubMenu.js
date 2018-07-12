@@ -5,14 +5,19 @@ const app = electron.app;
 
 /* eslint no-param-reassign: 0 */
 
-function setDirectory() {
+function setLocalDirectory() {
   dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
     if (files) {
       const directory = files[0];
       app.techFolioWindowManager.setDirectory(directory);
-      buildMainMenu(); //eslint-disable-line
+      buildMainMenu();
     }
   });
+}
+
+function unsetLocalDirectory() {
+  app.techFolioWindowManager.setDirectory(null);
+  buildMainMenu();
 }
 
 function gitHubLogin() {
@@ -41,7 +46,12 @@ function buildRemoteRepoSubMenu() {
 }
 
 function buildLocalDirSubMenu() {
-  return { label: 'Local Dir', submenu: [{ label: 'Specify local directory', click: setDirectory }] };
+  const currDir = app.techFolioWindowManager.getDirectory();
+  const firstItem = { label: currDir || 'No local directory specified', enabled: false };
+  const secondItem = currDir ?
+    { label: 'Unset local directory', click: unsetLocalDirectory } :
+    { label: 'Set local directory', click: setLocalDirectory };
+  return { label: 'Local Dir', submenu: [firstItem, secondItem] };
 }
 
 function buildClonePullSubMenu() {
