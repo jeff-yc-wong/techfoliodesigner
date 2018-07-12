@@ -10,8 +10,6 @@ import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
 
-/* eslint max-len: 0 */
-
 export default class SimpleBioEditorTabEducation extends React.Component {
   constructor(props) {
     super(props);
