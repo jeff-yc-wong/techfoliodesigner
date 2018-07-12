@@ -1,6 +1,21 @@
 Next steps:
 
 ## Implement github
+  - https://www.npmjs.com/package/nodegit-kit#commit-repo-options
+  - add all: https://github.com/nodegit/nodegit/issues/121
+
+  - Electron OAuth authentication with GitHub:
+    https://gist.github.com/paulbbauer/2add0bdf0f4342df48ea
+
+  - electron auth wrapper:
+    https://www.npmjs.com/package/electron-auth
+    https://www.npmjs.com/package/electron-oauth-github
+
+  - create credentials for oauth app with github:
+    https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/
+
+  - logout
+    https://stackoverflow.com/questions/12909332/how-to-logout-of-an-application-where-i-used-oauth2-to-login-with-google
 
 ## Implement CI with package build for releases.
 
