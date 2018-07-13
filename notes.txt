@@ -1,6 +1,12 @@
 Next steps:
 
 ## Implement github
+  - Edit Splash screen to provide summary of configuration variables.
+  - create github.js file to provide code for github.
+  - create the github app.
+  - implement the authentication code.
+
+GitHub notes:
   - https://www.npmjs.com/package/nodegit-kit#commit-repo-options
   - add all: https://github.com/nodegit/nodegit/issues/121
 
