@@ -1,5 +1,6 @@
 import electron, { dialog } from 'electron';
 import buildMainMenu from './MainMenu';
+import { loginToGitHub } from './Authenticate';
 
 const app = electron.app;
 
@@ -18,10 +19,6 @@ function setLocalDirectory() {
 function unsetLocalDirectory() {
   app.techFolioWindowManager.setDirectory(null);
   buildMainMenu();
-}
-
-function loginToGitHub() {
-  console.log('login to Github');
 }
 
 function logoutFromGitHub() {

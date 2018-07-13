@@ -4,7 +4,9 @@ Next steps:
   - Edit Splash screen to provide summary of configuration variables.
   - create github.js file to provide code for github.
   - create the github app.
-  - implement the authentication code.
+  - implement the authentication code. (https://github.com/settings/applications/808028)
+     - ID: b7889850a936356ea544
+     - secret: 607a024513937bff06fa719130f06ef1a261214d
 
 GitHub notes:
   - https://www.npmjs.com/package/nodegit-kit#commit-repo-options
@@ -19,6 +21,7 @@ GitHub notes:
 
   - create credentials for oauth app with github:
     https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/
+    https://medium.com/linagora-engineering/using-oauth-in-an-electron-application-abb0376c2ae0
 
   - logout
     https://stackoverflow.com/questions/12909332/how-to-logout-of-an-application-where-i-used-oauth2-to-login-with-google
