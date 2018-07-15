@@ -1,16 +1,16 @@
 import { BrowserWindow } from 'electron';
 import querystring from 'querystring';
 import https from 'https';
-
+import electronOauth2 from 'electron-oauth2';
 /* Based on: https://gist.github.com/paulbbauer/2add0bdf0f4342df48ea */
 
 const options = {
   client_id: 'b7889850a936356ea544',
   client_secret: '607a024513937bff06fa719130f06ef1a261214d',
-  scopes: ['public_repo', 'user'],
+  scopes: ['public_repo', 'user:email'],
 };
 
-function loginToGitHubOld() {
+export default function loginToGitHub() { //eslint-disable-line
   let authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
   const githubUrl = 'https://github.com/login/oauth/authorize?';
   const authUrl = `${githubUrl}client_id=${options.client_id}&scope=${options.scopes}`;
@@ -84,23 +84,23 @@ function loginToGitHubOld() {
   }, false);
 }
 
-export default function loginToGitHub() {
+function loginToGitHubold() { //eslint-disable-line
   let token;
 
-  const windowParams = { alwaysOnTop: true, autoHideMenuBar: true, webPreferences: { nodeIntegration: false, } };
+  const windowParams = { alwaysOnTop: true, autoHideMenuBar: true, webPreferences: { nodeIntegration: false } };
   const scopes = ['public_repo', 'user'];
 
-  const options = {
+  const oauthOptions = {
     scope: scopes.join(' '),
     accessType: 'online',
   };
 
-  const myApiOauth = electronOauth2(config, windowParams);
+  const myApiOauth = electronOauth2(options, windowParams);
 
-  return myApiOauth.getAccessToken(options)
+  return myApiOauth.getAccessToken(oauthOptions)
     .then((t) => {
       token = t;
-      window.localStorage.setItem('githubtoken', token.access_token);
+      // window.localStorage.setItem('githubtoken', token.access_token);
+      console.log('access token', token.access_token);
     });
-}
 }

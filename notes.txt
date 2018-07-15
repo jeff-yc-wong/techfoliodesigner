@@ -1,5 +1,8 @@
 Next steps:
 
+## Login processing.
+  - Do it once. If no credentials, then run it once more to get them. Avoid infinite loop.
+
 ## Implement github
   - Edit Splash screen to provide summary of configuration variables.
   - create github.js file to provide code for github.
