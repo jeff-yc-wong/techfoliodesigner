@@ -1,15 +1,18 @@
 Next steps:
 
-## Login processing.
-  - Do it once. If no credentials, then run it once more to get them. Avoid infinite loop.
+## Remote repo specification
+  - Unless the user has specified a value, then the remote repo defaults to username.github.io.
+  - Provide a menu option to request the remote repo name manually using electron-prompt.
+  - Write request to retrieve all public repos. show currently specified remote repo, as well as whether or not it appears to exist, in menu.
 
-## Implement github
-  - Edit Splash screen to provide summary of configuration variables.
-  - create github.js file to provide code for github.
-  - create the github app.
-  - implement the authentication code. (https://github.com/settings/applications/808028)
-     - ID: b7889850a936356ea544
-     - secret: 607a024513937bff06fa719130f06ef1a261214d
+## Clone or pull
+  - check whether the local dir is empty or a valid git repo.
+  - if empty, and if (authenticated && remote repo is specified and valid), then action is to clone.
+  - if non-empty, and if (authenticated && remote repo is specified and valid), then action is to pull.
+
+## Logout
+  - probably have to run the https request to logout along with access_token to really logout.
+
 
 GitHub notes:
   - https://www.npmjs.com/package/nodegit-kit#commit-repo-options
