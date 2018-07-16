@@ -1,6 +1,7 @@
 import electron, { BrowserWindow } from 'electron';
 import querystring from 'querystring';
 import https from 'https';
+import setGitHubUsername from './GitHubCommands';
 
 const app = electron.app;
 
@@ -60,6 +61,7 @@ export default function loginToGitHub() { //eslint-disable-line
             const json = JSON.parse(result.toString());
             const token = json.access_token;
             app.techFolioGitHubManager.set('token', token);
+            setGitHubUsername();
           }
         });
         response.on('error', (err) => {

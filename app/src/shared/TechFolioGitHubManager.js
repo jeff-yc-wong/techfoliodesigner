@@ -39,6 +39,10 @@ class TechFolioGitHubManager {
   clear(property) {
     this.store.set(property, null);
   }
+
+  clearAll() {
+    ['token', 'username', 'repo'].map(field => this.clear(field));
+  }
 }
 
 const techFolioGitHubManager = new TechFolioGitHubManager();
