@@ -40,9 +40,9 @@ function push() {
 
 function buildAuthenticationSubMenu() {
   const token = app.techFolioGitHubManager.get('token');
-  const username = token && app.techFolioGitHubManager.get('username');
-  const firstItem = { label: username || 'Not authenticated to github', enabled: false };
-  const secondItem = username ?
+  // const username = token && app.techFolioGitHubManager.get('username');
+  const firstItem = { label: token || 'Not authenticated to github', enabled: false };
+  const secondItem = token ?
     { label: 'Logout from GitHub', click: logoutFromGitHub } :
     { label: 'Login to GitHub', click: loginToGitHub };
   return { label: 'Authentication', submenu: [firstItem, secondItem] };
@@ -69,6 +69,10 @@ function buildPushMenu() {
   return { label: 'Push', submenu: [{ label: 'Push', click: push }] };
 }
 
+function buildRebuildMenus() {
+  return { label: 'Rebuild Menus', click: () => buildMainMenu() };
+}
+
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
@@ -76,6 +80,7 @@ export default function buildConfigSubMenu() {
     buildLocalDirSubMenu(),
     buildClonePullSubMenu(),
     buildPushMenu(),
+    buildRebuildMenus(),
   ];
   return configSubMenu;
 }

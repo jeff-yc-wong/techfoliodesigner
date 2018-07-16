@@ -29,7 +29,7 @@ class TechFolioGitHubManager {
    * @return The value of property.
    */
   get(property) {
-    this.store.get(property);
+    return this.store.get(property);
   }
 
   /**
