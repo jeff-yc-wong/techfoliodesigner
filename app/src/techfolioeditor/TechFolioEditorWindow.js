@@ -118,7 +118,7 @@ export async function newTechFolioWindow({ fileType }) {
       inputAttrs: { type: 'text', required: 'true' },
     });
   } catch (e) {
-    console.log('error in newTechFolioWindow dialog', e);
+    console.log('error in newTechFolioWindow dialog', e); // eslint-disable-line
     return null;
   }
   if (fileName === null) {

@@ -54,12 +54,12 @@ export default class TechFolioEditor extends React.Component {
   }
 
   saveFile() {
-    console.log('saveFile called');
+    console.log('saveFile called'); // eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
       } else {
-        console.log(`File ${this.filePath} has been saved.`);
+        console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
       }

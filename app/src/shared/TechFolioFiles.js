@@ -62,7 +62,7 @@ class TechFolioFiles {
     const filePath = path.join(this.directory, fileType, fileName);
     fs.writeFile(filePath, contents, 'utf8', (err) => {
       if (err) throw err;
-      console.log(`${filePath} written.`);
+      console.log(`${filePath} written.`); // eslint-disable-line
       successCallback();
     });
   }

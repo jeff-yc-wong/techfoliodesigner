@@ -52,7 +52,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
       company1, company2, company3, position1, position2, position3, website1, website2, website3,
       startDate1, startDate2, startDate3, endDate1, endDate2, endDate3, summary1, summary2, summary3,
       highlights1a, highlights1b, highlights1c, highlights2a, highlights2b, highlights2c,
-      highlights3a, highlights3b, highlights3c
+      highlights3a, highlights3b, highlights3c,
     } = data;
     const bio = this.props.bio;
     const entry1 = company1 && {

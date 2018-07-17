@@ -22,7 +22,7 @@ export function writeBioFile(bio, msg = 'File saved') {
     if (!Notify.needsPermission) {
       notification.show();
     } else if (Notify.isSupported()) {
-      Notify.requestPermission(() => notification.show(), () => console.log('notification denied'));
+      Notify.requestPermission(() => notification.show(), () => console.log('notification denied')); // eslint-disable-line
     }
   });
 }
