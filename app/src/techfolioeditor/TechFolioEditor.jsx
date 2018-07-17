@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+
+const fs = require('fs');
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');

@@ -1,10 +1,12 @@
 import { BrowserWindow, app, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
 import path from 'path';
 import prompt from 'electron-prompt';
 import moment from 'moment';
 import buildMainMenu from '../main/MainMenu';
+
+const fs = require('fs');
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();

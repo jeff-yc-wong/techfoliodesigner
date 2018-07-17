@@ -1,6 +1,8 @@
 import Notify from 'notifyjs'; // WARNING: this import fails when file is loaded in main process.
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
 import path from 'path';
+
+const fs = require('fs');
 
 /**
  * Renderer (remote side) function to write out the bio.json file.
