@@ -12,17 +12,23 @@
   import React from 'react';
   import ReactDOM from 'react-dom';
   import { Grid, Header } from 'semantic-ui-react';
+  import SplashTable from './SplashTable';
   const app = require('electron').remote.app
 
-  // Get the parameters to the App
-  const directory = app.techFolioWindowManager.getDirectory();
+  // Get the parameters to SplashTable
+  const dir = app.techFolioWindowManager.getDirectory();
+  const token = app.techFolioGitHubManager.get('token');
+  const username = app.techFolioGitHubManager.get('username');
+  const repo = app.techFolioGitHubManager.get('repo');
+  const dirty = 'unknown';
 
   const render = () => {
     ReactDOM.render(
       <Grid style={{padding: "20px"}}>
         <Grid.Column textAlign="center">
         <Header as="h1">Welcome to TechFolio Designer</Header>
-          <p>Use the config menubar to connect this designer to GitHub.</p>
+          <p>Use the config menu to change the following settings</p>
+          <SplashTable dir={dir} token={token} username={username} repo={repo} dirty={dirty}/>
         </Grid.Column>
       </Grid>,
       document.getElementById('SplashPage'));

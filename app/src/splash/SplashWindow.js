@@ -3,7 +3,7 @@ import { BrowserWindow, app } from 'electron';
 async function createSplashWindow() {
   // Create the browser window.
   const window = new BrowserWindow({
-    width: 500,
+    width: 700,
     height: 400,
     title: 'TechFolio Designer',
   });

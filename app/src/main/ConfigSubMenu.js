@@ -1,4 +1,5 @@
 import electron, { dialog } from 'electron';
+import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import loginToGitHub from './GitHubAuthenticate';
 
@@ -26,8 +27,20 @@ function logoutFromGitHub() {
   buildMainMenu();
 }
 
-function specifyRemoteRepo() {
-  console.log('specify remote repo.');
+async function specifyRemoteRepo() {
+  const username = app.techFolioGitHubManager.get('username') || 'username';
+  try {
+    const repoName = await prompt({
+      title: 'Specify the remote repo name',
+      label: 'Repo name:',
+      value: `${username}.github.io`,
+      inputAttrs: { type: 'text', required: 'true' },
+    });
+    app.techFolioGitHubManager.set('repo', repoName);
+    buildMainMenu();
+  } catch (e) {
+    console.log('error in specifyRemoteRepo dialog', e);
+  }
 }
 
 function cloneOrPull() {
@@ -50,7 +63,10 @@ function buildAuthenticationSubMenu() {
 }
 
 function buildRemoteRepoSubMenu() {
-  return { label: 'Remote Repo', submenu: [{ label: 'Specify remote repo', click: specifyRemoteRepo }] };
+  const remoteRepoName = app.techFolioGitHubManager.get('repo') || 'No remote repo specified.';
+  const firstItem = { label: remoteRepoName, enabled: false };
+  const secondItem = { label: 'Specify remote repo', click: specifyRemoteRepo };
+  return { label: 'Remote Repo', submenu: [firstItem, secondItem] };
 }
 
 function buildLocalDirSubMenu() {
