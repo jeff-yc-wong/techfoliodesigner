@@ -21,7 +21,7 @@
   const token = app.techFolioGitHubManager.get('token');
   const username = app.techFolioGitHubManager.get('username');
   const repo = app.techFolioGitHubManager.get('repo');
-  const dirty = 'unknown';
+  const status = app.techFolioGitHubManager.get('status');;
   const logs = app.techFolioGitHubManager.getLogs();
 
   const render = () => {
@@ -30,7 +30,7 @@
         <Grid.Column textAlign="center">
         <Header as="h1">Welcome to TechFolio Designer</Header>
           <p>Use the config menu to change the following settings</p>
-          <SplashTable dir={dir} token={token} username={username} repo={repo} dirty={dirty}/>
+          <SplashTable dir={dir} token={token} username={username} repo={repo} status={status}/>
           <SplashLogs logs={logs} />
         </Grid.Column>
       </Grid>,

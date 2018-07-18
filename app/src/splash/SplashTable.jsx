@@ -25,8 +25,8 @@ export default class SplashTable extends React.Component {
             <Table.Cell collapsing>{this.props.dir}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell collapsing>Changed files?</Table.Cell>
-            <Table.Cell collapsing>{this.props.dirty}</Table.Cell>
+            <Table.Cell collapsing>Status</Table.Cell>
+            <Table.Cell collapsing>{this.props.status}</Table.Cell>
           </Table.Row>
         </Table.Body>
       </Table>
@@ -39,7 +39,7 @@ SplashTable.defaultProps = {
   username: '',
   repo: '',
   dir: '',
-  dirty: '',
+  status: '',
 };
 
 SplashTable.propTypes = {
@@ -47,5 +47,5 @@ SplashTable.propTypes = {
   username: PropTypes.string,
   repo: PropTypes.string,
   dir: PropTypes.string,
-  dirty: PropTypes.string,
+  status: PropTypes.string,
 };

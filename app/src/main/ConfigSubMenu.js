@@ -2,7 +2,7 @@ import electron, { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import loginToGitHub from './GitHub';
-import { cloneRepo } from './Git';
+import { cloneRepo, localDirStatus } from './Git';
 
 const app = electron.app;
 
@@ -58,6 +58,10 @@ function push() {
   console.log('push');
 }
 
+function gitStatus() {
+  localDirStatus();
+}
+
 
 function buildAuthenticationSubMenu() {
   const token = app.techFolioGitHubManager.get('token');
@@ -98,6 +102,10 @@ function buildRebuildMenus() {
   return { label: 'Rebuild Menus', click: () => buildMainMenu() };
 }
 
+function buildStatusMenu() {
+  return { label: 'Status', submenu: [{ label: 'Get Git Status', click: gitStatus}] };
+}
+
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
@@ -106,6 +114,7 @@ export default function buildConfigSubMenu() {
     buildCloneSubMenu(),
     buildPushMenu(),
     buildRebuildMenus(),
+    buildStatusMenu(),
   ];
   return configSubMenu;
 }

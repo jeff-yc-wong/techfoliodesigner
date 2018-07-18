@@ -14,12 +14,13 @@ import moment from 'moment';
 class TechFolioGitHubManager {
   constructor() {
     this.commandLogEntries = [];
-    this.store = new Store({ name: 'TechFolioGitHubManager', defaults: { token: null, username: null, repo: null } });
+    this.store = new Store({ name: 'TechFolioGitHubManager',
+      defaults: { status: null, token: null, username: null, repo: null } });
   }
 
   /**
    * Set property to value.
-   * @param property Should be one of 'token', 'username', or 'repo'.
+   * @param property Should be one of 'token', 'username', 'status', or 'repo'.
    * @param value The value to be associated with the property.
    */
   set(property, value) {
@@ -28,7 +29,7 @@ class TechFolioGitHubManager {
 
   /**
    * Return the property value.
-   * @param property Property should be one of 'token', 'username', or 'repo'.
+   * @param property Property should be one of 'token', 'username', 'status' or 'repo'.
    * @return The value of property.
    */
   get(property) {
@@ -44,11 +45,11 @@ class TechFolioGitHubManager {
   }
 
   clearAll() {
-    ['token', 'username', 'repo'].map(field => this.clear(field));
+    ['token', 'username', 'repo', 'status'].map(field => this.clear(field));
   }
 
   addLog(logString) {
-    this.commandLogEntries.unshift({ timestamp: moment(), data: logString });
+    this.commandLogEntries.unshift({ timestamp: moment().format('h:mm a'), data: logString });
   }
 
   getLogs() {
