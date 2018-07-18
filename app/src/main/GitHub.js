@@ -23,9 +23,8 @@ function setGitHubUsername() {
         const json = JSON.parse(result.toString());
         const username = json.login;
         app.techFolioGitHubManager.set('username', username);
-        app.techFolioGitHubManager.addLog('GitHub request for username succeeded');
       } else {
-        app.techFolioGitHubManager.addLog(`Request GitHub user info failed: ${JSON.stringify(response)}`);
+        app.techFolioGitHubManager.addLog(`GitHub authentication: request user failed: ${JSON.stringify(response)}`);
       }
     });
   });
@@ -43,6 +42,7 @@ export default function loginToGitHub() {
     client_secret: '607a024513937bff06fa719130f06ef1a261214d',
     scopes: ['public_repo', 'user:email'],
   };
+  app.techFolioGitHubManager.addLog('GitHub authentication: starting.');
   let authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
   const githubUrl = 'https://github.com/login/oauth/authorize?';
   const authUrl = `${githubUrl}client_id=${options.client_id}&scope=${options.scopes}`;
@@ -87,13 +87,13 @@ export default function loginToGitHub() {
           if (response && (response.statusCode === 200)) {
             const json = JSON.parse(result.toString());
             const token = json.access_token;
-            app.techFolioGitHubManager.addLog('GitHub authentication succeeded');
+            app.techFolioGitHubManager.addLog('GitHub authentication: succeeded');
             app.techFolioGitHubManager.set('token', token);
             setGitHubUsername();
           }
         });
         response.on('error', (err) => {
-          app.techFolioGitHubManager.addLog(`GitHub authentication failed: ${err.message}`);
+          app.techFolioGitHubManager.addLog(`GitHub authentication: failed: ${err.message}`);
         });
       });
 
@@ -101,7 +101,7 @@ export default function loginToGitHub() {
       req.end();
     } else
       if (error) {
-        app.techFolioGitHubManager.addLog(`Error connecting to GitHub: ${error} Message: ${error.message}`);
+        app.techFolioGitHubManager.addLog(`GitHub authentication: Error connecting to GitHub: ${error}`);
       }
   });
 

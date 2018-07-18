@@ -18,7 +18,6 @@
 
   // Get the parameters to SplashTable
   const dir = app.techFolioWindowManager.getDirectory();
-  const token = app.techFolioGitHubManager.get('token');
   const username = app.techFolioGitHubManager.get('username');
   const repo = app.techFolioGitHubManager.get('repo');
   const status = app.techFolioGitHubManager.get('status');;
@@ -29,8 +28,7 @@
       <Grid style={{padding: "20px"}}>
         <Grid.Column textAlign="center">
         <Header as="h1">Welcome to TechFolio Designer</Header>
-          <p>Use the config menu to change the following settings</p>
-          <SplashTable dir={dir} token={token} username={username} repo={repo} status={status}/>
+          <SplashTable dir={dir} username={username} repo={repo} status={status}/>
           <SplashLogs logs={logs} />
         </Grid.Column>
       </Grid>,

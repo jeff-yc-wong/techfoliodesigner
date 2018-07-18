@@ -8,7 +8,7 @@ export default class SplashLogs extends React.Component {
     const logStrings = this.props.logs.map(entry => `${entry.timestamp}: ${entry.data}`);
     return (
       <Form>
-        <Form.Field control={TextArea} label="Command Logs" value={logStrings.join('\n\n')} readOnly rows={10} />
+        <Form.Field control={TextArea} label="Command Logs" value={logStrings.join('\n')} readOnly rows={10} />
       </Form>
     );
   }

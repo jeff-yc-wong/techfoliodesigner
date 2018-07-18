@@ -5,11 +5,11 @@ import moment from 'moment';
 const git = require('simple-git/promise');
 
 const app = electron.app;
-const wManager = app.techFolioWindowManager;
 
 export function cloneRepo(directory) {
   const gManager = app.techFolioGitHubManager;
-  gManager.addLog(`Clone: starting clone into ${directory}`);
+  const wManager = app.techFolioWindowManager;
+  gManager.addLog(`Clone: downloading ${gManager.get('repo')} into ${directory}`);
   const user = gManager.get('username');
   const token = gManager.get('token');
   const repo = gManager.get('repo');
@@ -51,4 +51,13 @@ export function localDirStatus() {
   git(directory).status()
     .then(result => processStatusResult(result))
     .catch(err => gManager.addLog(`Status: failed: ${err}`));
+}
+
+export function resetLocalDir() {
+  const gManager = app.techFolioGitHubManager;
+  const directory = app.techFolioWindowManager.getDirectory();
+  gManager.addLog(`Reset: starting reset of ${directory}`);
+  git(directory).reset('hard')
+    .then(() => gManager.addLog('Reset: finished'))
+    .catch(err => gManager.addLog(`Reset: failed: ${err}`));
 }

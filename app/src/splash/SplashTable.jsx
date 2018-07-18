@@ -9,24 +9,20 @@ export default class SplashTable extends React.Component {
       <Table celled unstackable>
         <Table.Body>
           <Table.Row>
-            <Table.Cell collapsing>Token</Table.Cell>
-            <Table.Cell collapsing>{this.props.token}</Table.Cell>
+            <Table.Cell>Username</Table.Cell>
+            <Table.Cell>{this.props.username}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell collapsing>Username</Table.Cell>
-            <Table.Cell collapsing>{this.props.username}</Table.Cell>
+            <Table.Cell>Remote Repo</Table.Cell>
+            <Table.Cell>{this.props.repo}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell collapsing>Remote Repo</Table.Cell>
-            <Table.Cell collapsing>{this.props.repo}</Table.Cell>
+            <Table.Cell>Local Dir</Table.Cell>
+            <Table.Cell>{this.props.dir}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell collapsing>Local Dir</Table.Cell>
-            <Table.Cell collapsing>{this.props.dir}</Table.Cell>
-          </Table.Row>
-          <Table.Row>
-            <Table.Cell collapsing>Status</Table.Cell>
-            <Table.Cell collapsing>{this.props.status}</Table.Cell>
+            <Table.Cell>Status</Table.Cell>
+            <Table.Cell>{this.props.status}</Table.Cell>
           </Table.Row>
         </Table.Body>
       </Table>
@@ -35,7 +31,6 @@ export default class SplashTable extends React.Component {
 }
 
 SplashTable.defaultProps = {
-  token: '',
   username: '',
   repo: '',
   dir: '',
@@ -43,7 +38,6 @@ SplashTable.defaultProps = {
 };
 
 SplashTable.propTypes = {
-  token: PropTypes.string,
   username: PropTypes.string,
   repo: PropTypes.string,
   dir: PropTypes.string,
