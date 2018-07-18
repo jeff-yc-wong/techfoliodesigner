@@ -34,10 +34,18 @@ export default class SplashTable extends React.Component {
   }
 }
 
+SplashTable.defaultProps = {
+  token: '',
+  username: '',
+  repo: '',
+  dir: '',
+  dirty: '',
+};
+
 SplashTable.propTypes = {
-  token: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
-  repo: PropTypes.string.isRequired,
-  dir: PropTypes.string.isRequired,
-  dirty: PropTypes.string.isRequired,
+  token: PropTypes.string,
+  username: PropTypes.string,
+  repo: PropTypes.string,
+  dir: PropTypes.string,
+  dirty: PropTypes.string,
 };

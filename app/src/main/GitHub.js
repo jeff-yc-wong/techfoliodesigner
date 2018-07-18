@@ -13,7 +13,7 @@ function setGitHubUsername() {
   const request = net.request(requestUrl);
   request.on('response', (response) => {
     let result = '';
-    console.log(`getGitHubUserName status code: ${response.statusCode}`);
+    // console.log(`getGitHubUserName status code: ${response.statusCode}`);
     // console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
     response.on('data', (chunk) => {
       result += chunk;
@@ -22,8 +22,10 @@ function setGitHubUsername() {
       if (response && (response.statusCode === 200)) {
         const json = JSON.parse(result.toString());
         const username = json.login;
-        console.log('setting username to', username);
         app.techFolioGitHubManager.set('username', username);
+        app.techFolioGitHubManager.addLog('GitHub request for username succeeded');
+      } else {
+        app.techFolioGitHubManager.addLog(`Request GitHub user info failed: ${JSON.stringify(response)}`);
       }
     });
   });
@@ -85,12 +87,13 @@ export default function loginToGitHub() {
           if (response && (response.statusCode === 200)) {
             const json = JSON.parse(result.toString());
             const token = json.access_token;
+            app.techFolioGitHubManager.addLog('GitHub authentication succeeded');
             app.techFolioGitHubManager.set('token', token);
             setGitHubUsername();
           }
         });
         response.on('error', (err) => {
-          console.log('Oauth request error ', err.message);
+          app.techFolioGitHubManager.addLog(`GitHub authentication failed: ${err.message}`);
         });
       });
 
@@ -98,7 +101,7 @@ export default function loginToGitHub() {
       req.end();
     } else
       if (error) {
-        console.log('Error connecting to GitHub.');
+        app.techFolioGitHubManager.addLog(`Error connecting to GitHub: ${error} Message: ${error.message}`);
       }
   });
 

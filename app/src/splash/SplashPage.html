@@ -13,6 +13,7 @@
   import ReactDOM from 'react-dom';
   import { Grid, Header } from 'semantic-ui-react';
   import SplashTable from './SplashTable';
+  import SplashLogs from './SplashLogs';
   const app = require('electron').remote.app
 
   // Get the parameters to SplashTable
@@ -21,6 +22,7 @@
   const username = app.techFolioGitHubManager.get('username');
   const repo = app.techFolioGitHubManager.get('repo');
   const dirty = 'unknown';
+  const logs = app.techFolioGitHubManager.getLogs();
 
   const render = () => {
     ReactDOM.render(
@@ -29,6 +31,7 @@
         <Header as="h1">Welcome to TechFolio Designer</Header>
           <p>Use the config menu to change the following settings</p>
           <SplashTable dir={dir} token={token} username={username} repo={repo} dirty={dirty}/>
+          <SplashLogs logs={logs} />
         </Grid.Column>
       </Grid>,
       document.getElementById('SplashPage'));

@@ -1,4 +1,5 @@
 import Store from 'electron-store';
+import moment from 'moment';
 
 /**
  * TechFolioGitHubManager provides persistent access to the following GitHub state variables:
@@ -6,11 +7,13 @@ import Store from 'electron-store';
  *   * OAuth token
  *   * username
  *   * remote repo name.
-
+ *
+ * It also provides an in-memory reference to the output of GitHub and Git commands.
  * The techFolioGitHubManager object is attached to the app object at system startup time.
  */
 class TechFolioGitHubManager {
   constructor() {
+    this.commandLogEntries = [];
     this.store = new Store({ name: 'TechFolioGitHubManager', defaults: { token: null, username: null, repo: null } });
   }
 
@@ -42,6 +45,14 @@ class TechFolioGitHubManager {
 
   clearAll() {
     ['token', 'username', 'repo'].map(field => this.clear(field));
+  }
+
+  addLog(logString) {
+    this.commandLogEntries.unshift({ timestamp: moment(), data: logString });
+  }
+
+  getLogs() {
+    return this.commandLogEntries;
   }
 }
 

@@ -16,7 +16,11 @@ Next steps:
   - probably have to run the https request to logout along with access_token to really logout.
 
 
-GitHub notes:
+## Signing the app
+  - https://blog.dcpos.ch/how-to-make-your-electron-app-sexy
+
+## GitHub notes:
+
   - https://www.npmjs.com/package/nodegit-kit#commit-repo-options
   - add all: https://github.com/nodegit/nodegit/issues/121
 

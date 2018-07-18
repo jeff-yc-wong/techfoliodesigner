@@ -2,6 +2,7 @@ import electron, { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import loginToGitHub from './GitHub';
+import { cloneRepo } from './Git';
 
 const app = electron.app;
 
@@ -43,8 +44,14 @@ async function specifyRemoteRepo() {
   }
 }
 
-function cloneOrPull() {
-  console.log('cloneOrPull');
+async function clone() {
+  dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
+    if (files) {
+      const directory = files[0];
+      app.techFolioGitHubManager.addLog(`Clone directory specified as: ${directory}`);
+      cloneRepo(directory);
+    }
+  });
 }
 
 function push() {
@@ -78,8 +85,9 @@ function buildLocalDirSubMenu() {
   return { label: 'Local Dir', submenu: [firstItem, secondItem] };
 }
 
-function buildClonePullSubMenu() {
-  return { label: 'Clone/Pull', submenu: [{ label: 'Clone or Pull', click: cloneOrPull }] };
+function buildCloneSubMenu() {
+  const enabled = app.techFolioGitHubManager.get('username');
+  return { label: 'Clone', submenu: [{ label: 'Clone', click: clone, enabled: !!enabled }] };
 }
 
 function buildPushMenu() {
@@ -95,7 +103,7 @@ export default function buildConfigSubMenu() {
     buildAuthenticationSubMenu(),
     buildRemoteRepoSubMenu(),
     buildLocalDirSubMenu(),
-    buildClonePullSubMenu(),
+    buildCloneSubMenu(),
     buildPushMenu(),
     buildRebuildMenus(),
   ];

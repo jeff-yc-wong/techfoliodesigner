@@ -26,7 +26,7 @@ function initializeWindows() {
       .map(fileName => createTechFolioWindow({ fileType: '_data', fileName }));
   }
   // If no windows were restored, then display the splash window.
-  if (techFolioWindowManager.noWindows() && !app.splashWindow) {
+  if (techFolioWindowManager.noWindows()) {
     createSplashWindow();
   }
 }
@@ -48,7 +48,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   // On OS X, create a window in the app when the dock icon is clicked and there are no other windows open.
-  if (techFolioWindowManager.noWindows() && !app.splashWindow) {
+  if (techFolioWindowManager.noWindows()) {
     createSplashWindow();
   }
 });

@@ -19,6 +19,7 @@ class TechFolioWindowManager {
     this.xOffset = 0;
     this.yOffset = 0;
     this.beforeQuit = false;
+    this.splashWindow = null;
     this.projects = [];
     this.essays = [];
     this._data = []; //eslint-disable-line
@@ -84,7 +85,15 @@ class TechFolioWindowManager {
   }
 
   noWindows() {
-    return _.isEmpty(this.projects) && _.isEmpty(this.essays);
+    return _.isEmpty(this.projects) && _.isEmpty(this.essays) && !this.splashWindow;
+  }
+
+  setSplashWindow(splashWindow) {
+    this.splashWindow = splashWindow;
+  }
+
+  clearSplashWindow() {
+    this.splashWindow = null;
   }
 }
 
