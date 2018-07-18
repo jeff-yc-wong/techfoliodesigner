@@ -1,7 +1,7 @@
 import electron, { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
-import loginToGitHub from './GitHubAuthenticate';
+import loginToGitHub from './GitHub';
 
 const app = electron.app;
 
