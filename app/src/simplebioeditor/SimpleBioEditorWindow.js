@@ -1,6 +1,10 @@
 import { BrowserWindow, app, dialog } from 'electron';
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
 import path from 'path';
+
+/* global Notify */
+
+const fs = require('fs');
 
 export function writeBioAsJson(bio) {
   const app = require('electron').remote.app; //eslint-disable-line
@@ -15,7 +19,7 @@ export function writeBioAsJson(bio) {
     if (!Notify.needsPermission) {
       notification.show();
     } else if (Notify.isSupported()) {
-      Notify.requestPermission(() => notification.show(), () => console.log('notification denied'));
+      Notify.requestPermission(() => notification.show(), () => console.log('notification denied')); // eslint-disable-line
     }
   });
 }

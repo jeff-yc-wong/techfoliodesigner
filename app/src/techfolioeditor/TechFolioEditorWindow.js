@@ -1,11 +1,13 @@
 import { BrowserWindow, app, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
 import path from 'path';
 import prompt from 'electron-prompt';
 import moment from 'moment';
 import buildMainMenu from '../main/MainMenu';
 import { runAddFile } from '../main/Git';
+
+const fs = require('fs');
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();
@@ -117,7 +119,7 @@ export async function newTechFolioWindow({ fileType }) {
       inputAttrs: { type: 'text', required: 'true' },
     });
   } catch (e) {
-    console.log('error in newTechFolioWindow dialog', e);
+    console.log('error in newTechFolioWindow dialog', e); // eslint-disable-line
     return null;
   }
   if (fileName === null) {

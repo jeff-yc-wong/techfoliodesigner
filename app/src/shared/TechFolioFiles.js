@@ -1,7 +1,8 @@
 import { _ } from 'underscore';
 import isDirectory from 'is-directory';
 import path from 'path';
-import fs from 'fs-extra';
+// import fs from 'fs-extra';
+const fs = require('fs');
 
 class TechFolioFiles {
   /**
@@ -61,7 +62,7 @@ class TechFolioFiles {
     const filePath = path.join(this.directory, fileType, fileName);
     fs.writeFile(filePath, contents, 'utf8', (err) => {
       if (err) throw err;
-      console.log(`${filePath} written.`);
+      console.log(`${filePath} written.`); // eslint-disable-line
       successCallback();
     });
   }
