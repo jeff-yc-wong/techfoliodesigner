@@ -8,6 +8,9 @@ Next steps:
 ## Logout
   - probably have to run the https request to logout along with removing access_token to really logout.
 
+## Splash window
+  - provide a way to get it redisplayed via menu
+
 ## Console logs -> app logging
   - search for console.logs, transition to in-app logging
 
