@@ -74,13 +74,22 @@ function runPushThenStatus() {
     .catch(err => gManager.addLog(`Push: failed during push: ${err}`));
 }
 
-export function runCommitThenPush() {
+function runCommitThenPush() {
   const gManager = app.techFolioGitHubManager;
   const directory = app.techFolioWindowManager.getDirectory();
   gManager.addLog('Push: committing local changes');
   git(directory).commit(['-a', '-m ', 'Commit by TechFolio Designer'])
     .then((result) => { gManager.addLog(`Push: finished commit: ${result}`); runPushThenStatus(); })
     .catch(err => gManager.addLog(`Commit: failed: ${err}`));
+}
+
+export function runAddThenCommitThenPush() {
+  const gManager = app.techFolioGitHubManager;
+  const directory = app.techFolioWindowManager.getDirectory();
+  gManager.addLog('Push: adding local changes');
+  git(directory).raw(['add', '--all'])
+    .then(() => { gManager.addLog('Push: finished add'); runCommitThenPush(); })
+    .catch(err => gManager.addLog(`Commit: add failed: ${err}`));
 }
 
 export function runPull() {

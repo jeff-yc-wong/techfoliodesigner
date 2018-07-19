@@ -2,7 +2,7 @@ import electron, { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
-import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runCommitThenPush, runPull } from './Git';
+import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
 
 const app = electron.app;
 
@@ -55,7 +55,7 @@ async function clone() {
 }
 
 function push() {
-  runCommitThenPush();
+  runAddThenCommitThenPush();
 }
 
 function gitStatus() {
