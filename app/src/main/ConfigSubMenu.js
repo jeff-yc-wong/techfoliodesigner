@@ -2,7 +2,7 @@ import electron, { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
-import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runCommitThenPushThenStatus } from './Git';
+import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runCommitThenPush, runPull } from './Git';
 
 const app = electron.app;
 
@@ -55,7 +55,7 @@ async function clone() {
 }
 
 function push() {
-  runCommitThenPushThenStatus();
+  runCommitThenPush();
 }
 
 function gitStatus() {
@@ -64,6 +64,10 @@ function gitStatus() {
 
 function gitReset() {
   runResetLocalDir();
+}
+
+function pull() {
+  runPull();
 }
 
 
@@ -114,6 +118,10 @@ function buildResetMenu() {
   return { label: 'Reset', submenu: [{ label: 'Reset local dir (delete changes)?', click: gitReset }] };
 }
 
+function buildPullMenu() {
+  return { label: 'Pull', submenu: [{ label: 'Get changes (if any) from GitHub', click: pull }] };
+}
+
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
@@ -123,6 +131,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildRebuildMenus(),
     buildStatusMenu(),
+    buildPullMenu(),
     buildResetMenu(),
   ];
   return configSubMenu;

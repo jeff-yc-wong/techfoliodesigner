@@ -11,6 +11,10 @@ Next steps:
 ## Console logs -> app logging
   - search for console.logs, transition to in-app logging
 
+## File deletion
+  - need to run 'git add <filename>' on deleted files.
+  - no current way to delete files gracefully and get changes pushed to github.
+
 
 ## Signing the app
   - https://blog.dcpos.ch/how-to-make-your-electron-app-sexy
