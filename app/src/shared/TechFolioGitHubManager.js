@@ -49,7 +49,7 @@ class TechFolioGitHubManager {
   }
 
   addLog(logString) {
-    this.commandLogEntries.unshift({ timestamp: moment().format('h:mm a'), data: logString });
+    this.commandLogEntries.unshift({ timestamp: moment().format('h:mm:ss a'), data: logString });
   }
 
   getLogs() {

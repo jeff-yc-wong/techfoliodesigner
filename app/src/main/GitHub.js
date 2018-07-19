@@ -36,7 +36,7 @@ function setGitHubUsername() {
  * Use HTTPS API to authenticate to GitHub.
  * Based on: https://gist.github.com/paulbbauer/2add0bdf0f4342df48ea
  */
-export default function loginToGitHub() {
+export default function runLoginToGitHub() {
   const options = {
     client_id: 'b7889850a936356ea544',
     client_secret: '607a024513937bff06fa719130f06ef1a261214d',
@@ -87,7 +87,7 @@ export default function loginToGitHub() {
           if (response && (response.statusCode === 200)) {
             const json = JSON.parse(result.toString());
             const token = json.access_token;
-            app.techFolioGitHubManager.addLog('GitHub authentication: succeeded');
+            app.techFolioGitHubManager.addLog('GitHub authentication: finished');
             app.techFolioGitHubManager.set('token', token);
             setGitHubUsername();
           }

@@ -1,19 +1,15 @@
 Next steps:
 
-## Installing nodegit
+## Nodegit problems
   Node V10 blocker: https://github.com/nodegit/nodegit/issues/1490
   Required prebuilt binary:
   https://axonodegit.s3.amazonaws.com/nodegit/nodegit/nodegit-v0.22.2-electron-v2.0-darwin-x64.tar.gz
 
-## Clone
-  - request the clone parent directory. Make sure it does not have a .git subdirectory.
-  - if (authenticated && remote repo is specified and valid), then attempt to clone.
-  - Once clone completed, set the local dir as the location where the cloned repo went.
-  - rebuild menus.
-  - Here's a nice package to try;: https://www.npmjs.com/package/nodegit-clone
-
 ## Logout
-  - probably have to run the https request to logout along with access_token to really logout.
+  - probably have to run the https request to logout along with removing access_token to really logout.
+
+## Console logs -> app logging
+  - search for console.logs, transition to in-app logging
 
 
 ## Signing the app

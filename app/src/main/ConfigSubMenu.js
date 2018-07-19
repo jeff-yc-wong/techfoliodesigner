@@ -1,8 +1,8 @@
 import electron, { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
-import loginToGitHub from './GitHub';
-import { cloneRepo, localDirStatus, resetLocalDir } from './Git';
+import runLoginToGitHub from './GitHub';
+import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runCommitThenPushThenStatus } from './Git';
 
 const app = electron.app;
 
@@ -49,22 +49,21 @@ async function clone() {
     if (files) {
       const directory = files[0];
       app.techFolioGitHubManager.addLog(`Clone directory specified as: ${directory}`);
-      cloneRepo(directory);
+      runCloneRepo(directory);
     }
   });
 }
 
 function push() {
-  console.log('push');
+  runCommitThenPushThenStatus();
 }
 
 function gitStatus() {
-  localDirStatus();
+  runLocalDirStatus();
 }
 
 function gitReset() {
-  resetLocalDir();
-  localDirStatus();
+  runResetLocalDir();
 }
 
 
@@ -74,7 +73,7 @@ function buildAuthenticationSubMenu() {
   const firstItem = { label: username || 'Not authenticated to github', enabled: false };
   const secondItem = username ?
     { label: 'Logout from GitHub', click: logoutFromGitHub } :
-    { label: 'Login to GitHub', click: loginToGitHub };
+    { label: 'Login to GitHub', click: runLoginToGitHub };
   return { label: 'Authentication', submenu: [firstItem, secondItem] };
 }
 
@@ -124,7 +123,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildRebuildMenus(),
     buildStatusMenu(),
-    buildResetMenu()
+    buildResetMenu(),
   ];
   return configSubMenu;
 }

@@ -5,6 +5,7 @@ import path from 'path';
 import prompt from 'electron-prompt';
 import moment from 'moment';
 import buildMainMenu from '../main/MainMenu';
+import { runAddFile } from '../main/Git';
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = app.techFolioWindowManager.getDirectory();
@@ -127,8 +128,10 @@ export async function newTechFolioWindow({ fileType }) {
       'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
     return null;
   }
+  const directory = app.techFolioWindowManager.getDirectory();
+  const filePath = path.join(directory, fileType, fileName);
   app.techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
-    () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(); });
+    () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(); runAddFile(filePath); });
   return null;
 }
 
