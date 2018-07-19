@@ -99,11 +99,11 @@ function buildLocalDirSubMenu() {
 
 function buildCloneSubMenu() {
   const enabled = app.techFolioGitHubManager.get('username');
-  return { label: 'Clone', submenu: [{ label: 'Clone', click: clone, enabled: !!enabled }] };
+  return { label: 'Clone', submenu: [{ label: 'Download repo to new local directory', click: clone, enabled: !!enabled }] };
 }
 
 function buildPushMenu() {
-  return { label: 'Push', submenu: [{ label: 'Push', click: push }] };
+  return { label: 'Push', submenu: [{ label: 'Upload local changes to GitHub', click: push }] };
 }
 
 function buildRebuildMenus() {
@@ -111,15 +111,15 @@ function buildRebuildMenus() {
 }
 
 function buildStatusMenu() {
-  return { label: 'Status', submenu: [{ label: 'Get Git Status', click: gitStatus }] };
+  return { label: 'Status', submenu: [{ label: 'Check for changes in local directory', click: gitStatus }] };
 }
 
 function buildResetMenu() {
-  return { label: 'Reset', submenu: [{ label: 'Reset local dir (delete changes)?', click: gitReset }] };
+  return { label: 'Reset', submenu: [{ label: 'Revert local directory (delete all unpushed changes!!)', click: gitReset }] };
 }
 
 function buildPullMenu() {
-  return { label: 'Pull', submenu: [{ label: 'Get changes (if any) from GitHub', click: pull }] };
+  return { label: 'Pull', submenu: [{ label: 'Download and merge changes (if any) from GitHub repo', click: pull }] };
 }
 
 export default function buildConfigSubMenu() {
@@ -129,10 +129,10 @@ export default function buildConfigSubMenu() {
     buildLocalDirSubMenu(),
     buildCloneSubMenu(),
     buildPushMenu(),
-    buildRebuildMenus(),
     buildStatusMenu(),
     buildPullMenu(),
     buildResetMenu(),
+    buildRebuildMenus(),
   ];
   return configSubMenu;
 }
