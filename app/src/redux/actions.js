@@ -19,6 +19,10 @@ export function setStatus(status) {
   return { type: 'SET_STATUS', payload: status };
 }
 
+export function setToken(token) {
+  return { type: 'SET_TOKEN', payload: token };
+}
+
 export function addLog(log) {
   return { type: 'ADD_LOG', payload: log };
 }

@@ -3,12 +3,10 @@ import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
 import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
-import { setAuthenticated, setDirectory } from '../redux/actions';
+import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 
 const app = electron.app;
-
-mainStore.dispatch(setAuthenticated(true));
 
 /* eslint no-param-reassign: 0 */
 
@@ -17,8 +15,7 @@ function setLocalDirectory() {
     if (files) {
       const directory = files[0];
       app.techFolioWindowManager.setDirectory(directory);
-      console.log('about to dispatch setDirectory');
-      mainStore.dispatch(setDirectory(directory));
+      mainStore.dispatch(action.setDirectory(directory));
       buildMainMenu();
     }
   });
@@ -26,16 +23,21 @@ function setLocalDirectory() {
 
 function unsetLocalDirectory() {
   app.techFolioWindowManager.setDirectory(null);
+  mainStore.dispatch(action.setDirectory(null));
   buildMainMenu();
 }
 
 function logoutFromGitHub() {
   app.techFolioGitHubManager.clearAll();
+  mainStore.dispatch(action.setUsername(null));
+  mainStore.dispatch(action.setToken(null));
+  mainStore.dispatch(action.setRepo(null));
+  mainStore.dispatch(action.setStatus(null));
   buildMainMenu();
 }
 
 async function specifyRemoteRepo() {
-  const username = app.techFolioGitHubManager.get('username') || 'username';
+  const username = mainStore.getState().username || 'username';
   try {
     const repoName = await prompt({
       title: 'Specify the remote repo name',
@@ -44,6 +46,7 @@ async function specifyRemoteRepo() {
       inputAttrs: { type: 'text', required: 'true' },
     });
     app.techFolioGitHubManager.set('repo', repoName);
+    mainStore.dispatch(action.setRepo(repoName));
     buildMainMenu();
   } catch (e) {
     console.log('error in specifyRemoteRepo dialog', e);
@@ -55,6 +58,7 @@ async function clone() {
     if (files) {
       const directory = files[0];
       app.techFolioGitHubManager.addLog(`Clone directory specified as: ${directory}`);
+      mainStore.dispatch(action.addLog(`Clone directory specified as: ${directory}`));
       runCloneRepo(directory);
     }
   });
@@ -78,8 +82,8 @@ function pull() {
 
 
 function buildAuthenticationSubMenu() {
-  const token = app.techFolioGitHubManager.get('token');
-  const username = token && app.techFolioGitHubManager.get('username');
+  const token = mainStore.getState().token;
+  const username = token && mainStore.getState().username;
   const firstItem = { label: username || 'Not authenticated to github', enabled: false };
   const secondItem = username ?
     { label: 'Logout from GitHub', click: logoutFromGitHub } :
@@ -88,14 +92,14 @@ function buildAuthenticationSubMenu() {
 }
 
 function buildRemoteRepoSubMenu() {
-  const remoteRepoName = app.techFolioGitHubManager.get('repo') || 'No remote repo specified.';
+  const remoteRepoName = mainStore.getState().repo || 'No remote repo specified.';
   const firstItem = { label: remoteRepoName, enabled: false };
   const secondItem = { label: 'Specify remote repo', click: specifyRemoteRepo };
   return { label: 'Remote Repo', submenu: [firstItem, secondItem] };
 }
 
 function buildLocalDirSubMenu() {
-  const currDir = app.techFolioWindowManager.getDirectory();
+  const currDir = mainStore.getState().dir;
   const firstItem = { label: currDir || 'No local directory specified', enabled: false };
   const secondItem = currDir ?
     { label: 'Unset local directory', click: unsetLocalDirectory } :
@@ -104,8 +108,8 @@ function buildLocalDirSubMenu() {
 }
 
 function buildCloneSubMenu() {
-  const enabled = app.techFolioGitHubManager.get('username');
-  return { label: 'Clone', submenu: [{ label: 'Download repo to new local directory', click: clone, enabled: !!enabled }] };
+  const enabled = !!mainStore.getState().username;
+  return { label: 'Clone', submenu: [{ label: 'Download repo to new local directory', click: clone, enabled }] };
 }
 
 function buildPushMenu() {
@@ -121,7 +125,7 @@ function buildStatusMenu() {
 }
 
 function buildResetMenu() {
-  return { label: 'Reset', submenu: [{ label: 'Revert local directory (delete all unpushed changes!!)', click: gitReset }] };
+  return { label: 'Reset', submenu: [{ label: 'Revert local directory (delete unpushed changes!)', click: gitReset }] };
 }
 
 function buildPullMenu() {

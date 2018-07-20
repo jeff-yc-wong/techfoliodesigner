@@ -35,15 +35,24 @@ class SplashTable extends React.Component {
   }
 }
 
+SplashTable.defaultProps = {
+  authenticated: false,
+  username: '',
+  repo: '',
+  dir: '',
+  status: '',
+};
+
 SplashTable.propTypes = {
-  authenticated: PropTypes.bool.isRequired,
-  username: PropTypes.string.isRequired,
-  repo: PropTypes.string.isRequired,
-  dir: PropTypes.string.isRequired,
-  status: PropTypes.string.isRequired,
+  authenticated: PropTypes.bool,
+  username: PropTypes.string,
+  repo: PropTypes.string,
+  dir: PropTypes.string,
+  status: PropTypes.string,
 };
 
 function mapStateToProps(state) {
+  console.log('running mapStateToProps', state);
   return {
     authenticated: state.authenticated,
     username: state.username,

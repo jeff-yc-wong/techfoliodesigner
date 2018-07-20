@@ -6,11 +6,12 @@ import prompt from 'electron-prompt';
 import moment from 'moment';
 import buildMainMenu from '../main/MainMenu';
 import { runAddFile } from '../main/Git';
+import mainStore from '../redux/mainstore';
 
 const fs = require('fs');
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
-  const directory = app.techFolioWindowManager.getDirectory();
+  const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = app.techFolioWindowManager.getWindow(fileType, fileName);
   if (currWindow) {
@@ -30,7 +31,8 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     app.techFolioWindowManager.addWindow(fileType, fileName, window);
 
     // Load the index.html of the app.
-    window.loadURL(`file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}`);
+    window.loadURL(
+      `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
 
     // Install DevTools
     if (isDevMode) {
@@ -130,7 +132,7 @@ export async function newTechFolioWindow({ fileType }) {
       'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
     return null;
   }
-  const directory = app.techFolioWindowManager.getDirectory();
+  const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   app.techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
     () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(); runAddFile(filePath); });

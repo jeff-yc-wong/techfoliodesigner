@@ -1,20 +1,18 @@
-import electron, { BrowserWindow, net } from 'electron';
+import { BrowserWindow, net } from 'electron';
 import querystring from 'querystring';
 import https from 'https';
-
-const app = electron.app;
+import * as action from '../redux/actions';
+import mainStore from '../redux/mainstore';
 
 /**
  * Once authenticated to GitHub and access token is available, this function uses the https GitHub API to get username.
  */
 function setGitHubUsername() {
-  const token = app.techFolioGitHubManager.get('token');
+  const token = mainStore.getState().token;
   const requestUrl = `https://api.github.com/user?access_token=${token}`;
   const request = net.request(requestUrl);
   request.on('response', (response) => {
     let result = '';
-    // console.log(`getGitHubUserName status code: ${response.statusCode}`);
-    // console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
     response.on('data', (chunk) => {
       result += chunk;
     });
@@ -22,9 +20,9 @@ function setGitHubUsername() {
       if (response && (response.statusCode === 200)) {
         const json = JSON.parse(result.toString());
         const username = json.login;
-        app.techFolioGitHubManager.set('username', username);
+        action.setUsername(username);
       } else {
-        app.techFolioGitHubManager.addLog(`GitHub authentication: request user failed: ${JSON.stringify(response)}`);
+        action.addLog(`GitHub authentication: request user failed: ${JSON.stringify(response)}`);
       }
     });
   });
@@ -42,7 +40,7 @@ export default function runLoginToGitHub() {
     client_secret: '607a024513937bff06fa719130f06ef1a261214d',
     scopes: ['public_repo', 'user:email'],
   };
-  app.techFolioGitHubManager.addLog('GitHub authentication: starting.');
+  action.addLog('GitHub authentication: starting.');
   let authWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
   const githubUrl = 'https://github.com/login/oauth/authorize?';
   const authUrl = `${githubUrl}client_id=${options.client_id}&scope=${options.scopes}`;
@@ -87,13 +85,13 @@ export default function runLoginToGitHub() {
           if (response && (response.statusCode === 200)) {
             const json = JSON.parse(result.toString());
             const token = json.access_token;
-            app.techFolioGitHubManager.addLog('GitHub authentication: finished');
-            app.techFolioGitHubManager.set('token', token);
+            action.addLog('GitHub authentication: finished');
+            action.setToken(token);
             setGitHubUsername();
           }
         });
         response.on('error', (err) => {
-          app.techFolioGitHubManager.addLog(`GitHub authentication: failed: ${err.message}`);
+          action.addLog(`GitHub authentication: failed: ${err.message}`);
         });
       });
 
@@ -101,7 +99,7 @@ export default function runLoginToGitHub() {
       req.end();
     } else
       if (error) {
-        app.techFolioGitHubManager.addLog(`GitHub authentication: Error connecting to GitHub: ${error}`);
+        action.addLog(`GitHub authentication: Error connecting to GitHub: ${error}`);
       }
   });
 

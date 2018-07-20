@@ -16,7 +16,7 @@
   import { createStore, applyMiddleware } from 'redux';
   import { Grid, Header } from 'semantic-ui-react';
   import { forwardToMain, replayActionRenderer, getInitialStateRenderer } from 'electron-redux';
-  import { reducer } from '../redux/reducer';
+  import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
   const app = require('electron').remote.app

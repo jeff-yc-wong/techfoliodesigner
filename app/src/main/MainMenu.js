@@ -1,12 +1,11 @@
-import electron, { Menu, dialog } from 'electron';
+import { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
-
-const app = electron.app;
+import mainStore from '../redux/mainstore';
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -15,15 +14,15 @@ function indexOfMenuItem(template, label) {
 
 /* eslint no-param-reassign: 0 */
 /** If the user specifies a directory that does not contain TechFolio files, then we tell them and clear menus. */
-function processInvalidDirectory(template) {
-  dialog.showErrorBox('Invalid Directory', app.techFolioFiles.isInvalidDirectory());
+function processInvalidDirectory(template, techFolioFiles) {
+  dialog.showErrorBox('Invalid Directory', techFolioFiles.isInvalidDirectory());
   template[indexOfMenuItem(template, 'Bio')].submenu = [];
   template[indexOfMenuItem(template, 'Projects')].submenu = [];
   template[indexOfMenuItem(template, 'Essays')].submenu = [];
 }
 
-function buildProjectsMenu(template) {
-  const projectFiles = app.techFolioFiles.projectFileNames();
+function buildProjectsMenu(template, techFolioFiles) {
+  const projectFiles = techFolioFiles.projectFileNames();
   const projectsSubMenu = projectFiles.map(
     fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
   projectsSubMenu.push({ type: 'separator' });
@@ -31,8 +30,8 @@ function buildProjectsMenu(template) {
   template[indexOfMenuItem(template, 'Projects')].submenu = projectsSubMenu;
 }
 
-function buildEssaysMenu(template) {
-  const essayFiles = app.techFolioFiles.essayFileNames();
+function buildEssaysMenu(template, techFolioFiles) {
+  const essayFiles = techFolioFiles.essayFileNames();
   const essaysSubMenu = essayFiles.map(
     fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
   essaysSubMenu.push({ type: 'separator' });
@@ -60,20 +59,19 @@ function buildConfigMenu(template) {
 function buildMainMenu() {
   const template = makeMenuTemplate();
   buildConfigMenu(template);
-  const directory = app.techFolioWindowManager.getDirectory();
+  const directory = mainStore.getState().dir;
   if (directory) {
-    app.techFolioFiles = new TechFolioFiles(directory);
-    if (app.techFolioFiles.isInvalidDirectory()) {
-      processInvalidDirectory(template);
+    const techFolioFiles = new TechFolioFiles(directory);
+    if (techFolioFiles.isInvalidDirectory()) {
+      processInvalidDirectory(template, techFolioFiles);
     } else {
-      buildProjectsMenu(template);
-      buildEssaysMenu(template);
+      buildProjectsMenu(template, techFolioFiles);
+      buildEssaysMenu(template, techFolioFiles);
       buildBioMenu(template);
     }
   }
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
-
 
 export default buildMainMenu;

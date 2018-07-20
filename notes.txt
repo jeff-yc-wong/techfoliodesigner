@@ -1,26 +1,7 @@
 Next steps:
 
 ## Redux
-  - download sample code, run through it to make sure it works and I understand it.
-    - https://github.com/learncodeacademy/react-js-tutorials/
-    - https://www.youtube.com/watch?v=sX3KeP7v7Kg (Add redux to simple react app).
-  - Basic purpose:
-    - Running git and github operations in main process; I want to communicate process and results to Splash window.
-    - That requires electron-redux.
-  - Later: merge "Managers" into redux.
-
-Steps:
-  - design state object
-  - design actions and reducers
-  - wrap the Splash window in a "Provider" element and pass the store.
-  - Get the store and dispatch actions based on menu items.
-  - Need to use thunk thing; potential interaction with electron-redux?
-  - https://www.youtube.com/watch?v=sX3KeP7v7Kg
-     - Provides a good sequence of steps for switching over to Redux from regular react.
-       - Set up page to get state from props.
-       - Set up page to use connector so that store is available.
-       - Implement store and a reducer that just returns a static state.
-       - That should be enough to render the page with a static state.
+ - TechFolioFiles:  build it 'on demand' by accessing getState().dir, don't access from app instance.
 
 ## Logout
   - probably have to run the https request to logout along with removing access_token to really logout.
@@ -43,6 +24,9 @@ Steps:
   - no current way to delete files gracefully and get changes pushed to github.
 
 ===================  Archive ===================================
+
+## Redux material
+  - https://www.youtube.com/watch?v=sX3KeP7v7Kg
 
 ## Nodegit problems
   Node V10 blocker: https://github.com/nodegit/nodegit/issues/1490
