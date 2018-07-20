@@ -1,13 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
+import { connect } from 'react-redux';
 
-export default class SplashTable extends React.Component {
+class SplashTable extends React.Component {
 
   render() {
     return (
       <Table celled unstackable>
         <Table.Body>
+          <Table.Row>
+            <Table.Cell>Authenticated</Table.Cell>
+            <Table.Cell>{this.props.authenticated ? 'True' : 'False'}</Table.Cell>
+          </Table.Row>
           <Table.Row>
             <Table.Cell>Username</Table.Cell>
             <Table.Cell>{this.props.username}</Table.Cell>
@@ -30,16 +35,22 @@ export default class SplashTable extends React.Component {
   }
 }
 
-SplashTable.defaultProps = {
-  username: '',
-  repo: '',
-  dir: '',
-  status: '',
+SplashTable.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
+  username: PropTypes.string.isRequired,
+  repo: PropTypes.string.isRequired,
+  dir: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
 };
 
-SplashTable.propTypes = {
-  username: PropTypes.string,
-  repo: PropTypes.string,
-  dir: PropTypes.string,
-  status: PropTypes.string,
-};
+function mapStateToProps(state) {
+  return {
+    authenticated: state.authenticated,
+    username: state.username,
+    repo: state.repo,
+    dir: state.dir,
+    status: state.status,
+  };
+}
+
+export default connect(mapStateToProps)(SplashTable);

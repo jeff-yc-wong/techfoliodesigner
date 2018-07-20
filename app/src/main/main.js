@@ -1,10 +1,16 @@
 import { app } from 'electron';
+import { replayActionMain } from 'electron-redux';
 import { enableLiveReload } from 'electron-compile';
 import buildMainMenu from './MainMenu';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import createSplashWindow from '../splash/SplashWindow';
 import { createTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
+import mainStore from '../redux/mainstore';
+
+
+// Redux setup
+replayActionMain(mainStore);
 
 // Development mode utilities.
 const isDevMode = process.execPath.match(/[\\/]electron/);

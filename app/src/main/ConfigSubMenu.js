@@ -3,8 +3,12 @@ import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
 import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
+import { setAuthenticated, setDirectory } from '../redux/actions';
+import mainStore from '../redux/mainstore';
 
 const app = electron.app;
+
+mainStore.dispatch(setAuthenticated(true));
 
 /* eslint no-param-reassign: 0 */
 
@@ -13,6 +17,8 @@ function setLocalDirectory() {
     if (files) {
       const directory = files[0];
       app.techFolioWindowManager.setDirectory(directory);
+      console.log('about to dispatch setDirectory');
+      mainStore.dispatch(setDirectory(directory));
       buildMainMenu();
     }
   });

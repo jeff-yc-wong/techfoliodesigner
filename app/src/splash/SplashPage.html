@@ -11,27 +11,33 @@
 <script type="text/jsx">
   import React from 'react';
   import ReactDOM from 'react-dom';
+  import { Provider } from "react-redux"
+  import logger from 'redux-logger';
+  import { createStore, applyMiddleware } from 'redux';
   import { Grid, Header } from 'semantic-ui-react';
+  import { forwardToMain, replayActionRenderer, getInitialStateRenderer } from 'electron-redux';
+  import { reducer } from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
   const app = require('electron').remote.app
 
-  // Get the parameters to SplashTable
-  const dir = app.techFolioWindowManager.getDirectory();
-  const username = app.techFolioGitHubManager.get('username');
-  const repo = app.techFolioGitHubManager.get('repo');
-  const status = app.techFolioGitHubManager.get('status');;
-  const logs = app.techFolioGitHubManager.getLogs();
+  // Set up renderer-side redux
+  const initialState = getInitialStateRenderer();
+  // ForwardToMain must be first middleware.
+  const store = createStore(reducer, initialState, applyMiddleware(forwardToMain, logger));
+  replayActionRenderer(store);
 
   const render = () => {
     ReactDOM.render(
-      <Grid style={{padding: "20px"}}>
-        <Grid.Column textAlign="center">
-        <Header as="h1">Welcome to TechFolio Designer</Header>
-          <SplashTable dir={dir} username={username} repo={repo} status={status}/>
-          <SplashLogs logs={logs} />
-        </Grid.Column>
-      </Grid>,
+      <Provider store={store}>
+        <Grid style={{padding: "20px"}}>
+          <Grid.Column textAlign="center">
+            <Header as="h1">Welcome to TechFolio Designer</Header>
+            <SplashTable />
+            <SplashLogs />
+          </Grid.Column>
+        </Grid>
+      </Provider>,
       document.getElementById('SplashPage'));
   }
   render();

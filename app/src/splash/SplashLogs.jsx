@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, TextArea } from 'semantic-ui-react';
+import { connect } from 'react-redux';
 
-export default class SplashLogs extends React.Component {
+
+class SplashLogs extends React.Component {
 
   render() {
     const logStrings = this.props.logs.map(entry => `${entry.timestamp}: ${entry.data}`);
@@ -17,3 +19,11 @@ export default class SplashLogs extends React.Component {
 SplashLogs.propTypes = {
   logs: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
+
+function mapStateToProps(state) {
+  return {
+    logs: state.logs,
+  };
+}
+
+export default connect(mapStateToProps)(SplashLogs);

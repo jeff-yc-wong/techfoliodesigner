@@ -3,6 +3,7 @@ Next steps:
 ## Redux
   - download sample code, run through it to make sure it works and I understand it.
     - https://github.com/learncodeacademy/react-js-tutorials/
+    - https://www.youtube.com/watch?v=sX3KeP7v7Kg (Add redux to simple react app).
   - Basic purpose:
     - Running git and github operations in main process; I want to communicate process and results to Splash window.
     - That requires electron-redux.
@@ -23,6 +24,9 @@ Steps:
 
 ## Logout
   - probably have to run the https request to logout along with removing access_token to really logout.
+
+## Authentication
+  - Investigate https://github.com/pksunkara/octonode
 
 ## Other menu item
   - display Splash window if hidden or deleted.
