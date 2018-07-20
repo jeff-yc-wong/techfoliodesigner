@@ -1,7 +1,13 @@
 Next steps:
 
 ## Redux
- - TechFolioFiles:  build it 'on demand' by accessing getState().dir, don't access from app instance.
+ - Forgot to call dispatch!
+ - Authentication currently busted. Some kind of state-related problem. Trace through code carefully to fix.
+ - GitHubManager: persist just the token and username. Initialize redux store on startup, persist when changed.
+ - TechFolioWindowManager: just do the in-memory references. Persist local dirr.
+    - initialize redux store on startup, persist change whenever changed.
+ - Both: get rid of methods no longer used.
+   - do persistence within the action? Can we make a new instance each time so as to avoid setting them on app?
 
 ## Logout
   - probably have to run the https request to logout along with removing access_token to really logout.
