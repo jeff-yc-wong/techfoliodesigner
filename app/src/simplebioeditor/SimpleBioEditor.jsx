@@ -19,8 +19,7 @@ export default class SimpleBioEditor extends React.Component {
   constructor(props) {
     super(props);
     this.handleBioChange = this.handleBioChange.bind(this);
-    const app = require('electron').remote.app; //eslint-disable-line
-    this.state = { bio: getBioAsJson(app) };
+    this.state = { bio: getBioAsJson(this.props.directory) };
   }
 
   handleBioChange(bio) {

@@ -1,4 +1,4 @@
-import { BrowserWindow, app, dialog } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import path from 'path';
 import mainStore from '../redux/mainstore';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
@@ -29,7 +29,6 @@ export function writeBioAsJson(bio) {
  * @param Directory to the local dir.
  */
 export function getBioAsJson(directory) {
-  // TODO: figure out how to get directory. Pass it in as required param?
   const fileType = '_data';
   const fileName = 'bio.json';
   const filePath = path.join(directory, fileType, fileName);
@@ -51,11 +50,12 @@ export function getBioAsJson(directory) {
 async function createSimpleBioEditorWindow() {
   const fileType = '_data';
   const fileName = 'bio.json';
+  const directory = mainStore.getState().dir;
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
   if (currWindow) {
     currWindow.show();
   } else {
-    const bioJSON = getBioAsJson();
+    const bioJSON = getBioAsJson(directory);
     if (!bioJSON) {
       dialog.showErrorBox('Bad Bio File', 'bio.json is not valid JSON. Please correct in the bio.json text editor.');
     } else {
@@ -71,9 +71,8 @@ async function createSimpleBioEditorWindow() {
 
       // Tell the window manager that this window has been created.
       techFolioWindowManager.addWindow(fileType, fileName, window);
-      const directory = mainStore.getState().dir;
 
-      // Load SplashPage.html.
+      // Load html page.
       window.loadURL(`file://${__dirname}/SimpleBioEditorPage.html?directory=${directory}`);
 
       window.on('closed', () => {

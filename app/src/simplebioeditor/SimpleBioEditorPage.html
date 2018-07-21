@@ -12,8 +12,11 @@
   import React from 'react';
   import ReactDOM from 'react-dom';
   import { Grid } from 'semantic-ui-react';
-  const app = require('electron').remote.app;
+  import queryString from 'query-string';
+  console.log('in simplebioeditorpage.html about to parse window.');
+  const queryObject = queryString.parse(window.location.search);
   const directory = queryObject.directory || 'unknown';
+  console.log('in simplebioeditorpage.html about to render.', directory);
 
   const render = () => {
     const SimpleBioEditor = require('./SimpleBioEditor').default;

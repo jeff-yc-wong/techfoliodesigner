@@ -33,7 +33,7 @@ function processStatusResult(result) {
     statusString = 'No changes to local directory';
   }
   statusString = `${moment().format('h:mm:ss a')}: ${statusString}`;
-  mainStore.dispatch(action.setStatus('status', statusString));
+  mainStore.dispatch(action.setStatus(statusString));
   mainStore.dispatch(action.addLog('Status: finished'));
 }
 

@@ -15,6 +15,9 @@ export default function reducer(state = initialState(), action) {
     case 'SET_DIR': {
       return Object.assign({}, state, { dir: action.payload });
     }
+    case 'SET_STATUS': {
+      return Object.assign({}, state, { status: action.payload });
+    }
     case 'SET_TOKEN': {
       return Object.assign({}, state, { token: action.payload });
     }

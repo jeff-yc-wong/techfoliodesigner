@@ -18,17 +18,12 @@ function setLocalDirectory() {
   });
 }
 
-function unsetLocalDirectory() {
-  mainStore.dispatch(action.setDirectory(null));
-  buildMainMenu();
-}
-
 function logoutFromGitHub() {
   mainStore.dispatch(action.clearAll());
   buildMainMenu();
 }
 
-async function specifyRemoteRepo() {
+async function setRemoteRepo() {
   const username = mainStore.getState().username || 'username';
   try {
     const repoName = await prompt({
@@ -40,7 +35,7 @@ async function specifyRemoteRepo() {
     mainStore.dispatch(action.setRepo(repoName));
     buildMainMenu();
   } catch (e) {
-    console.log('error in specifyRemoteRepo dialog', e);
+    mainStore.dispatch(action.addLog(`Error in setRemoteRepo dialog: ${e}`));
   }
 }
 
@@ -58,9 +53,6 @@ function push() {
   runAddThenCommitThenPush();
 }
 
-function gitStatus() {
-  runLocalDirStatus();
-}
 
 function gitReset() {
   runResetLocalDir();
@@ -78,19 +70,11 @@ function buildAuthenticationSubMenu() {
 }
 
 function buildRemoteRepoSubMenu() {
-  const remoteRepoName = mainStore.getState().repo || 'No remote repo specified.';
-  const firstItem = { label: remoteRepoName, enabled: false };
-  const secondItem = { label: 'Specify remote repo', click: specifyRemoteRepo };
-  return { label: 'Remote Repo', submenu: [firstItem, secondItem] };
+  return { label: 'Set remote repo', click: setRemoteRepo };
 }
 
 function buildLocalDirSubMenu() {
-  const currDir = mainStore.getState().dir;
-  const firstItem = { label: currDir || 'No local directory specified', enabled: false };
-  const secondItem = currDir ?
-    { label: 'Unset local directory', click: unsetLocalDirectory } :
-    { label: 'Set local directory', click: setLocalDirectory };
-  return { label: 'Local Dir', submenu: [firstItem, secondItem] };
+  return { label: 'Set local directory', click: setLocalDirectory };
 }
 
 function buildCloneSubMenu() {
@@ -107,7 +91,7 @@ function buildRebuildMenus() {
 }
 
 function buildStatusMenu() {
-  return { label: 'Status', submenu: [{ label: 'Check for changes in local directory', click: gitStatus }] };
+  return { label: 'Check local directory status', click: runLocalDirStatus };
 }
 
 function buildResetMenu() {
