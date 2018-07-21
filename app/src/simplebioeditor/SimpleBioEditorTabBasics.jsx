@@ -44,7 +44,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     if (city && bio.basics.location) bio.basics.location.city = city;
     if (region && bio.basics.location) bio.basics.location.region = region;
     if (countryCode && bio.basics.location) bio.basics.location.countryCode = countryCode;
-    writeBioFile(bio, 'Updated basics section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated basics section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -131,4 +131,5 @@ export default class SimpleBioEditorTabBasics extends React.Component {
 SimpleBioEditorTabBasics.propTypes = {
   bio: PropTypes.shape({ basics: React.PropTypes.object }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

@@ -42,7 +42,7 @@ export default class SimpleBioEditorTabInterests extends React.Component {
 
     bio.interests = updateArray(bio.interests, entry1, 0);
     bio.interests = updateArray(bio.interests, entry2, 1);
-    writeBioFile(bio, 'Updated interests section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated interests section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -110,4 +110,5 @@ export default class SimpleBioEditorTabInterests extends React.Component {
 SimpleBioEditorTabInterests.propTypes = {
   bio: PropTypes.shape({ interests: React.PropTypes.array }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

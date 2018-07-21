@@ -51,7 +51,7 @@ export default class SimpleBioEditorTabActivities extends React.Component {
 
     bio.volunteer = updateArray(bio.volunteer, entry1, 0);
     bio.volunteer = updateArray(bio.volunteer, entry2, 1);
-    writeBioFile(bio, 'Updated activities section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated activities section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -139,4 +139,5 @@ export default class SimpleBioEditorTabActivities extends React.Component {
 SimpleBioEditorTabActivities.propTypes = {
   bio: PropTypes.shape({ volunteer: React.PropTypes.array }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

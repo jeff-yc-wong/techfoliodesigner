@@ -55,7 +55,7 @@ export default class SimpleBioEditorTabEducation extends React.Component {
 
     bio.education = updateArray(bio.education, entry1, 0);
     bio.education = updateArray(bio.education, entry2, 1);
-    writeBioFile(bio, 'Updated education section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated education section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -151,4 +151,5 @@ export default class SimpleBioEditorTabEducation extends React.Component {
 SimpleBioEditorTabEducation.propTypes = {
   bio: PropTypes.shape({ education: React.PropTypes.array }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

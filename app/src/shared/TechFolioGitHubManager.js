@@ -1,26 +1,28 @@
 import Store from 'electron-store';
-import moment from 'moment';
 
 /**
- * TechFolioGitHubManager provides persistent access to the following GitHub state variables:
+ * TechFolioGitHubManager provides persistent access to the following GitHub-related variables:
+ *   * GitHub OAuth token
+ *   * GitHub username
+ *   * GitHub remote repo name.
+ *   * Local directory containing a GitHub repo.
+ *     This is usually, but does not have to be, a clone of the GitHub remote rep.
  *
- *   * OAuth token
- *   * username
- *   * remote repo name.
- *
- * It also provides an in-memory reference to the output of GitHub and Git commands.
- * The techFolioGitHubManager object is attached to the app object at system startup time.
+ * This class is used as follows:
+ *   * Upon system startup, the stored values are read using the get methods and used to initialize the Redux store.
+ *   * During system execution, the redux store maintains the current values.  Any time a value is updated in the
+ *   Redux store, this class instance's set methods are called to ensure the latest value is persisted.
+ *   * After system startup, the get methods are never used.
  */
 class TechFolioGitHubManager {
   constructor() {
-    this.commandLogEntries = [];
     this.store = new Store({ name: 'TechFolioGitHubManager',
-      defaults: { status: null, token: null, username: null, repo: null } });
+      defaults: { token: null, username: null, repo: null, dir: null } });
   }
 
   /**
    * Set property to value.
-   * @param property Should be one of 'token', 'username', 'status', or 'repo'.
+   * @param property Should be one of 'token', 'username', or 'repo'.
    * @param value The value to be associated with the property.
    */
   set(property, value) {
@@ -28,32 +30,22 @@ class TechFolioGitHubManager {
   }
 
   /**
-   * Return the property value.
-   * @param property Property should be one of 'token', 'username', 'status' or 'repo'.
-   * @return The value of property.
+   * Return an object containing the current values of all the stored properties (token, username, repo, dir).
    */
-  get(property) {
-    return this.store.get(property);
+  getSavedState() {
+    return Object.assign({}, this.store.store);
   }
 
   /**
    * Clears the property value.
-   * @param property One of 'token', 'username', or 'repo'.
+   * @param property One of 'token', 'username', 'dir', or 'repo'.
    */
   clear(property) {
     this.store.set(property, null);
   }
 
   clearAll() {
-    ['token', 'username', 'repo', 'status'].map(field => this.clear(field));
-  }
-
-  addLog(logString) {
-    this.commandLogEntries.push({ timestamp: moment().format('h:mm:ss a'), data: logString });
-  }
-
-  getLogs() {
-    return this.commandLogEntries;
+    ['token', 'username', 'repo', 'dir'].map(field => this.clear(field));
   }
 }
 

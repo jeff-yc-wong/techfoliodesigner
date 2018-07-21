@@ -1,5 +1,4 @@
 import Notify from 'notifyjs'; // WARNING: this import fails when file is loaded in main process.
-// import fs from 'fs-extra';
 import path from 'path';
 
 const fs = require('fs');
@@ -9,9 +8,7 @@ const fs = require('fs');
  * Creates a notification.
  * @param bio An object containing the bio.json data.
  */
-export function writeBioFile(bio, msg = 'File saved') {
-  const app = require('electron').remote.app; //eslint-disable-line
-  const directory = app.techFolioWindowManager.getDirectory();
+export function writeBioFile(directory, bio, msg = 'File saved') {  //eslint-disable-line
   const fileType = '_data';
   const fileName = 'bio.json';
   const filePath = path.join(directory, fileType, fileName);
@@ -27,25 +24,25 @@ export function writeBioFile(bio, msg = 'File saved') {
   });
 }
 
-/**
- * Returns the bio.json file as an object if it exists and is parsable, null otherwise.
- */
-export function readBioFile() {
-  const app = require('electron').remote.app; //eslint-disable-line
-  const directory = app.techFolioWindowManager.getDirectory();
-  const fileType = '_data';
-  const fileName = 'bio.json';
-  const filePath = path.join(directory, fileType, fileName);
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-  const bioFileData = fs.readFileSync(filePath, 'utf8');
-  let validJSON = true;
-  let bioJSON = null;
-  try {
-    bioJSON = JSON.parse(bioFileData);
-  } catch (e) {
-    validJSON = false;
-  }
-  return (validJSON) ? bioJSON : null;
-}
+// /**
+//  * Returns the bio.json file as an object if it exists and is parsable, null otherwise.
+//  */
+// export function readBioFile() {
+//   const app = require('electron').remote.app; //eslint-disable-line
+//   const directory = app.techFolioWindowManager.getDirectory();
+//   const fileType = '_data';
+//   const fileName = 'bio.json';
+//   const filePath = path.join(directory, fileType, fileName);
+//   if (!fs.existsSync(filePath)) {
+//     return null;
+//   }
+//   const bioFileData = fs.readFileSync(filePath, 'utf8');
+//   let validJSON = true;
+//   let bioJSON = null;
+//   try {
+//     bioJSON = JSON.parse(bioFileData);
+//   } catch (e) {
+//     validJSON = false;
+//   }
+//   return (validJSON) ? bioJSON : null;
+// }

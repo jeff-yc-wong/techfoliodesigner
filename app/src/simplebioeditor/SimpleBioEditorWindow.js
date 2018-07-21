@@ -1,14 +1,14 @@
 import { BrowserWindow, app, dialog } from 'electron';
-// import fs from 'fs-extra';
 import path from 'path';
+import mainStore from '../redux/mainstore';
+import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 /* global Notify */
 
 const fs = require('fs');
 
 export function writeBioAsJson(bio) {
-  const app = require('electron').remote.app; //eslint-disable-line
-  const directory = app.techFolioWindowManager.getDirectory();
+  const directory = mainStore.getState().dir;
   const fileType = '_data';
   const fileName = 'bio.json';
   const filePath = path.join(directory, fileType, fileName);
@@ -26,11 +26,10 @@ export function writeBioAsJson(bio) {
 
 /**
  * Returns the bio.json file as an object if it exists and is parsable, null otherwise.
- * @param Pass in app if you are calling this function from the renderer side.
+ * @param Directory to the local dir.
  */
-export function getBioAsJson(appVal) {
-  const theApp = appVal || app;
-  const directory = theApp.techFolioWindowManager.getDirectory();
+export function getBioAsJson(directory) {
+  // TODO: figure out how to get directory. Pass it in as required param?
   const fileType = '_data';
   const fileName = 'bio.json';
   const filePath = path.join(directory, fileType, fileName);
@@ -52,7 +51,7 @@ export function getBioAsJson(appVal) {
 async function createSimpleBioEditorWindow() {
   const fileType = '_data';
   const fileName = 'bio.json';
-  const currWindow = app.techFolioWindowManager.getWindow(fileType, fileName);
+  const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
   if (currWindow) {
     currWindow.show();
   } else {
@@ -62,8 +61,8 @@ async function createSimpleBioEditorWindow() {
     } else {
       // Create the browser window.
       const window = new BrowserWindow({
-        x: app.techFolioWindowManager.getXOffset(),
-        y: app.techFolioWindowManager.getYOffset(),
+        x: techFolioWindowManager.getXOffset(),
+        y: techFolioWindowManager.getYOffset(),
         width: 1080,
         minWidth: 800,
         height: 840,
@@ -71,14 +70,15 @@ async function createSimpleBioEditorWindow() {
       });
 
       // Tell the window manager that this window has been created.
-      app.techFolioWindowManager.addWindow(fileType, fileName, window);
+      techFolioWindowManager.addWindow(fileType, fileName, window);
+      const directory = mainStore.getState().dir;
 
       // Load SplashPage.html.
-      window.loadURL(`file://${__dirname}/SimpleBioEditorPage.html`);
+      window.loadURL(`file://${__dirname}/SimpleBioEditorPage.html?directory=${directory}`);
 
       window.on('closed', () => {
         // Dereference the window object.
-        app.techFolioWindowManager.removeWindow(fileType, fileName);
+        techFolioWindowManager.removeWindow(fileType, fileName);
       });
     }
   }

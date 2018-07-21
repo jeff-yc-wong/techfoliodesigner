@@ -12,14 +12,15 @@
   import React from 'react';
   import ReactDOM from 'react-dom';
   import { Grid } from 'semantic-ui-react';
-  const app = require('electron').remote.app
+  const app = require('electron').remote.app;
+  const directory = queryObject.directory || 'unknown';
 
   const render = () => {
     const SimpleBioEditor = require('./SimpleBioEditor').default;
     ReactDOM.render(
       <Grid style={{padding: "20px"}}>
         <Grid.Column>
-          <SimpleBioEditor />
+          <SimpleBioEditor directory={directory}/>
         </Grid.Column>
       </Grid>,
       document.getElementById('SimpleBioEditorPage'));

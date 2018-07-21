@@ -1,26 +1,27 @@
-import { BrowserWindow, app, dialog } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
-// import fs from 'fs-extra';
 import path from 'path';
 import prompt from 'electron-prompt';
 import moment from 'moment';
 import buildMainMenu from '../main/MainMenu';
 import { runAddFile } from '../main/Git';
 import mainStore from '../redux/mainstore';
+import techFolioWindowManager from '../shared/TechFolioWindowManager';
+import TechFolioFiles from '../shared/TechFolioFiles';
 
 const fs = require('fs');
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
-  const currWindow = app.techFolioWindowManager.getWindow(fileType, fileName);
+  const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
   if (currWindow) {
     currWindow.show();
   } else if (fs.existsSync(filePath)) {
     // Create the browser window.
     const window = new BrowserWindow({
-      x: app.techFolioWindowManager.getXOffset(),
-      y: app.techFolioWindowManager.getYOffset(),
+      x: techFolioWindowManager.getXOffset(),
+      y: techFolioWindowManager.getYOffset(),
       width: 1080,
       minWidth: 680,
       height: 840,
@@ -28,7 +29,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     });
 
     // Tell the window manager that this window has been created.
-    app.techFolioWindowManager.addWindow(fileType, fileName, window);
+    techFolioWindowManager.addWindow(fileType, fileName, window);
 
     // Load the index.html of the app.
     window.loadURL(
@@ -61,7 +62,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
 
     window.on('closed', () => {
       // Dereference the window object.
-      app.techFolioWindowManager.removeWindow(fileType, fileName);
+      techFolioWindowManager.removeWindow(fileType, fileName);
     });
   }
 }
@@ -82,7 +83,9 @@ function validFileName(fileName, fileType) {
   if (fileName.indexOf(' ') >= 0) {
     return false;
   }
-  if (app.techFolioFiles.fileNames(fileType).includes(fileName)) {
+  const directory = mainStore.getState().dir;
+  const techFolioFiles = new TechFolioFiles(directory);
+  if (techFolioFiles.fileNames(fileType).includes(fileName)) {
     return false;
   }
   return true;
@@ -134,7 +137,8 @@ export async function newTechFolioWindow({ fileType }) {
   }
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
-  app.techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
+  const techFolioFiles = new TechFolioFiles(directory);
+  techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
     () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(); runAddFile(filePath); });
   return null;
 }

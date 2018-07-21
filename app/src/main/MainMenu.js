@@ -54,7 +54,6 @@ function buildConfigMenu(template) {
 
 /**
  * Builds (or rebuilds) the application menu based upon the current state of the application.
- * Application state is held in app.techFolioWindowManager and app.techFolioGitHubManager.
  */
 function buildMainMenu() {
   const template = makeMenuTemplate();

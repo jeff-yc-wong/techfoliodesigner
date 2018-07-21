@@ -86,7 +86,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
     bio.work = updateArray(bio.work, entry1, 0);
     bio.work = updateArray(bio.work, entry2, 1);
     bio.work = updateArray(bio.work, entry3, 2);
-    writeBioFile(bio, 'Updated work section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated work section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -245,4 +245,5 @@ export default class SimpleBioEditorTabWork extends React.Component {
 SimpleBioEditorTabWork.propTypes = {
   bio: PropTypes.shape({ work: React.PropTypes.array }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

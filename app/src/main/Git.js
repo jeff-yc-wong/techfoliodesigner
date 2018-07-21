@@ -11,12 +11,15 @@ export function runCloneRepo(directory) {
   const token = mainStore.getState().token;
   const repo = mainStore.getState().repo;
   const newDir = path.join(directory, repo);
-  action.addLog(`Clone: downloading ${repo} into ${directory}`);
+  mainStore.dispatch(action.addLog(`Clone: downloading ${repo} into ${directory}`));
   const remote = `https://${token}@github.com/${user}/${repo}.git`;
   git(directory).silent(true)
     .clone(remote)
-    .then(() => { action.setDirectory(newDir); action.addLog('Clone: finished'); })
-    .catch(err => action.addLog(`Clone: failed: ${err}`));
+    .then(() => {
+      mainStore.dispatch(action.setDirectory(newDir));
+      mainStore.dispatch(action.addLog('Clone: finished'));
+    })
+    .catch(err => mainStore.dispatch(action.addLog(`Clone: failed: ${err}`)));
 }
 
 function processStatusResult(result) {
@@ -30,62 +33,62 @@ function processStatusResult(result) {
     statusString = 'No changes to local directory';
   }
   statusString = `${moment().format('h:mm:ss a')}: ${statusString}`;
-  action.setStatus('status', statusString);
-  action.addLog('Status: finished');
+  mainStore.dispatch(action.setStatus('status', statusString));
+  mainStore.dispatch(action.addLog('Status: finished'));
 }
 
 export function runLocalDirStatus() {
   const directory = mainStore.getState().dir;
-  action.addLog(`Status: starting status for ${directory}`);
+  mainStore.dispatch(action.addLog(`Status: starting status for ${directory}`));
   git(directory).status()
     .then(result => processStatusResult(result))
-    .catch(err => action.addLog(`Status: failed: ${err}`));
+    .catch(err => mainStore.dispatch(action.addLog(`Status: failed: ${err}`)));
 }
 
 export function runResetLocalDir() {
   const directory = mainStore.getState().dir;
-  action.addLog(`Reset: starting reset of ${directory}`);
+  mainStore.dispatch(action.addLog(`Reset: starting reset of ${directory}`));
   git(directory).reset('hard')
-    .then(() => { action.addLog('Reset: finished'); runLocalDirStatus(); buildMainMenu(); })
-    .catch(err => action.addLog(`Reset: failed: ${err}`));
+    .then(() => { mainStore.dispatch(action.addLog('Reset: finished')); runLocalDirStatus(); buildMainMenu(); })
+    .catch(err => mainStore.dispatch(action.addLog(`Reset: failed: ${err}`)));
 }
 
 export function runAddFile(filePath) {
   const directory = mainStore.getState().dir;
-  action.addLog(`Add: adding file ${filePath} to git.`);
+  mainStore.dispatch(action.addLog(`Add: adding file ${filePath} to git.`));
   git(directory).add([filePath])
-    .then(() => action.addLog('Add: finished'))
-    .catch(err => action.addLog(`Add: failed: ${err}`));
+    .then(() => mainStore.dispatch(action.addLog('Add: finished')))
+    .catch(err => mainStore.dispatch(action.addLog(`Add: failed: ${err}`)));
 }
 
 function runPushThenStatus() {
   const directory = mainStore.getState().dir;
-  action.addLog('Push: pushing local dir to GitHub');
+  mainStore.dispatch(action.addLog('Push: pushing local dir to GitHub'));
   git(directory).push(['origin', 'master'])
-    .then((result) => { action.addLog(`Push: finished push: ${result}`); runLocalDirStatus(); })
-    .catch(err => action.addLog(`Push: failed during push: ${err}`));
+    .then((result) => { mainStore.dispatch(action.addLog(`Push: finished push: ${result}`)); runLocalDirStatus(); })
+    .catch(err => mainStore.dispatch(action.addLog(`Push: failed during push: ${err}`)));
 }
 
 function runCommitThenPush() {
   const directory = mainStore.getState().dir;
-  action.addLog('Push: committing local changes');
+  mainStore.dispatch(action.addLog('Push: committing local changes'));
   git(directory).commit(['-a', '-m ', 'Commit by TechFolio Designer'])
-    .then((result) => { action.addLog(`Push: finished commit: ${result}`); runPushThenStatus(); })
-    .catch(err => action.addLog(`Commit: failed: ${err}`));
+    .then((result) => { mainStore.dispatch(action.addLog(`Push: finished commit: ${result}`)); runPushThenStatus(); })
+    .catch(err => mainStore.dispatch(action.addLog(`Commit: failed: ${err}`)));
 }
 
 export function runAddThenCommitThenPush() {
   const directory = mainStore.getState().dir;
-  action.addLog('Push: adding local changes');
+  mainStore.dispatch(action.addLog('Push: adding local changes'));
   git(directory).raw(['add', '--all'])
-    .then(() => { action.addLog('Push: finished add'); runCommitThenPush(); })
-    .catch(err => action.addLog(`Commit: add failed: ${err}`));
+    .then(() => { mainStore.dispatch(action.addLog('Push: finished add')); runCommitThenPush(); })
+    .catch(err => mainStore.dispatch(action.addLog(`Commit: add failed: ${err}`)));
 }
 
 export function runPull() {
   const directory = mainStore.getState().dir;
-  action.addLog('Pull: getting changes (if any) from GitHub');
+  mainStore.dispatch(action.addLog('Pull: getting changes (if any) from GitHub'));
   git(directory).pull()
-    .then(() => { action.addLog('Pull: finished'); runLocalDirStatus(); })
-    .catch(err => action.addLog(`Pull: failed: ${err}`));
+    .then(() => { mainStore.dispatch(action.addLog('Pull: finished')); runLocalDirStatus(); })
+    .catch(err => mainStore.dispatch(action.addLog(`Pull: failed: ${err}`)));
 }

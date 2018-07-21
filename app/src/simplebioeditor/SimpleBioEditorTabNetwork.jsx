@@ -36,7 +36,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     bio.basics.profiles = updateArray(bio.basics.profiles, entry1, 0);
     bio.basics.profiles = updateArray(bio.basics.profiles, entry2, 1);
     bio.basics.profiles = updateArray(bio.basics.profiles, entry3, 2);
-    writeBioFile(bio, 'Updated network section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -110,4 +110,5 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
 SimpleBioEditorTabNetwork.propTypes = {
   bio: PropTypes.shape({ basics: React.PropTypes.object }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

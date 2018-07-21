@@ -1,16 +1,7 @@
 import moment from 'moment';
+import { emptyState, initialState } from './state';
 
-const initialState = {
-  authenticated: false,
-  username: 'No username',
-  repo: 'No remote repo',
-  dir: 'No local dir',
-  status: 'No status info',
-  token: '',
-  logs: [],
-};
-
-export default function reducer(state = initialState, action) {
+export default function reducer(state = initialState(), action) {
   switch (action.type) {
     case 'SET_AUTHENTICATED': {
       return Object.assign({}, state, { authenticated: action.payload });
@@ -30,6 +21,9 @@ export default function reducer(state = initialState, action) {
     case 'ADD_LOG': {
       const newLogs = state.logs.slice(0).push({ timestamp: moment().format('h:mm:ss a'), data: action.payload });
       return Object.assign({}, state, { logs: newLogs });
+    }
+    case 'CLEAR_ALL': {
+      return Object.assign({}, emptyState);
     }
     default:
       return state;

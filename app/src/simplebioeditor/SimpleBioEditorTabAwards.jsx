@@ -35,7 +35,7 @@ export default class SimpleBioEditorTabAwards extends React.Component {
 
     bio.awards = updateArray(bio.awards, entry1, 0);
     bio.awards = updateArray(bio.awards, entry2, 1);
-    writeBioFile(bio, 'Updated awards section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated awards section of bio.');
     this.props.handleBioChange(bio);
   }
 
@@ -115,4 +115,5 @@ export default class SimpleBioEditorTabAwards extends React.Component {
 SimpleBioEditorTabAwards.propTypes = {
   bio: PropTypes.shape({ awards: React.PropTypes.array }).isRequired,
   handleBioChange: PropTypes.func.isRequired,
+  directory: PropTypes.string.isRequired,
 };

@@ -1,4 +1,4 @@
-import electron, { dialog } from 'electron';
+import { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
@@ -6,15 +6,12 @@ import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThen
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 
-const app = electron.app;
-
 /* eslint no-param-reassign: 0 */
 
 function setLocalDirectory() {
   dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
     if (files) {
       const directory = files[0];
-      app.techFolioWindowManager.setDirectory(directory);
       mainStore.dispatch(action.setDirectory(directory));
       buildMainMenu();
     }
@@ -22,17 +19,12 @@ function setLocalDirectory() {
 }
 
 function unsetLocalDirectory() {
-  app.techFolioWindowManager.setDirectory(null);
   mainStore.dispatch(action.setDirectory(null));
   buildMainMenu();
 }
 
 function logoutFromGitHub() {
-  app.techFolioGitHubManager.clearAll();
-  mainStore.dispatch(action.setUsername(null));
-  mainStore.dispatch(action.setToken(null));
-  mainStore.dispatch(action.setRepo(null));
-  mainStore.dispatch(action.setStatus(null));
+  mainStore.dispatch(action.clearAll());
   buildMainMenu();
 }
 
@@ -45,7 +37,6 @@ async function specifyRemoteRepo() {
       value: `${username}.github.io`,
       inputAttrs: { type: 'text', required: 'true' },
     });
-    app.techFolioGitHubManager.set('repo', repoName);
     mainStore.dispatch(action.setRepo(repoName));
     buildMainMenu();
   } catch (e) {
@@ -57,7 +48,6 @@ async function clone() {
   dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
     if (files) {
       const directory = files[0];
-      app.techFolioGitHubManager.addLog(`Clone directory specified as: ${directory}`);
       mainStore.dispatch(action.addLog(`Clone directory specified as: ${directory}`));
       runCloneRepo(directory);
     }

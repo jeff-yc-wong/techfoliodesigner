@@ -1,7 +1,6 @@
 Next steps:
 
 ## Redux
- - Forgot to call dispatch!
  - Authentication currently busted. Some kind of state-related problem. Trace through code carefully to fix.
  - GitHubManager: persist just the token and username. Initialize redux store on startup, persist when changed.
  - TechFolioWindowManager: just do the in-memory references. Persist local dirr.
