@@ -19,8 +19,9 @@ export default function reducer(state = initialState(), action) {
       return Object.assign({}, state, { token: action.payload });
     }
     case 'ADD_LOG': {
-      const newLogs = state.logs.slice(0).push({ timestamp: moment().format('h:mm:ss a'), data: action.payload });
-      return Object.assign({}, state, { logs: newLogs });
+      const copyLogs = JSON.parse(JSON.stringify(state.logs));
+      copyLogs.push({ timestamp: moment().format('h:mm:ss a'), data: action.payload });
+      return Object.assign({}, state, { logs: copyLogs });
     }
     case 'CLEAR_ALL': {
       return Object.assign({}, emptyState);

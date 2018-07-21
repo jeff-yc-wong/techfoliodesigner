@@ -72,13 +72,9 @@ function pull() {
 
 
 function buildAuthenticationSubMenu() {
-  const token = mainStore.getState().token;
-  const username = token && mainStore.getState().username;
-  const firstItem = { label: username || 'Not authenticated to github', enabled: false };
-  const secondItem = username ?
-    { label: 'Logout from GitHub', click: logoutFromGitHub } :
-    { label: 'Login to GitHub', click: runLoginToGitHub };
-  return { label: 'Authentication', submenu: [firstItem, secondItem] };
+  const authenticatedMenu = { label: 'Logout from GitHub', click: logoutFromGitHub };
+  const notAuthenticatedMenu = { label: 'Login to GitHub', click: runLoginToGitHub };
+  return mainStore.getState().authenticated ? authenticatedMenu : notAuthenticatedMenu;
 }
 
 function buildRemoteRepoSubMenu() {
