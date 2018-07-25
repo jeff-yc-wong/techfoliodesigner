@@ -55,7 +55,18 @@ function push() {
 
 
 function gitReset() {
-  runResetLocalDir();
+  const options = {
+    type: 'warning',
+    title: 'Do you really want to reset your local directory?',
+    message: 'You will lose any changes not pushed to GitHub!',
+    defaultId: 0,
+    buttons: ['Cancel', 'Yes, lose my changes'],
+  };
+  dialog.showMessageBox(options, (index) => {
+    if (index === 1) {
+      runResetLocalDir();
+    }
+  });
 }
 
 function pull() {
@@ -70,20 +81,23 @@ function buildAuthenticationSubMenu() {
 }
 
 function buildRemoteRepoSubMenu() {
-  return { label: 'Set remote repo', click: setRemoteRepo };
+  const enabled = !!mainStore.getState().authenticated;
+  return { label: 'Set GitHub repo name', click: setRemoteRepo, enabled };
 }
 
 function buildLocalDirSubMenu() {
-  return { label: 'Set local directory', click: setLocalDirectory };
+  const enabled = mainStore.getState().authenticated;
+  return { label: 'Set local directory', click: setLocalDirectory, enabled };
 }
 
 function buildCloneSubMenu() {
-  const enabled = !!mainStore.getState().username;
-  return { label: 'Clone', submenu: [{ label: 'Download repo to new local directory', click: clone, enabled }] };
+  const enabled = mainStore.getState().authenticated;
+  return { label: 'Clone repo into directory', click: clone, enabled };
 }
 
 function buildPushMenu() {
-  return { label: 'Push', submenu: [{ label: 'Upload local changes to GitHub', click: push }] };
+  const enabled = mainStore.getState().authenticated;
+  return { label: 'Push changes to GitHub', click: push, enabled };
 }
 
 function buildRebuildMenus() {
@@ -95,11 +109,12 @@ function buildStatusMenu() {
 }
 
 function buildResetMenu() {
-  return { label: 'Reset', submenu: [{ label: 'Revert local directory (delete unpushed changes!)', click: gitReset }] };
+  return { label: 'Reset local directory', click: gitReset };
 }
 
 function buildPullMenu() {
-  return { label: 'Pull', submenu: [{ label: 'Download and merge changes (if any) from GitHub repo', click: pull }] };
+  const enabled = mainStore.getState().authenticated;
+  return { label: 'Pull changes from GitHub repo', click: pull, enabled };
 }
 
 export default function buildConfigSubMenu() {
@@ -109,8 +124,8 @@ export default function buildConfigSubMenu() {
     buildLocalDirSubMenu(),
     buildCloneSubMenu(),
     buildPushMenu(),
-    buildStatusMenu(),
     buildPullMenu(),
+    buildStatusMenu(),
     buildResetMenu(),
     buildRebuildMenus(),
   ];

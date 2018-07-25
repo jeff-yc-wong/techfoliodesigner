@@ -10,23 +10,23 @@ class SplashTable extends React.Component {
       <Table celled unstackable>
         <Table.Body>
           <Table.Row>
-            <Table.Cell>Authenticated</Table.Cell>
+            <Table.Cell>Logged into GitHub</Table.Cell>
             <Table.Cell>{this.props.authenticated ? 'True' : 'False'}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell>Username</Table.Cell>
+            <Table.Cell>GitHub Username</Table.Cell>
             <Table.Cell>{this.props.username}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell>Remote Repo</Table.Cell>
+            <Table.Cell>GitHub Repo</Table.Cell>
             <Table.Cell>{this.props.repo}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell>Local Dir</Table.Cell>
+            <Table.Cell>Local Directory</Table.Cell>
             <Table.Cell>{this.props.dir}</Table.Cell>
           </Table.Row>
           <Table.Row>
-            <Table.Cell>Status</Table.Cell>
+            <Table.Cell>Local Directory Status</Table.Cell>
             <Table.Cell>{this.props.status}</Table.Cell>
           </Table.Row>
         </Table.Body>

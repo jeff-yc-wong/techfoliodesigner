@@ -11,7 +11,7 @@ export function runCloneRepo(directory) {
   const token = mainStore.getState().token;
   const repo = mainStore.getState().repo;
   const newDir = path.join(directory, repo);
-  mainStore.dispatch(action.addLog(`Clone: downloading ${repo} into ${directory}`));
+  mainStore.dispatch(action.addLog(`Clone: downloading ${repo} into ${directory}. Please wait until "Clone: finished" appears below. This may take 20-60 seconds.`)); // eslint-disable-line
   const remote = `https://${token}@github.com/${user}/${repo}.git`;
   git(directory).silent(true)
     .clone(remote)

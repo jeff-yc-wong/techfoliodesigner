@@ -12,7 +12,7 @@
   import React from 'react';
   import ReactDOM from 'react-dom';
   import { Provider } from "react-redux"
-  import logger from 'redux-logger';
+  // import logger from 'redux-logger';
   import { createStore, applyMiddleware } from 'redux';
   import { Grid, Header } from 'semantic-ui-react';
   import { forwardToMain, replayActionRenderer, getInitialStateRenderer } from 'electron-redux';
@@ -24,7 +24,7 @@
   // Set up renderer-side redux
   const initialState = getInitialStateRenderer();
   // ForwardToMain must be first middleware.
-  const store = createStore(reducer, initialState, applyMiddleware(forwardToMain, logger));
+  const store = createStore(reducer, initialState, applyMiddleware(forwardToMain));
   replayActionRenderer(store);
 
   const render = () => {
