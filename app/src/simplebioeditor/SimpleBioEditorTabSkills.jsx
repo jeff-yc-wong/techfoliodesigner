@@ -42,7 +42,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
 
     bio.skills = updateArray(bio.skills, entry1, 0);
     bio.skills = updateArray(bio.skills, entry2, 1);
-    writeBioFile(this.pros.directory, bio, 'Updated skills section of bio.');
+    writeBioFile(this.props.directory, bio, 'Updated skills section of bio.');
     this.props.handleBioChange(bio);
   }
 
