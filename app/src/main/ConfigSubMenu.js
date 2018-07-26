@@ -19,6 +19,11 @@ function setLocalDirectory() {
 }
 
 function logoutFromGitHub() {
+  mainStore.dispatch(action.setAuthenticated(false));
+  buildMainMenu();
+}
+
+function clearAll() {
   mainStore.dispatch(action.clearAll());
   buildMainMenu();
 }
@@ -27,13 +32,15 @@ async function setRemoteRepo() {
   const username = mainStore.getState().username || 'username';
   try {
     const repoName = await prompt({
-      title: 'Specify the remote repo name',
-      label: 'Repo name:',
+      title: 'Specify the remote TechFolio repo name',
+      label: 'TechFolio Repo Name:',
       value: `${username}.github.io`,
       inputAttrs: { type: 'text', required: 'true' },
     });
-    mainStore.dispatch(action.setRepo(repoName));
-    buildMainMenu();
+    if (repoName) {
+      mainStore.dispatch(action.setRepo(repoName));
+      buildMainMenu();
+    }
   } catch (e) {
     mainStore.dispatch(action.addLog(`Error in setRemoteRepo dialog: ${e}`));
   }
@@ -85,11 +92,6 @@ function buildRemoteRepoSubMenu() {
   return { label: 'Set GitHub repo name', click: setRemoteRepo, enabled };
 }
 
-function buildLocalDirSubMenu() {
-  const enabled = mainStore.getState().authenticated;
-  return { label: 'Set local directory', click: setLocalDirectory, enabled };
-}
-
 function buildCloneSubMenu() {
   const enabled = mainStore.getState().authenticated;
   return { label: 'Clone repo into directory', click: clone, enabled };
@@ -100,34 +102,28 @@ function buildPushMenu() {
   return { label: 'Push changes to GitHub', click: push, enabled };
 }
 
-function buildRebuildMenus() {
-  return { label: 'Rebuild Menus', click: () => buildMainMenu() };
-}
-
 function buildStatusMenu() {
   return { label: 'Check local directory status', click: runLocalDirStatus };
 }
 
-function buildResetMenu() {
-  return { label: 'Reset local directory', click: gitReset };
-}
-
-function buildPullMenu() {
+function buildAdvancedMenu() {
   const enabled = mainStore.getState().authenticated;
-  return { label: 'Pull changes from GitHub repo', click: pull, enabled };
+  const item1 = { label: 'Reset local directory contents', click: gitReset, enabled };
+  const item2 = { label: 'Set local directory', click: setLocalDirectory, enabled };
+  const item3 = { label: 'Pull changes from GitHub repo', click: pull, enabled };
+  const item4 = { label: 'Rebuild Menus', click: () => buildMainMenu() };
+  const item5 = { label: 'Clear settings', click: () => clearAll() };
+  return { label: 'Advanced', submenu: [item1, item2, item3, item4, item5] };
 }
 
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
     buildRemoteRepoSubMenu(),
-    buildLocalDirSubMenu(),
     buildCloneSubMenu(),
     buildPushMenu(),
-    buildPullMenu(),
     buildStatusMenu(),
-    buildResetMenu(),
-    buildRebuildMenus(),
+    buildAdvancedMenu(),
   ];
   return configSubMenu;
 }

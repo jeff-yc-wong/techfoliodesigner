@@ -51,7 +51,13 @@ export default function runLoginToGitHub() {
   authWindow.loadURL(authUrl);
   authWindow.show();
 
+  authWindow.webContents.on('will-navigate', () => {
+    mainStore.dispatch(action.addLog('Please select Config | Login to GitHub one more time.'));
+    authWindow.close();
+  });
+
   authWindow.webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
+    mainStore.dispatch(action.addLog('Redirection processing starting.'));
     const rawCode = /code=([^&]*)/.exec(newUrl) || null;
     const code = (rawCode && rawCode.length > 1) ? rawCode[1] : null;
     const error = /\?error=(.+)$/.exec(newUrl);

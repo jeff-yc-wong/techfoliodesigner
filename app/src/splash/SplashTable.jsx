@@ -9,19 +9,19 @@ class SplashTable extends React.Component {
     return (
       <Table celled unstackable>
         <Table.Body>
-          <Table.Row>
+          <Table.Row negative={!this.props.authenticated} positive={!!this.props.authenticated}>
             <Table.Cell>Logged into GitHub</Table.Cell>
-            <Table.Cell>{this.props.authenticated ? 'True' : 'False'}</Table.Cell>
+            <Table.Cell>{this.props.authenticated ? 'True' : 'False'} </Table.Cell>
           </Table.Row>
-          <Table.Row>
+          <Table.Row negative={!this.props.username} positive={!!this.props.username}>
             <Table.Cell>GitHub Username</Table.Cell>
             <Table.Cell>{this.props.username}</Table.Cell>
           </Table.Row>
-          <Table.Row>
+          <Table.Row negative={!this.props.repo} positive={!!this.props.repo}>
             <Table.Cell>GitHub Repo</Table.Cell>
             <Table.Cell>{this.props.repo}</Table.Cell>
           </Table.Row>
-          <Table.Row>
+          <Table.Row negative={!this.props.dir} positive={!!this.props.dir}>
             <Table.Cell>Local Directory</Table.Cell>
             <Table.Cell>{this.props.dir}</Table.Cell>
           </Table.Row>
@@ -52,7 +52,6 @@ SplashTable.propTypes = {
 };
 
 function mapStateToProps(state) {
-  console.log('running mapStateToProps', state);
   return {
     authenticated: state.authenticated,
     username: state.username,

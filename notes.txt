@@ -1,13 +1,8 @@
 Next steps:
 
-## Authentication
-  - window does not go away after entering password. How to debug this?  Octonode?
+## Figure out why build of my repo is now failing!
 
-## Logout
-  - probably have to run the https request to logout along with removing access_token to really logout.
-
-## Authentication
-  - Investigate https://github.com/pksunkara/octonode
+## Build documentation in TechFolio site.
 
 ## Other menu item
   - display Splash window if hidden or deleted.
@@ -19,11 +14,20 @@ Next steps:
 ## Signing the app
   - https://blog.dcpos.ch/how-to-make-your-electron-app-sexy
 
-## File deletion
-  - need to run 'git add <filename>' on deleted files.
-  - no current way to delete files gracefully and get changes pushed to github.
 
 ===================  Archive ===================================
+
+## File deletion
+  -- Must be done manually.
+
+## Authentication
+  - Have to login twice.
+
+## Logout
+  - Have to go to github to revoke access.
+
+## Authentication
+  - Investigate https://github.com/pksunkara/octonode
 
 ## Redux material
   - https://www.youtube.com/watch?v=sX3KeP7v7Kg
