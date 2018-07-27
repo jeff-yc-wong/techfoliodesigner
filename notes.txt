@@ -6,7 +6,10 @@ Next steps:
   - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
    - osxsign https://github.com/electron-userland/electron-packager/blob/master/docs/api.md
    - travis ci code sign: https://jviotti.com/2016/03/16/how-to-code-sign-os-x-electron-apps-in-travis-ci.html
-   -
+   - get appveyor to work with techfoliodesigner2
+   - transition to techfoliodesigner repo, maybe move everything to top level.
+   - create a release branch, and have CI builds only trigger on commits to that branch.
+   - Probably create the release manually maybe?
 
 ## Other menu item
   - display Splash window if hidden or deleted.
