@@ -6,6 +6,9 @@ dist: trusty
 osx_image: xcode8.3
 sudo: false
 
+before_install:
+  - cd app
+
 cache:
   directories:
   - node_modules
