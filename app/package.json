@@ -1,7 +1,7 @@
 {
   "name": "TechFolioDesigner",
   "productName": "TechFolio Designer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Desktop application to support development of techfolios.",
   "repository": {
     "type": "git",
@@ -44,7 +44,7 @@
       "github_repository": {
         "owner": "techfolios",
         "name": "techfoliodesigner",
-        "draft": false
+        "draft": true
       },
       "windowsStoreConfig": {
         "packageName": "",

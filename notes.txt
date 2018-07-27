@@ -1,13 +1,11 @@
 Next steps:
 
-## Figure out why build of my repo is now failing!
-  - Update template to have all dates in YYYY-MM-DD format. This must be consistent!
-
 ## Build documentation in TechFolio site.
 
 ## Packaging etc
   - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
    - osxsign https://github.com/electron-userland/electron-packager/blob/master/docs/api.md
+   - travis ci code sign: https://jviotti.com/2016/03/16/how-to-code-sign-os-x-electron-apps-in-travis-ci.html
    -
 
 ## Other menu item
