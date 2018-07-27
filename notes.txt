@@ -5,6 +5,11 @@ Next steps:
 
 ## Build documentation in TechFolio site.
 
+## Packaging etc
+  - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
+   - osxsign https://github.com/electron-userland/electron-packager/blob/master/docs/api.md
+   -
+
 ## Other menu item
   - display Splash window if hidden or deleted.
   - Edit config.yml file.

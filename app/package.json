@@ -1,7 +1,7 @@
 {
   "name": "TechFolioDesigner",
   "productName": "TechFolio Designer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Desktop application to support development of techfolios.",
   "repository": {
     "type": "git",
@@ -33,20 +33,22 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "npm"
+        "packageManager": "npm",
+        "osxSign": true
       },
       "electronWinstallerConfig": {
-        "name": "app"
+        "name": "<%= productName %>"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
       "github_repository": {
-        "owner": "",
-        "name": ""
+        "owner": "techfolios",
+        "name": "techfoliodesigner",
+        "draft": false
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "app"
+        "name": "<%= productName %>"
       }
     }
   },
