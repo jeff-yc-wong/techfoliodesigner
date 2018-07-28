@@ -2,10 +2,12 @@ language: node_js
 node_js: "6"
 os:
 - linux
-- osx
 dist: trusty
 osx_image: xcode8.3
 sudo: false
+
+before_install:
+  - cd app
 
 cache:
   directories:
