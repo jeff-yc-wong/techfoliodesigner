@@ -103,7 +103,7 @@ function buildPushMenu() {
 }
 
 function buildStatusMenu() {
-  const enabled = mainStore.getState().dir;
+  const enabled = !!mainStore.getState().dir;
   return { label: 'Check local directory status', click: runLocalDirStatus, enabled };
 }
 

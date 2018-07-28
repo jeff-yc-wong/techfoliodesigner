@@ -1,4 +1,5 @@
 import path from 'path';
+import { dialog } from 'electron';
 import moment from 'moment';
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
@@ -15,16 +16,20 @@ function getRepoURL() {
 
 export function runCloneRepo(directory) {
   const repo = mainStore.getState().repo;
-  const newDir = path.join(directory, repo);
-  mainStore.dispatch(action.addLog(`Starting download of ${repo} into ${directory}. This may take up to 60 seconds...`)); // eslint-disable-line
-  const remote = getRepoURL();
-  git(directory).silent(true)
-    .clone(remote)
-    .then(() => {
-      mainStore.dispatch(action.setDirectory(newDir));
-      mainStore.dispatch(action.addLog(`Finished download of ${repo} into ${directory}.`));
-    })
-    .catch(err => mainStore.dispatch(action.addLog(`Finished download with error: ${err}`)));
+  if (!repo) {
+    dialog.showErrorBox('No TechFolio Repo', 'You cannot clone a repo until you have specified the TechFolio repo name. Please select "Set GitHub repo name" from the Config menu.'); // eslint-disable-line
+  } else {
+    const newDir = path.join(directory, repo);
+    mainStore.dispatch(action.addLog(`Starting download of ${repo} into ${directory}. This may take up to 60 seconds...`)); // eslint-disable-line
+    const remote = getRepoURL();
+    git(directory).silent(true)
+      .clone(remote)
+      .then(() => {
+        mainStore.dispatch(action.setDirectory(newDir));
+        mainStore.dispatch(action.addLog(`Finished download of ${repo} into ${directory}.`));
+      })
+      .catch(err => mainStore.dispatch(action.addLog(`Finished download with error: ${err}`)));
+  }
 }
 
 function processStatusResult(result) {
