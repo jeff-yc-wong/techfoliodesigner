@@ -6,9 +6,6 @@ dist: trusty
 osx_image: xcode8.3
 sudo: false
 
-before_install:
-  - cd app
-
 cache:
   directories:
   - node_modules
@@ -22,7 +19,7 @@ addons:
 
 branches:
   only:
-  - master
+  - release
   - /^v\d+\.\d+\.\d+/
 
 install:
@@ -31,5 +28,4 @@ install:
 
 script:
 - npm run lint
-- if test -z "$TRAVIS_TAG"; then npm run make; fi
-after_success: if test -n "$TRAVIS_TAG"; then npm run publish; fi
+- npm run publish
