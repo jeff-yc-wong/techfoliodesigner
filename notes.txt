@@ -1,6 +1,7 @@
 Next steps:
 
 ## Build documentation in TechFolio site.
+  - After running clone command, need to rebuild menus!
 
 ## Packaging issues 1: MacOS CI build.
   - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
