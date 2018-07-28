@@ -27,6 +27,7 @@ export function runCloneRepo(directory) {
       .then(() => {
         mainStore.dispatch(action.setDirectory(newDir));
         mainStore.dispatch(action.addLog(`Finished download of ${repo} into ${directory}.`));
+        buildMainMenu();
       })
       .catch(err => mainStore.dispatch(action.addLog(`Finished download with error: ${err}`)));
   }
