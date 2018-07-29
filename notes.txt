@@ -1,24 +1,11 @@
 Next steps:
 
 ## Build documentation in TechFolio site.
-  - After running clone command, need to rebuild menus!
-  - bio.json editor missing in action.
-  - change to kick off build.
-
-## Packaging issues 1: MacOS CI build.
-  - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
-   - osxsign https://github.com/electron-userland/electron-packager/blob/master/docs/api.md
-   - travis ci code sign: https://jviotti.com/2016/03/16/how-to-code-sign-os-x-electron-apps-in-travis-ci.html
 
 ## Packagine issue 2: Windows CI build
    - get appveyor to work with techfoliodesigner2
    - Need to encrypt GITHUB_TOKEN, other stuff to do probably.
    - "Activate encryption": http://hoverbaum.gitlab.io/2016/08/03/Building-Electron-based-applications-using-CIs/
-
-## Packaging issues 3: Workflow
-  - Move app to top level?
-  - Both CIs should trigger builds only on commit to the "release" branch.
-  - Create the release manually, then trigger builds?
 
 ## Other menu item
   - display Splash window if hidden or deleted.
@@ -32,6 +19,12 @@ Next steps:
 
 
 ===================  Archive ===================================
+
+## Packaging issues 1: MacOS CI build.
+  - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
+   - osxsign https://github.com/electron-userland/electron-packager/blob/master/docs/api.md
+   - travis ci code sign: https://jviotti.com/2016/03/16/how-to-code-sign-os-x-electron-apps-in-travis-ci.html
+
 
 ## File deletion
   -- Must be done manually.
