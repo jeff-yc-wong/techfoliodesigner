@@ -6,6 +6,10 @@ Next steps:
 
 ## Create the ICS 491 class specification.
 
+## Finish creating issues.
+
+## Update readme to provide developer guide overview.
+
 ## Other menu item
   - display Splash window if hidden or deleted.
   - Edit config.yml file.
