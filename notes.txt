@@ -1,11 +1,10 @@
 Next steps:
 
-## Build documentation in TechFolio site.
+## Finish documentation in TechFolio site.
 
-## Packagine issue 2: Windows CI build
-   - get appveyor to work with techfoliodesigner2
-   - Need to encrypt GITHUB_TOKEN, other stuff to do probably.
-   - "Activate encryption": http://hoverbaum.gitlab.io/2016/08/03/Building-Electron-based-applications-using-CIs/
+## Get some initial use on Mac, Windows, and Unix platforms
+
+## Create the ICS 491 class specification.
 
 ## Other menu item
   - display Splash window if hidden or deleted.
@@ -19,6 +18,12 @@ Next steps:
 
 
 ===================  Archive ===================================
+
+## Packagine issue 2: Windows CI build
+   - get appveyor to work with techfoliodesigner2
+   - Need to encrypt GITHUB_TOKEN, other stuff to do probably.
+   - "Activate encryption": http://hoverbaum.gitlab.io/2016/08/03/Building-Electron-based-applications-using-CIs/
+
 
 ## Packaging issues 1: MacOS CI build.
   - coding signing tutorial: https://electronjs.org/docs/tutorial/code-signing
