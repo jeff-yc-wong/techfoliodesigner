@@ -39,5 +39,6 @@ script:
     security default-keychain -s $KEYCHAIN;
     security unlock-keychain -p $CERTIFICATE_PASSWORD $KEYCHAIN;
     security import $CERTIFICATE_P12 -k $KEYCHAIN -P $CERTIFICATE_PASSWORD -T /usr/bin/codesign;
+    security set-key-partition-list -S apple-tool:,apple: -s -k $CERTIFICATE_PASSWORD $KEYCHAIN
   fi
 - npm run publish
