@@ -12,6 +12,25 @@ Next steps:
 
 ===================  Archive ===================================
 
+tl;dr Please download, try out, and let me know your experiences using my desktop app for TechFolios.
+
+Greetings all.  I have just completed the initial development of a cross-platform, desktop application called TechFolio Designer. Its goal to simplify the development and management of professional portfolios using TechFolios.
+
+For those of you who have TechFolios (i.e. everyone who's taken ICS 314), I would like to request your help in evaluating this system.  If all goes well, I am hoping to start using it in ICS 314 this Fall, but I would like to get some preliminary evaluation of it before the semester starts.
+
+Here are the things you can do to help evaluate the system:
+
+1. Read the User Guide at http://techfolios.github.io/designer.html. Is it clear? Are there questions you have that are not answered by the Guide?
+
+2. Download and install the system. There are binaries for Mac, Linux, and Windows, but I have only been able to test it on Mac. Did you run into any problems trying to run it? If so, please let me know what problems you had and what platform you were running it on.
+
+3. Implement some updates to your TechFolio, and publish the changes.  Did everything go well? If not, what problems occurred?
+
+4. Would you be interested in participating in an ICS 491 special topics class this fall on building desktop applications using Electron? My idea would be for you to spend the first part of the semester implementing improvements to TechFolio Designer (in order to get familiar with Electron, React, Redux, etc.) and then implement your own application during the second part of the semester.  LMK.
+
+Thanks for your help! You can send your comments to this channel, or DM me, or send me an email, whatever works best for you.
+
+
 ## Packagine issue 2: Windows CI build
    - get appveyor to work with techfoliodesigner2
    - Need to encrypt GITHUB_TOKEN, other stuff to do probably.
