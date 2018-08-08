@@ -151,10 +151,18 @@ The source for TechFolioDesigner is located in the src/ directory, and is organi
 | techfolioeditor/  | This directory contains the implementation of the TechFolioEditor for editing the Project and Essay markdown files, as well as the JSON formatted bio.json file. |
 
 
-## Ongoing development
+## Development Process
 
-Please see the [Summer 2018 Project Page](https://github.com/techfolios/techfoliodesigner/projects/1) for a list of tasks. 
+We use a [GitHub project](https://github.com/techfolios/techfoliodesigner/projects/1) to organize the tasks associated with development.
 
+In most cases, each task is defined as a GitHub issue.  Work on that task is accomplished by creating a branch called issue-XX, where XX is the issue number.  
 
+When that task is completed, the issue-XX branch is merged into master. Anyone can merge into master when they think their branch is complete.   
 
+Currently, Philip is the only one who should create binary releases. In order to create a binary release:
 
+  1. Make sure the master branch has no ESLint errors. Use `npm run lint` to check.
+  2. Make sure the master branch is fully functional. Currently, we have no tests, so this verification must be done by hand.
+  3. Update the version field in package.json in the master branch and commit the change.
+  4. Merge the master branch into the release branch. This will kick off CI builds at [https://travis-ci.org/techfolios/techfoliodesigner](https://travis-ci.org/techfolios/techfoliodesigner) and [https://ci.appveyor.com/project/PhilipJohnson/techfoliodesigner](https://ci.appveyor.com/project/PhilipJohnson/techfoliodesigner). These builds will create binary versions for Mac, Windows, and Unix, and publish the results to the [TechFolio Designer Release Page](https://github.com/techfolios/techfoliodesigner/releases). 
+  5. If the release looks good, then go to the releases page and change its status from Draft to Published.
