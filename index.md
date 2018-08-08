@@ -1,5 +1,3 @@
-<img src="https://github.com/techfolios/designer/raw/master/doc/header-image.png">
-
 ## Motivation
 
 TechFolio Designer is a desktop app written using [Electron](http://electron.atom.io/) to simplify the development of professional portfolios using TechFolios.  
@@ -32,23 +30,21 @@ Second, the student downloads a binary release of TechFolio appropriate for thei
 Third, the student uses TechFolio Designer to develop their TechFolio. They can:
   * Create, edit, and delete essay and project files using a Markdown-aware editor.
   * Edit their bio.json file using either a JSON-aware editor or a simple form-based interface.
-  * Add, delete, and crop image files.
+  * Add, delete, and crop image files. (Currently, this must be done manually, TechFolioDesigner does not yet support this.)
   
 These editors should provide spell checking and validation on file front matter (i.e. YAML headers) in order to detect and notify the student of common errors. 
 
 Finally, the student can run a command within TechFolio Designer to push their changes back to GitHub so that the TechFolio can be published and available online.
 
-Note that TechFolio Designer is meant to support the needs of new TechFolio users who are struggling to implement their first TechFolio using standard layouts.  Users who want to do advanced customization, such as the development of an alternative theme, should use a regular IDE such as IntelliJ IDEA for editing. So, TechFolio Designer will only provide access to a subset of the files associated with a TechFolio. 
+Note that TechFolio Designer is meant to support the needs of new TechFolio users who are struggling to implement their first TechFolio using standard layouts.  Users who want to do advanced customization, such as the development of an alternative theme, should use a regular IDE such as IntelliJ IDEA for editing. So, TechFolio Designer need only provide access to a subset of the files associated with a TechFolio. In fact, "hiding" some of the complexity of a TechFolio from beginning users is a feature of TechFolioDesigner.
 
 ## Installation
-
-There are currently no platform-specific binary builds of TechFolio Designer. Instead, the system must be built and run in development mode. 
 
 First, install a recent version of [NodeJS](https://nodejs.org/en/) (10.5 or above).
 
 Second, install [electron forge](https://electronforge.io/). (I used `sudo npm install -g electron-forge --allow-root` successfully, but it might be better to use [nvm](https://docs.npmjs.com/getting-started/installing-node#using-a-version-manager-to-install-nodejs-and-npm).)
 
-Third, cd into the app directory and run `npm install`:
+Third, cd into the app directory and run `npm install`. The output looks similar to this:
 
 ```
 npm install
@@ -122,7 +118,7 @@ found 20 vulnerabilities (4 low, 15 moderate, 1 high)
   
 ```
 
-Fourth, run `electron-forge start`:
+Fourth, run `electron-forge start`. The output looks similar to this:
 
 ```
 electron-forge start
@@ -134,45 +130,25 @@ electron-forge start
   
 If successful, the following window should appear:
 
-<img src="https://github.com/techfolios/designer/raw/master/doc/splash-page.png" width="600" >
-
-As instructed, you can use the Config menubar to select the directory containing your (previously cloned) TechFolio directory. Currently, TechFolio Designer does not integrate support for cloning and pushing to GitHub.
-
-Once you have specified the directory containing your local copy of your TechFolio github.io repo, the "Bio", "Projects", and "Essays" menus should provide access to the associated TechFolio files.
-
-*Important Note: TechFolio Designer sometimes exhibits a lag of 3-4 seconds when creating windows. Be patient. If the contents of a window has not appeared within 3-4 seconds, then you can use the View window to open the Developer Tools pane to see if an error has occurred.*
+<img src="http://techfolios.github.io/images/designer/splash-window-initial.png" width="600" >
 
 ## Using TechFolio Designer
 
-Currently, TechFolio Design provides just basic editing facilities. For example, here is the Markdown-aware editor that appears when editing an essay:
-
-<img src="https://github.com/techfolios/designer/raw/master/doc/essay-editor.png" width="600" >
-
-After you type a character, a "*" appears in the titlebar (as shown) to indicate that the buffer has been edited. Typing control-s (or command-S on Mac) will save out the file and remove the asterix until you edit the file again.
-
-Project files are edited in a similar fashion.
-
-For the bio.json file, two options are available in the "Bio" menu. You can edit the JSON file directly:
-
-<img src="https://github.com/techfolios/designer/raw/master/doc/json-editor.png" width="600" >
-
-Or you can use a form editor:
-
-<img src="https://github.com/techfolios/designer/raw/master/doc/json-form.png" width="600" >
-
-The latter implements restrictions on what you can do (for example, only three Work Experiences can be listed), but the benefit is that it guarantees that the JSON syntax will be preserved.
+Please consult the [User Guide](http://techfolios.github.io/designer.html) for instructions on how to use TechFolio Designer.
 
 ## Source code organization
 
 The source for TechFolioDesigner is located in the src/ directory, and is organized into the following subdirectories:
 
-* **css**.  This directory contains the file style.css, which contains global style information. 
-* **lib**. This directory contains third party libraries. The autorefresh.ext.js is a library that ensures that when a CodeMirror editor instance is created, the entire contents of the file being edited is displayed.  Due to some issue with CodeMirror, unless this extension is loaded, not all of the contents of a file is initially displayed until the window is clicked.
-* **main**. This directory contains code that runs only in the main process. That includes the main.js file and the MainMenu.js code for constructing the native menu. 
-* **shared**. This directory contains code for data structures that are available on both the main process and any browser (renderer) processes.  This is accomplished by adding instances of the data structures to the `app` instance.  These data structures are TechFolioFiles and TechFolioWindowManager.
-* **simplebioeditor**. This directory contains the implementation of the Simple Bio Editor, the forms-based editor for the bio.json file. It contains code that runs in the main process (SimpleBioEditorWindow.js) as well as code that runs in the renderer process (all of the other files).
-* **splash**. This directory contains the implementation of the "Splash" window that appears when no other window is displayed. 
-* **techfolioeditor*.  This directory contains the implementation of the TechFolioEditor for editing the Project and Essay markdown files, as well as the JSON formatted bio.json file.
+| Directory | Contents |
+| css/      | This directory contains the file style.css, which contains global style information. | 
+| lib/      | This directory contains third party libraries. The autorefresh.ext.js is a library that ensures that when a CodeMirror editor instance is created, the entire contents of the file being edited is displayed.  Due to some issue with CodeMirror, unless this extension is loaded, not all of the contents of a file is initially displayed until the window is clicked. |
+| main/     | This directory contains code that runs only in the main process. That includes the main.js file and the MainMenu.js code for constructing the native menu. | 
+| redux/    | This directory contains the implementation of a Redux-based state manager. This is needed to support asynchronous updating of the Command Logs window within the Splash Page. |
+| shared/   | This directory contains code for data structures that are available on both the main process and any browser (renderer) processes.  This is accomplished by adding instances of the data structures to the `app` instance.  These data structures are TechFolioFiles and TechFolioWindowManager. |
+| simplebioeditor/ | This directory contains the implementation of the Simple Bio Editor, the forms-based editor for the bio.json file. It contains code that runs in the main process (SimpleBioEditorWindow.js) as well as code that runs in the renderer process (all of the other files). |
+| splash/    | This directory contains the implementation of the "Splash" window that appears when no other window is displayed. | 
+| techfolioeditor/  | This directory contains the implementation of the TechFolioEditor for editing the Project and Essay markdown files, as well as the JSON formatted bio.json file. |
 
 
 ## Ongoing development

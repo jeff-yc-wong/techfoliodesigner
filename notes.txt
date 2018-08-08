@@ -1,15 +1,3 @@
-Next steps:
-
-## Get some initial use on Mac, Windows, and Unix platforms
-
-## Create the ICS 491 class specification.
-
-## Update readme to provide developer guide overview.
-
-## Signing the app
-  - https://blog.dcpos.ch/how-to-make-your-electron-app-sexy
-
-
 ===================  Archive ===================================
 
 tl;dr Please download, try out, and let me know your experiences using my desktop app for TechFolios.
