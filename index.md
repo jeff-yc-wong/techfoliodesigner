@@ -38,9 +38,54 @@ Finally, the student can run a command within TechFolio Designer to push their c
 
 Note that TechFolio Designer is meant to support the needs of new TechFolio users who are struggling to implement their first TechFolio using standard layouts.  Users who want to do advanced customization, such as the development of an alternative theme, should use a regular IDE such as IntelliJ IDEA for editing. So, TechFolio Designer need only provide access to a subset of the files associated with a TechFolio. In fact, "hiding" some of the complexity of a TechFolio from beginning users is a feature of TechFolioDesigner.
 
-## Installation
+## Using TechFolio Designer
 
-First, install a recent version of [NodeJS](https://nodejs.org/en/) (10.5 or above).
+For more details, please consult the [User Guide](http://techfolios.github.io/designer.html) for instructions on how to install a binary distribution and use TechFolio Designer.
+
+## Technologies and background reading
+
+To develop TechFolio Designer, you must become familiar with the following technologies:
+
+### Electron
+
+Electron is a cross-platform framework for building desktop applications. To gain some initial familiarity with Electron, you can consult the following documentation:
+
+  * [Electron Home Page](https://electronjs.org/)
+  * [What is Electron: The Hard Parts Made Easy](https://www.youtube.com/watch?v=8YP_nOCO-4Q)
+  * Download and run the [Electron APIs Demo App](https://github.com/electron/electron-api-demos)
+  * [About Electron](https://electronjs.org/docs/tutorial/about)
+  * [Writing your first Electron app](https://electronjs.org/docs/tutorial/first-app)
+  * [Electron application architecture](https://electronjs.org/docs/tutorial/application-architecture)
+  
+### HTML/CSS
+
+The user interface for Electron is built using HTML and CSS.  If you are not familiar with HTML and CSS, or need a refresher, please consult the [ICS 314s18 module on UI Basics](http://courses.ics.hawaii.edu/ics314s18/modules/ui-basics/).
+  
+### Semantic UI
+
+Semantic UI is a CSS framework for building user interfaces. If you are not familiar with Semantic UI, or need a refresher, please consult the [ICS 314s18 module on UI frameworks](http://courses.ics.hawaii.edu/ics314s18/modules/ui-frameworks/).
+  
+### React
+
+React is a Javascript user interface framework.  If you are not familiar with React, or need a refresher, please consult the [ICS 314s18 module on React](http://courses.ics.hawaii.edu/ics314s18/modules/react/). 
+
+Note that TechFolio Designer uses [Semantic UI React](https://react.semantic-ui.com/), a version of Semantic UI designed specifically for use with React.
+
+### Redux
+
+Redux is a framework for sharing state among React components.  In TechFolio Designer, Redux is used to enable the Console Log window to update automatically when git commands execute. Some useful documentation:
+
+ * [Redux basics](https://redux.js.org/basics)
+ * [Redux video tutorial #1](https://www.youtube.com/watch?v=1w-oQ-i1XB8), then [2](https://www.youtube.com/watch?v=9M-r8p9ey8U), [3](https://www.youtube.com/watch?v=ucd5x3Ka3gw), [4](https://www.youtube.com/watch?v=gBER4Or86hE), [5](https://www.youtube.com/watch?v=DJ8fR0mZM44), [6](https://www.youtube.com/watch?v=Td-2D-_7Y2E), and [7](https://www.youtube.com/watch?v=nrg7zhgJd4w). (About 75 minutes total. I used this tutorial to learn Redux and found it to be extremely clear.)
+ 
+### Simple Git
+
+For integration with Git, TechFolio Designer currently uses [Simple Git](https://github.com/steveukx/git-js). See the readme file for documentation.
+
+
+## Build from source
+
+To build the system from source code for development purposes, begin by installing a recent version of [NodeJS](https://nodejs.org/en/) (10.5 or above).
 
 Second, install [electron forge](https://electronforge.io/). (I used `sudo npm install -g electron-forge --allow-root` successfully, but it might be better to use [nvm](https://docs.npmjs.com/getting-started/installing-node#using-a-version-manager-to-install-nodejs-and-npm).)
 
@@ -132,9 +177,6 @@ If successful, the following window should appear:
 
 <img src="http://techfolios.github.io/images/designer/splash-window-initial.png" width="600" >
 
-## Using TechFolio Designer
-
-Please consult the [User Guide](http://techfolios.github.io/designer.html) for instructions on how to use TechFolio Designer.
 
 ## Source code organization
 
