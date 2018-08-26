@@ -82,6 +82,13 @@ Redux is a framework for sharing state among React components.  In TechFolio Des
 
 For integration with Git, TechFolio Designer currently uses [Simple Git](https://github.com/steveukx/git-js). See the readme file for documentation.
 
+### Code Mirror
+
+TechFolio Designer uses Code Mirror as its editor library.
+
+  * [Code Mirror Home Page](https://codemirror.net/)
+  * [Build a desktop app with Code Mirror and Electron](https://medium.com/@rcwestlake/building-a-desktop-app-with-electron-codemirror-93b681237e60)
+
 
 ## Build from source
 
