@@ -39,8 +39,12 @@ async function setRemoteRepo() {
       inputAttrs: { type: 'text', required: 'true' },
     });
     if (repoName) {
-      mainStore.dispatch(action.setRepo(repoName));
-      buildMainMenu();
+      if (!repoName.valueOf('value').includes('github.io')) {
+        mainStore.dispatch(action.addLog('Error: Repo specified does not contain "github.io"'));
+      } else {
+        mainStore.dispatch(action.setRepo(repoName));
+        buildMainMenu();
+      }
     }
   } catch (e) {
     mainStore.dispatch(action.addLog(`Error in setRemoteRepo dialog: ${e}`));
