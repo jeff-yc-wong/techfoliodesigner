@@ -5,6 +5,7 @@ import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 import buildMainMenu from './MainMenu';
 
+const notifier = require('node-notifier');
 const git = require('simple-git/promise');
 
 function getRepoURL() {
@@ -101,4 +102,10 @@ export function runPull() {
   git(directory).pull(getRepoURL())
     .then(() => { mainStore.dispatch(action.addLog('Finished pull of updates.')); runLocalDirStatus(); })
     .catch(err => mainStore.dispatch(action.addLog(`Finished pull with error: ${err}`)));
+}
+
+export function notifyTime() {
+  let currentDateTime = moment().format('MMMM Do YYYY, h:mm:ss a').toString();
+  currentDateTime = `The current time is: ${currentDateTime}`;
+  notifier.notify(currentDateTime);
 }

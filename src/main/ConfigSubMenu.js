@@ -2,7 +2,7 @@ import { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
-import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
+import { notifyTime, runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 
@@ -107,6 +107,10 @@ function buildStatusMenu() {
   return { label: 'Check local directory status', click: runLocalDirStatus, enabled };
 }
 
+function buildTimeMenu() {
+  return { label: 'Get Current Time', click: notifyTime };
+}
+
 function buildAdvancedMenu() {
   const enabled = mainStore.getState().authenticated;
   const item1 = { label: 'Reset local directory contents', click: gitReset, enabled };
@@ -124,6 +128,7 @@ export default function buildConfigSubMenu() {
     buildCloneSubMenu(),
     buildPushMenu(),
     buildStatusMenu(),
+    buildTimeMenu(),
     buildAdvancedMenu(),
   ];
   return configSubMenu;
