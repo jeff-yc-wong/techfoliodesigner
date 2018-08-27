@@ -1,5 +1,6 @@
 import { dialog } from 'electron';
 import prompt from 'electron-prompt';
+import moment from 'moment';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
 import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
@@ -80,6 +81,9 @@ function pull() {
   runPull();
 }
 
+function getTime() {
+  dialog.showMessageBox({ message: `The current time is: ${moment().format('LTS')}` });
+}
 
 function buildAuthenticationSubMenu() {
   const authenticatedMenu = { label: 'Logout from GitHub', click: logoutFromGitHub };
@@ -107,6 +111,11 @@ function buildStatusMenu() {
   return { label: 'Check local directory status', click: runLocalDirStatus, enabled };
 }
 
+function buildTimeMenu() {
+  const enabled = mainStore.getState().authenticated;
+  return { label: 'Get Current Time', click: getTime, enabled };
+}
+
 function buildAdvancedMenu() {
   const enabled = mainStore.getState().authenticated;
   const item1 = { label: 'Reset local directory contents', click: gitReset, enabled };
@@ -125,6 +134,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildStatusMenu(),
     buildAdvancedMenu(),
+    buildTimeMenu(),
   ];
   return configSubMenu;
 }

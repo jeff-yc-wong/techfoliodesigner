@@ -19,6 +19,8 @@
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
+  import LastModified from './LastModified';
+  import moment from 'moment';
   const app = require('electron').remote.app
 
   // Set up renderer-side redux
@@ -26,6 +28,8 @@
   // ForwardToMain must be first middleware.
   const store = createStore(reducer, initialState, applyMiddleware(forwardToMain));
   replayActionRenderer(store);
+//            <p>{moment().format('LTS')}</p>
+
 
   const render = () => {
     ReactDOM.render(
@@ -35,12 +39,14 @@
             <Header as="h1">Welcome to TechFolio Designer</Header>
             <SplashTable />
             <SplashLogs />
+            <LastModified />
           </Grid.Column>
         </Grid>
       </Provider>,
       document.getElementById('SplashPage'));
   }
   render();
+
 </script>
 </html>
 
