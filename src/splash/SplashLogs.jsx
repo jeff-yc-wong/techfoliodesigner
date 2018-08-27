@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Form, TextArea } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
-
 class SplashLogs extends React.Component {
 
   render() {

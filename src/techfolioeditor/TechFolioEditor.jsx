@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
+import { dialog } from 'electron';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const fs = require('fs');
+const cm = require('codemirror');
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
@@ -59,6 +61,11 @@ export default class TechFolioEditor extends React.Component {
       if (err) {
         throw err;
       } else {
+        // if (console.log(cm.getTokenAt(5, 7, true)))
+        // if (cm.getTokenAt({ 5: 7 }, true)) {
+          // console.log('Date format is invalid. Please change it YYYY-MM-DD format.');
+          dialog.showMessageBox({ message: 'Date format is invalid. Please change it YYYY-MM-DD format.' });
+        // }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();

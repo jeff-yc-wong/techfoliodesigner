@@ -31,6 +31,7 @@ class SplashTable extends React.Component {
           </Table.Row>
         </Table.Body>
       </Table>
+
     );
   }
 }
