@@ -38,7 +38,11 @@ async function setRemoteRepo() {
       inputAttrs: { type: 'text', required: 'true' },
     });
     if (repoName) {
-      mainStore.dispatch(action.setRepo(repoName));
+      if (repoName.endsWith('.github.io')) {
+        mainStore.dispatch(action.setRepo(repoName));
+      } else {
+        mainStore.dispatch(action.addLog('Repo name must be ".github.io" at the end!'));
+      }
       buildMainMenu();
     }
   } catch (e) {
