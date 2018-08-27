@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+import mainStore from '../redux/mainstore';
+import * as action from '../redux/actions';
 
 const fs = require('fs');
 
@@ -11,6 +13,8 @@ require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
 require('../lib/autorefresh.ext');
+
+const notifier = require('node-notifier');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -55,6 +59,17 @@ export default class TechFolioEditor extends React.Component {
 
   saveFile() {
     console.log('saveFile called'); // eslint-disable-line
+    let stringSplit = this.state.value.split('\n');
+    for (let line = 0; line < stringSplit.length; line++) {
+      if (stringSplit[line].includes('date') || stringSplit[line].includes('Date')) {
+        stringSplit = stringSplit[line];
+        break;
+      }
+    }
+    stringSplit = stringSplit.split(':')[1].trim();
+    if (!stringSplit.match(/(\d{4})-(\d{2})-(\d{2})/)) {
+      notifier.notify('Date field was not valid! It must be in YYYY-MM-DD format!');
+    }
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;

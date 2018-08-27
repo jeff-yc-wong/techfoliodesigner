@@ -59,7 +59,6 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       url2: { type: String, optional: true, label: 'Url' },
       url3: { type: String, optional: true, label: 'Url' },
       url4: { type: String, optional: true, label: 'Url' },
-
     });
     return (
       <div>
