@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
+const moment = require('moment');
+
 class SplashTable extends React.Component {
 
   render() {
@@ -29,6 +31,10 @@ class SplashTable extends React.Component {
             <Table.Cell>Local Directory Status</Table.Cell>
             <Table.Cell>{this.props.status}</Table.Cell>
           </Table.Row>
+          <Table.Row>
+            <Table.Cell>Last Modified</Table.Cell>
+            <Table.Cell>{this.props.lastmod}</Table.Cell>
+          </Table.Row>
         </Table.Body>
       </Table>
 
@@ -42,6 +48,7 @@ SplashTable.defaultProps = {
   repo: '',
   dir: '',
   status: '',
+  lastmod: moment().format('LTS'),
 };
 
 SplashTable.propTypes = {
@@ -50,6 +57,7 @@ SplashTable.propTypes = {
   repo: PropTypes.string,
   dir: PropTypes.string,
   status: PropTypes.string,
+  lastmod: PropTypes.string,
 };
 
 function mapStateToProps(state) {
@@ -59,6 +67,7 @@ function mapStateToProps(state) {
     repo: state.repo,
     dir: state.dir,
     status: state.status,
+    lastmod: moment().format('LTS'),
   };
 }
 

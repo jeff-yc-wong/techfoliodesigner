@@ -1,12 +1,17 @@
+import { dialog } from 'electron';
+import { moment } from 'moment';
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { dialog } from 'electron';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const fs = require('fs');
-const cm = require('codemirror');
+const fm = require('front-matter');
+const yfm = require('yaml-front-matter');
+const m = require('moment');
+const notifier = require('node-notifier');
+// const dialog = require('electron');
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
@@ -57,15 +62,20 @@ export default class TechFolioEditor extends React.Component {
 
   saveFile() {
     console.log('saveFile called'); // eslint-disable-line
+    const data = fm(this.state.value);
+    const otherData = yfm.loadFront(this.state.value);
+    console.log(data);
+    console.log(otherData);
+    const theDate = data.attributes.date.toString();
+    console.log(theDate);
+    if (!theDate.match(/(\w{3})\s(\w{3})\s(\d{2})\s(\w{4})/)) {
+      notifier.notify('Date format is invalid. Please change it YYYY-MM-DD format.');
+    }
+
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
       } else {
-        // if (console.log(cm.getTokenAt(5, 7, true)))
-        // if (cm.getTokenAt({ 5: 7 }, true)) {
-          // console.log('Date format is invalid. Please change it YYYY-MM-DD format.');
-          dialog.showMessageBox({ message: 'Date format is invalid. Please change it YYYY-MM-DD format.' });
-        // }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
