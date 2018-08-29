@@ -40,7 +40,17 @@ async function setRemoteRepo() {
       inputAttrs: { type: 'text', required: 'true' },
     });
     if (repoName) {
-      mainStore.dispatch(action.setRepo(repoName));
+      if (!repoName.match(/.github.io$/g)) {
+        const options = {
+          type: 'warning',
+          title: 'Invalid repo name',
+          message: 'Repo name must end with ".github.io". Repo name NOT updated.',
+          buttons: ['OK'],
+        };
+        dialog.showMessageBox(options);
+      } else {
+        mainStore.dispatch(action.setRepo(repoName));
+      }
       buildMainMenu();
     }
   } catch (e) {
