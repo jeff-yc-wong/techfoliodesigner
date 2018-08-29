@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 class SplashTable extends React.Component {
 
@@ -29,6 +30,10 @@ class SplashTable extends React.Component {
             <Table.Cell>Local Directory Status</Table.Cell>
             <Table.Cell>{this.props.status}</Table.Cell>
           </Table.Row>
+          <Table.Row>
+            <Table.Cell>Last Modified</Table.Cell>
+            <Table.Cell>{this.props.timestamp}</Table.Cell>
+          </Table.Row>
         </Table.Body>
       </Table>
     );
@@ -41,6 +46,7 @@ SplashTable.defaultProps = {
   repo: '',
   dir: '',
   status: '',
+  timestamp: moment().format('MMMM Do YYYY, h:mm:ss a'),
 };
 
 SplashTable.propTypes = {
@@ -49,6 +55,7 @@ SplashTable.propTypes = {
   repo: PropTypes.string,
   dir: PropTypes.string,
   status: PropTypes.string,
+  timestamp: PropTypes.date,
 };
 
 function mapStateToProps(state) {
@@ -58,6 +65,7 @@ function mapStateToProps(state) {
     repo: state.repo,
     dir: state.dir,
     status: state.status,
+    timestamp: state.timestamp,
   };
 }
 
