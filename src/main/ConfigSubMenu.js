@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
@@ -5,6 +6,7 @@ import runLoginToGitHub from './GitHub';
 import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
+
 
 /* eslint no-param-reassign: 0 */
 
@@ -80,6 +82,15 @@ function pull() {
   runPull();
 }
 
+function currentTime() {
+  const options = {
+    title: 'Current time',
+    message: `It is currently ${moment().format('MMMM Do YYYY, h:mm:ss a')}.`,
+    buttons: ['OK'],
+  };
+  dialog.showMessageBox(options);
+}
+
 
 function buildAuthenticationSubMenu() {
   const authenticatedMenu = { label: 'Logout from GitHub', click: logoutFromGitHub };
@@ -117,6 +128,10 @@ function buildAdvancedMenu() {
   return { label: 'Advanced', submenu: [item1, item2, item3, item4, item5] };
 }
 
+function buildGetCurrentTime() {
+  return { label: 'Get current time', click: currentTime };
+}
+
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
@@ -125,6 +140,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildStatusMenu(),
     buildAdvancedMenu(),
+    buildGetCurrentTime(),
   ];
   return configSubMenu;
 }
