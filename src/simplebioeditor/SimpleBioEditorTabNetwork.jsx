@@ -18,24 +18,29 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     this.state.model.network1 = profiles[0] && profiles[0].network;
     this.state.model.network2 = profiles[1] && profiles[1].network;
     this.state.model.network3 = profiles[2] && profiles[2].network;
+    this.state.model.network4 = profiles[3] && profiles[3].network;
     this.state.model.username1 = profiles[0] && profiles[0].username;
     this.state.model.username2 = profiles[1] && profiles[1].username;
     this.state.model.username3 = profiles[2] && profiles[2].username;
+    this.state.model.username4 = profiles[3] && profiles[3].username;
     this.state.model.url1 = profiles[0] && profiles[0].url;
     this.state.model.url2 = profiles[1] && profiles[1].url;
     this.state.model.url3 = profiles[2] && profiles[2].url;
+    this.state.model.url4 = profiles[3] && profiles[3].url;
   }
 
   submit(data) {
     const
-      { network1, network2, network3, username1, username2, username3, url1, url2, url3 } = data;
+      { network1, network2, network3, network4, username1, username2, username3, username4, url1, url2, url3, url4 } = data;
     const bio = this.props.bio;
     const entry1 = network1 && { network: network1, username: username1, url: url1 };
     const entry2 = network2 && { network: network2, username: username2, url: url2 };
     const entry3 = network3 && { network: network3, username: username3, url: url3 };
+    const entry4 = network4 && { network: network4, username: username4, url: url4 };
     bio.basics.profiles = updateArray(bio.basics.profiles, entry1, 0);
     bio.basics.profiles = updateArray(bio.basics.profiles, entry2, 1);
     bio.basics.profiles = updateArray(bio.basics.profiles, entry3, 2);
+    bio.basics.profiles = updateArray(bio.basics.profiles, entry4, 3);
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.props.handleBioChange(bio);
   }
@@ -45,12 +50,15 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       network1: { type: String, optional: true, label: 'Network' },
       network2: { type: String, optional: true, label: 'Network' },
       network3: { type: String, optional: true, label: 'Network' },
+      network4: { type: String, optional: true, label: 'Network' },
       username1: { type: String, optional: true, label: 'Username' },
       username2: { type: String, optional: true, label: 'Username' },
       username3: { type: String, optional: true, label: 'Username' },
+      username4: { type: String, optional: true, label: 'Username' },
       url1: { type: String, optional: true, label: 'Url' },
       url2: { type: String, optional: true, label: 'Url' },
       url3: { type: String, optional: true, label: 'Url' },
+      url4: { type: String, optional: true, label: 'Url' },
 
     });
     return (
@@ -88,6 +96,17 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
               </Grid.Column>
               <Grid.Column>
                 <AutoField name="url3" />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={3}>
+              <Grid.Column>
+                <AutoField name="network4" />
+              </Grid.Column>
+              <Grid.Column>
+                <AutoField name="username4" />
+              </Grid.Column>
+              <Grid.Column>
+                <AutoField name="url4" />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
