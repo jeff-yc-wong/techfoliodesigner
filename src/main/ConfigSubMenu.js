@@ -1,10 +1,13 @@
 import { dialog } from 'electron';
+import moment from 'moment';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
 import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
+
+
 
 /* eslint no-param-reassign: 0 */
 
@@ -38,8 +41,13 @@ async function setRemoteRepo() {
       inputAttrs: { type: 'text', required: 'true' },
     });
     if (repoName) {
-      mainStore.dispatch(action.setRepo(repoName));
-      buildMainMenu();
+      const re = new RegExp('.*.github.io');
+      if (re.test(repoName)) {
+        mainStore.dispatch(action.setRepo(repoName));
+        buildMainMenu();
+      } else {
+        console.error('Repo name does not end with ".github.io"');
+      }
     }
   } catch (e) {
     mainStore.dispatch(action.addLog(`Error in setRemoteRepo dialog: ${e}`));
@@ -80,6 +88,12 @@ function pull() {
   runPull();
 }
 
+function runGetCurrentTime() {
+  const dialogOptions = { type: 'info', buttons: ['OK'], message: moment().format('MMMM Do YYYY, h:mm:ss a') };
+
+  dialog.showMessageBox(dialogOptions);
+}
+
 
 function buildAuthenticationSubMenu() {
   const authenticatedMenu = { label: 'Logout from GitHub', click: logoutFromGitHub };
@@ -107,6 +121,12 @@ function buildStatusMenu() {
   return { label: 'Check local directory status', click: runLocalDirStatus, enabled };
 }
 
+function buildCurrentTimeMenu() {
+  const enabled = true;
+  return { label: 'Get Current Time', click: runGetCurrentTime, enabled };
+}
+
+
 function buildAdvancedMenu() {
   const enabled = mainStore.getState().authenticated;
   const item1 = { label: 'Reset local directory contents', click: gitReset, enabled };
@@ -125,6 +145,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildStatusMenu(),
     buildAdvancedMenu(),
+    buildCurrentTimeMenu(),
   ];
   return configSubMenu;
 }
