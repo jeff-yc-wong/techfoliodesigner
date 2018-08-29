@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 class SplashTable extends React.Component {
 
@@ -28,6 +29,10 @@ class SplashTable extends React.Component {
           <Table.Row>
             <Table.Cell>Local Directory Status</Table.Cell>
             <Table.Cell>{this.props.status}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Last Modified</Table.Cell>
+            <Table.Cell>{moment().format('h:mm:ss a')}</Table.Cell>
           </Table.Row>
         </Table.Body>
       </Table>
