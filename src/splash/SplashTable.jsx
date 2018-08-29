@@ -65,7 +65,7 @@ function mapStateToProps(state) {
     repo: state.repo,
     dir: state.dir,
     status: state.status,
-    timestamp: state.timestamp,
+    timestamp: moment().format('MMMM Do YYYY, h:mm:ss a'),
   };
 }
 
