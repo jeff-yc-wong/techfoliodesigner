@@ -40,8 +40,13 @@ async function setRemoteRepo() {
       inputAttrs: { type: 'text', required: 'true' },
     });
     if (repoName) {
-      mainStore.dispatch(action.setRepo(repoName));
-      buildMainMenu();
+
+      if (repoName.substring(repoName.length - 10, repoName.length) === '.github.io') {
+         mainStore.dispatch(action.setRepo(repoName));
+         buildMainMenu();
+       } else {
+         dialog.showErrorBox('Error', 'Not a github.io repo');
+       }
     }
   } catch (e) {
     mainStore.dispatch(action.addLog(`Error in setRemoteRepo dialog: ${e}`));
