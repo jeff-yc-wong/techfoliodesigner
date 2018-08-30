@@ -8,6 +8,8 @@ import mainStore from '../redux/mainstore';
 
 /* eslint no-param-reassign: 0 */
 
+const moment = require('moment');
+
 function setLocalDirectory() {
   dialog.showOpenDialog({ properties: ['openDirectory'] }, (files) => {
     if (files) {
@@ -117,6 +119,16 @@ function buildAdvancedMenu() {
   return { label: 'Advanced', submenu: [item1, item2, item3, item4, item5] };
 }
 
+function buildGetCurrentTime() {
+  return { label: 'Get Current Time',
+           click: dialog.showMessageBox({
+              type: 'info',
+              title: 'Time',
+              message: moment().format('hh:mm:ss a')
+            })
+          };
+}
+
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
@@ -125,6 +137,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildStatusMenu(),
     buildAdvancedMenu(),
+    buildGetCurrentTime()
   ];
   return configSubMenu;
 }
