@@ -4,8 +4,9 @@ import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
+const { dialog } = require('electron').remote;
+// const notifier = require('node-notifier');
 const fs = require('fs');
-const notifier = require('node-notifier');
 
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
@@ -57,8 +58,9 @@ export default class TechFolioEditor extends React.Component {
   saveFile() {
     console.log('saveFile called'); // eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
-      if (this.state.value.match(/date: (\d{4})-(\d{2})-(\d{2})/)) {
-        notifier.notify('Invalid date field');
+      if (!this.state.value.match(/date: (\d{4})-(\d{2})-(\d{2})/)) {
+        // notifier.notify('Invalid date field');
+        dialog.showMessageBox({ message: 'Invalid date field'});
       }
       if (err) {
         throw err;
