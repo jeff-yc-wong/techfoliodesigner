@@ -1,5 +1,6 @@
 import electron from 'electron';
 
+
 /**
  * Creates and returns an array containing the skeletal form of the TechFolioMenu.
  * This skeletal form will be filled out by buildMainMenu based upon the current state of the application.

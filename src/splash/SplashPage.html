@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="../../node_modules/semantic-ui-css/semantic.css">
 </head>
 <body>
-<div id="SplashPage"></div>
+<div id="SplashPage" style="background-color: lightgrey; height: 100%"></div>
 </body>
 
 <script type="text/jsx">
@@ -19,7 +19,7 @@
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
-  const app = require('electron').remote.app
+  const app = require('electron').remote.app;
 
   // Set up renderer-side redux
   const initialState = getInitialStateRenderer();
@@ -39,7 +39,7 @@
         </Grid>
       </Provider>,
       document.getElementById('SplashPage'));
-  }
+  };
   render();
 </script>
 </html>

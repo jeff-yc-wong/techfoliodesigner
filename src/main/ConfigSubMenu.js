@@ -1,5 +1,6 @@
 import { dialog } from 'electron';
 import prompt from 'electron-prompt';
+import moment from 'moment';
 import buildMainMenu from './MainMenu';
 import runLoginToGitHub from './GitHub';
 import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThenPush, runPull } from './Git';
@@ -37,9 +38,15 @@ async function setRemoteRepo() {
       value: `${username}.github.io`,
       inputAttrs: { type: 'text', required: 'true' },
     });
+
+
     if (repoName) {
-      mainStore.dispatch(action.setRepo(repoName));
-      buildMainMenu();
+      if (repoName.substring((repoName.length - 10), (repoName.length)) === '.github.io') {
+        mainStore.dispatch(action.setRepo(repoName));
+        buildMainMenu();
+      } else {
+        dialog.showErrorBox('Error', 'Not a valid repo');
+      }
     }
   } catch (e) {
     mainStore.dispatch(action.addLog(`Error in setRemoteRepo dialog: ${e}`));
@@ -80,6 +87,16 @@ function pull() {
   runPull();
 }
 
+function time() {
+  const options = {
+    type: 'info',
+    title: 'Time',
+    message: `The current time is ${moment().format('hh:mm:ss a')}`,
+  };
+
+  dialog.showMessageBox(options);
+}
+
 
 function buildAuthenticationSubMenu() {
   const authenticatedMenu = { label: 'Logout from GitHub', click: logoutFromGitHub };
@@ -107,6 +124,10 @@ function buildStatusMenu() {
   return { label: 'Check local directory status', click: runLocalDirStatus, enabled };
 }
 
+function getTime() {
+  return { label: 'Get Time', click: time };
+}
+
 function buildAdvancedMenu() {
   const enabled = mainStore.getState().authenticated;
   const item1 = { label: 'Reset local directory contents', click: gitReset, enabled };
@@ -125,6 +146,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildStatusMenu(),
     buildAdvancedMenu(),
+    getTime(),
   ];
   return configSubMenu;
 }

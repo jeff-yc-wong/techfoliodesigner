@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
+
+
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+
+const notifier = require('node-notifier');
 
 const fs = require('fs');
 
@@ -56,6 +60,9 @@ export default class TechFolioEditor extends React.Component {
   saveFile() {
     console.log('saveFile called'); // eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
+      if (this.state.value.match(/date: (\d{4})-(\d{2})-(\d{2})/)) {
+        notifier.notify('Warning: The date and time are not valid!');
+      }
       if (err) {
         throw err;
       } else {

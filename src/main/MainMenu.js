@@ -7,6 +7,7 @@ import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
 
+
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
   return _.findIndex(template, element => element.label && element.label.toUpperCase() === label.toUpperCase());
@@ -72,5 +73,6 @@ function buildMainMenu() {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
+
 
 export default buildMainMenu;
