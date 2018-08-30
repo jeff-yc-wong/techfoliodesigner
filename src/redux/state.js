@@ -6,6 +6,7 @@ export const emptyState = {
   repo: null,
   dir: null,
   status: null,
+  modified: null,
   token: null,
   logs: [],
 };
