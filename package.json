@@ -68,6 +68,7 @@
     "electron-store": "^2.0.0",
     "is-directory": "^0.3.1",
     "moment": "^2.22.2",
+    "node-notifier": "^5.2.1",
     "notifyjs": "^3.0.0",
     "query-string": "^6.1.0",
     "react": "^15.6.2",
@@ -83,7 +84,8 @@
     "simple-git": "^1.96.0",
     "underscore": "^1.9.1",
     "uniforms": "^1.25.0-rc.3",
-    "uniforms-semantic": "^1.25.0-rc.3"
+    "uniforms-semantic": "^1.25.0-rc.3",
+    "yaml-front-matter": "^4.0.0"
   },
   "devDependencies": {
     "electron-forge": "^5.2.2",

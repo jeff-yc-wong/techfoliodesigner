@@ -6,6 +6,9 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const fs = require('fs');
 
+const notifier = require('node-notifier');
+const yamlFront = require('yaml-front-matter');
+
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
@@ -53,8 +56,18 @@ export default class TechFolioEditor extends React.Component {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
   }
 
+  validateFile() {
+    let readData = '';
+    const ydata = yamlFront.loadFront(this.state.value);
+    const regex = RegExp('^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$');
+    if (!ydata.date.toString().match(/(\w{3})\s(\w{3})\s(\d{2})\s(\w{4})/)) {
+      notifier.notify('Date field was not valid');
+    }
+  }
+
   saveFile() {
-    console.log('saveFile called'); // eslint-disable-line
+    this.validateFile();
+    console.log('saveFile called');
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
