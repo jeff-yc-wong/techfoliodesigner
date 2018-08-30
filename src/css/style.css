@@ -4,3 +4,7 @@
   font-size: 14px;
   font-family: Courier, monospace;
 }
+
+body.splash {
+  background-color: lightgrey;
+}
