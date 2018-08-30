@@ -20,6 +20,7 @@
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
+  import SplashLastModified from './SplashLastModified';
   const app = require('electron').remote.app
 
   // Set up renderer-side redux
@@ -36,6 +37,7 @@
             <Header as="h1">Welcome to TechFolio Designer</Header>
             <SplashTable />
             <SplashLogs />
+            <SplashLastModified />
           </Grid.Column>
         </Grid>
       </Provider>,
