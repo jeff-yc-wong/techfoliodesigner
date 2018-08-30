@@ -6,6 +6,8 @@ import { runCloneRepo, runLocalDirStatus, runResetLocalDir, runAddThenCommitThen
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 
+const moment = require('moment');
+
 /* eslint no-param-reassign: 0 */
 
 function setLocalDirectory() {
@@ -117,6 +119,18 @@ function buildAdvancedMenu() {
   return { label: 'Advanced', submenu: [item1, item2, item3, item4, item5] };
 }
 
+function getTime() {
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'Current Time',
+    message: `The current time is ${moment().format('hh:mm:ss a')}`,
+  });
+}
+
+function buildTimeMenu() {
+  return { label: 'Get Current Time', click: getTime() };
+}
+
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
@@ -125,6 +139,7 @@ export default function buildConfigSubMenu() {
     buildPushMenu(),
     buildStatusMenu(),
     buildAdvancedMenu(),
+    buildTimeMenu(),
   ];
   return configSubMenu;
 }
