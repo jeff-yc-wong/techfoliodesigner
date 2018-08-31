@@ -76,7 +76,8 @@ function runPushThenStatus() {
   const directory = mainStore.getState().dir;
   mainStore.dispatch(action.addLog('Starting push of local dir to GitHub...'));
   git(directory).push([getRepoURL(), 'master'])
-    .then(result => mainStore.dispatch(action.addLog(`Finished push. ${result}`)));
+    .then(result => mainStore.dispatch(action.addLog(`Finished push. ${result}`)))
+    .catch(err => mainStore.dispatch(action.addLog(`Finished push with failure: ${err}`)));
 }
 
 function runCommitThenPush() {
