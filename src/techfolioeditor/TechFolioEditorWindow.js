@@ -17,54 +17,55 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
   if (currWindow) {
     currWindow.show();
-  } else if (fs.existsSync(filePath)) {
-    // Create the browser window.
-    const window = new BrowserWindow({
-      x: techFolioWindowManager.getXOffset(),
-      y: techFolioWindowManager.getYOffset(),
-      width: 1080,
-      minWidth: 680,
-      height: 840,
-      title: 'TechFolio Designer',
-    });
+  } else
+    if (fs.existsSync(filePath)) {
+      // Create the browser window.
+      const window = new BrowserWindow({
+        x: techFolioWindowManager.getXOffset(),
+        y: techFolioWindowManager.getYOffset(),
+        width: 1080,
+        minWidth: 680,
+        height: 840,
+        title: 'TechFolio Designer',
+      });
 
-    // Tell the window manager that this window has been created.
-    techFolioWindowManager.addWindow(fileType, fileName, window);
+      // Tell the window manager that this window has been created.
+      techFolioWindowManager.addWindow(fileType, fileName, window);
 
-    // Load the index.html of the app.
-    window.loadURL(
-      `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
+      // Load the index.html of the app.
+      window.loadURL(
+        `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`); // eslint-disable-line
 
-    // Install DevTools
-    if (isDevMode) {
-      await installExtension(REACT_DEVELOPER_TOOLS);
-      // mainWindow.webContents.openDevTools();
-    }
-
-    window.on('close', (e) => {
-      e.preventDefault();
-      if (window.getTitle().startsWith('*')) {
-        const options = {
-          type: 'info',
-          title: 'Do you really want to close this window?',
-          message: 'This window has unsaved changes. Close anyway?',
-          buttons: ['No', 'Yes, lose my changes'],
-        };
-        dialog.showMessageBox(options, (index) => {
-          if (index === 1) {
-            window.destroy();
-          }
-        });
-      } else {
-        window.destroy();
+      // Install DevTools
+      if (isDevMode) {
+        await installExtension(REACT_DEVELOPER_TOOLS);
+        // mainWindow.webContents.openDevTools();
       }
-    });
 
-    window.on('closed', () => {
-      // Dereference the window object.
-      techFolioWindowManager.removeWindow(fileType, fileName);
-    });
-  }
+      window.on('close', (e) => {
+        e.preventDefault();
+        if (window.getTitle().startsWith('*')) {
+          const options = {
+            type: 'info',
+            title: 'Do you really want to close this window?',
+            message: 'This window has unsaved changes. Close anyway?',
+            buttons: ['No', 'Yes, lose my changes'],
+          };
+          dialog.showMessageBox(options, (index) => {
+            if (index === 1) {
+              window.destroy();
+            }
+          });
+        } else {
+          window.destroy();
+        }
+      });
+
+      window.on('closed', () => {
+        // Dereference the window object.
+        techFolioWindowManager.removeWindow(fileType, fileName);
+      });
+    }
 }
 
 function validFileName(fileName, fileType) {
@@ -113,7 +114,6 @@ labels:
 ---
 Essay goes here.`;
 
-
 export async function newTechFolioWindow({ fileType }) {
   let fileName = null;
   try {
@@ -139,7 +139,11 @@ export async function newTechFolioWindow({ fileType }) {
   const filePath = path.join(directory, fileType, fileName);
   const techFolioFiles = new TechFolioFiles(directory);
   techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
-    () => { createTechFolioWindow({ fileType, fileName }); buildMainMenu(); runAddFile(filePath); });
+    () => {
+      createTechFolioWindow({ fileType, fileName });
+      buildMainMenu();
+      runAddFile(filePath);
+    });
   return null;
 }
 

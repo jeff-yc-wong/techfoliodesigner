@@ -43,7 +43,7 @@ export default class TechFolioEditor extends React.Component {
 
   onBeforeChange(editor, data, value) {
     this.setState({ value });
-    if (this.state.fileChangedMarker === '') { //eslint-disable-line
+    if (this.state.fileChangedMarker === '') {
       this.setState({ fileChangedMarker: '* ' });
       this.setWindowTitle();
     }
@@ -54,7 +54,7 @@ export default class TechFolioEditor extends React.Component {
   }
 
   saveFile() {
-    console.log('saveFile called'); // eslint-disable-line
+    console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
