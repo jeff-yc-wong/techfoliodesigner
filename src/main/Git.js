@@ -76,7 +76,10 @@ function runPushThenStatus() {
   const directory = mainStore.getState().dir;
   mainStore.dispatch(action.addLog('Starting push of local dir to GitHub...'));
   git(directory).push([getRepoURL(), 'master'])
-    .then(result => mainStore.dispatch(action.addLog(`Finished push. ${result}`)));
+    .then(result => mainStore.dispatch(action.addLog(`Finished push. ${result}`)))
+    .catch(err => mainStore.dispatch(action.addLog(`Finished push with failure: ${err}
+      \nTo fix this problem, please update your local repo by invoking the command Config > Advanced > Pull changes from GitHub repo. Then try committing your changes again.
+      `)));
 }
 
 function runCommitThenPush() {
