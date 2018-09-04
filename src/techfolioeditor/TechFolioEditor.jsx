@@ -6,10 +6,19 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const fs = require('fs');
 
+require('codemirror/lib/codemirror.js');
+
+require('codemirror/mode/css/css.js');
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
+
 require('codemirror/addon/lint/lint');
+require('codemirror/addon/lint/javascript-lint');
+require('codemirror/addon/lint/css-lint');
+require('codemirror/addon/lint/json-lint');
+
+
 require('../lib/autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
@@ -38,11 +47,15 @@ export default class TechFolioEditor extends React.Component {
     if (this.mode === 'application/json') {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
+      this.spellcheck = true;
     }
   }
 
   onBeforeChange(editor, data, value) {
     this.setState({ value });
+    console.log(editor);
+    console.log(data);
+    console.log(value);
     if (this.state.fileChangedMarker === '') {
       this.setState({ fileChangedMarker: '* ' });
       this.setWindowTitle();
