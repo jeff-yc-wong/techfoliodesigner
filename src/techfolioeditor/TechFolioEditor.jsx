@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-// import fs from 'fs-extra';
+import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-// import jsonlint from 'jsonlint';
-// import { JSHINT } from 'jshint';
+import jsonlint from 'jsonlint';
+import { JSHINT } from 'jshint';
 
 const fs = require('fs');
 // const notifier = require('node-notifier');
@@ -19,9 +19,9 @@ require('codemirror/addon/lint/json-lint');
 
 require('../lib/autorefresh.ext');
 
-// const jsonlint = require('jsonlint');
-const clipboardy = require('clipboardy');
+const jsonlint = require('jsonlint');
 const { clipboard } = require('electron');
+const { ks } = require('node-key-sender');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -34,8 +34,8 @@ export default class TechFolioEditor extends React.Component {
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
 
-    // window.JSHINT = JSHINT; // eslint-disable-line
-    // window.jsonlint = jsonlint; // eslint-disable-line
+    window.JSHINT = JSHINT; // eslint-disable-line
+    window.jsonlint = jsonlint; // eslint-disable-line
 
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
@@ -74,30 +74,30 @@ export default class TechFolioEditor extends React.Component {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
   }
 
-  saveFile() {
-    console.log('saveFile called');
-  }
   // saveFile() {
-  //   console.log('saveFile called'); //eslint-disable-line
-  //   fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
-  //     if (err) {
-  //       throw err;
-  //     } else {
-  //       try {
-  //         jsonlint.parse(this.state.value);
-  //       } catch (e) {
-  //         notifier.notify({
-  //           title: 'JSON IS NOT IN VALID FORMAT!',
-  //           message: 'There is at least one JSON Error!!!',
-  //         });
-  //         console.log(e);
-  //       }
-  //       console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
-  //       this.setState({ fileChangedMarker: '' });
-  //       this.setWindowTitle();
-  //     }
-  //   });
+  //   console.log('saveFile called');
   // }
+  saveFile() {
+    console.log('saveFile called'); //eslint-disable-line
+    fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
+      if (err) {
+        throw err;
+      } else {
+        try {
+          jsonlint.parse(this.state.value);
+        } catch (e) {
+          notifier.notify({
+            title: 'JSON IS NOT IN VALID FORMAT!',
+            message: 'There is at least one JSON Error!!!',
+          });
+          console.log(e);
+        }
+        console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
+        this.setState({ fileChangedMarker: '' });
+        this.setWindowTitle();
+      }
+    });
+  }
 
   copy() {  // eslint-disable-line
     console.log('copy called');
@@ -108,8 +108,16 @@ export default class TechFolioEditor extends React.Component {
     }
   }
 
-  paste() {
+  paste() { // eslint-disable-line
     console.log('PASTE!');
+    if (window.getSelection()) { // eslint-disable-line
+      const readString = clipboard.readText();
+      // console.log(readString);
+      // Throws error message: Uncaught TypeError: Cannot read property 'sendText' of undefined
+      // However functionality still seems to work. Unsure what the solution should be.
+      ks.sendText(readString);
+    }
+    // console.log(readString);
     // clipboardy.readSync();
   }
 
