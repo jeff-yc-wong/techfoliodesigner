@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import jsonlint from 'jsonlint';
-import { JSHINT } from 'jshint';
+// import jsonlint from 'jsonlint';
+// import { JSHINT } from 'jshint';
 
 const fs = require('fs');
-const notifier = require('node-notifier');
+// const notifier = require('node-notifier');
 
 require('codemirror/lib/codemirror.js');
 require('codemirror/mode/css/css.js');
@@ -20,6 +20,8 @@ require('codemirror/addon/lint/json-lint');
 require('../lib/autorefresh.ext');
 
 // const jsonlint = require('jsonlint');
+const clipboardy = require('clipboardy');
+const { clipboard } = require('electron');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -32,8 +34,8 @@ export default class TechFolioEditor extends React.Component {
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
 
-    window.JSHINT = JSHINT; // eslint-disable-line
-    window.jsonlint = jsonlint; // eslint-disable-line
+    // window.JSHINT = JSHINT; // eslint-disable-line
+    // window.jsonlint = jsonlint; // eslint-disable-line
 
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
@@ -73,33 +75,42 @@ export default class TechFolioEditor extends React.Component {
   }
 
   saveFile() {
-    console.log('saveFile called'); //eslint-disable-line
-    fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
-      if (err) {
-        throw err;
-      } else {
-        try {
-          jsonlint.parse(this.state.value);
-        } catch (e) {
-          notifier.notify({
-            title: 'JSON IS NOT IN VALID FORMAT!',
-            message: 'There is at least one JSON Error!!!',
-          });
-          console.log(e);
-        }
-        console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
-        this.setState({ fileChangedMarker: '' });
-        this.setWindowTitle();
-      }
-    });
+    console.log('saveFile called');
   }
+  // saveFile() {
+  //   console.log('saveFile called'); //eslint-disable-line
+  //   fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
+  //     if (err) {
+  //       throw err;
+  //     } else {
+  //       try {
+  //         jsonlint.parse(this.state.value);
+  //       } catch (e) {
+  //         notifier.notify({
+  //           title: 'JSON IS NOT IN VALID FORMAT!',
+  //           message: 'There is at least one JSON Error!!!',
+  //         });
+  //         console.log(e);
+  //       }
+  //       console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
+  //       this.setState({ fileChangedMarker: '' });
+  //       this.setWindowTitle();
+  //     }
+  //   });
+  // }
 
-  copy() {
-    console.log('COPY!');
+  copy() {  // eslint-disable-line
+    console.log('copy called');
+    // Disable eslint here, I know window is defined even though eslint says it isn't
+    if (window.getSelection()) { // eslint-disable-line
+      const selectedText = window.getSelection().toString(); // eslint-disable-line
+      clipboard.writeText(selectedText);
+    }
   }
 
   paste() {
     console.log('PASTE!');
+    // clipboardy.readSync();
   }
 
   render() {

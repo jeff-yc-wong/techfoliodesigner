@@ -58,6 +58,7 @@
     "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "clipboardy": "^1.2.3",
     "codemirror": "^5.39.0",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
