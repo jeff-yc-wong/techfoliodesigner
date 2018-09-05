@@ -27,6 +27,8 @@ export default class TechFolioEditor extends React.Component {
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
+    this.copy = this.copy.bind(this);
+    this.paste = this.paste.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
 
@@ -40,7 +42,11 @@ export default class TechFolioEditor extends React.Component {
     this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
+    const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
+    const pasteKeyBinding = (process.platform === 'darwin') ? 'Cmd-V' : 'Ctrl-V';
     extraKeys[saveKeyBinding] = () => this.saveFile();
+    extraKeys[copyKeyBinding] = () => this.copy();
+    extraKeys[pasteKeyBinding] = () => this.paste();
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -86,6 +92,14 @@ export default class TechFolioEditor extends React.Component {
         this.setWindowTitle();
       }
     });
+  }
+
+  copy() {
+    console.log('COPY!');
+  }
+
+  paste() {
+    console.log('PASTE!');
   }
 
   render() {
