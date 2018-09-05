@@ -3,23 +3,23 @@ import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+import jsonlint from 'jsonlint';
+import { JSHINT } from 'jshint';
 
 const fs = require('fs');
+const notifier = require('node-notifier');
 
 require('codemirror/lib/codemirror.js');
-
 require('codemirror/mode/css/css.js');
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
-
 require('codemirror/addon/lint/lint');
-require('codemirror/addon/lint/javascript-lint');
-require('codemirror/addon/lint/css-lint');
 require('codemirror/addon/lint/json-lint');
 
-
 require('../lib/autorefresh.ext');
+
+// const jsonlint = require('jsonlint');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -29,6 +29,10 @@ export default class TechFolioEditor extends React.Component {
     this.saveFile = this.saveFile.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
+
+    window.JSHINT = JSHINT; // eslint-disable-line
+    window.jsonlint = jsonlint; // eslint-disable-line
+
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
@@ -47,15 +51,11 @@ export default class TechFolioEditor extends React.Component {
     if (this.mode === 'application/json') {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
-      this.spellcheck = true;
     }
   }
 
   onBeforeChange(editor, data, value) {
     this.setState({ value });
-    console.log(editor);
-    console.log(data);
-    console.log(value);
     if (this.state.fileChangedMarker === '') {
       this.setState({ fileChangedMarker: '* ' });
       this.setWindowTitle();
@@ -72,9 +72,18 @@ export default class TechFolioEditor extends React.Component {
       if (err) {
         throw err;
       } else {
-        console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
-        this.setState({ fileChangedMarker: '' });
-        this.setWindowTitle();
+        try {
+          jsonlint.parse(this.state.value);
+          console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
+          this.setState({ fileChangedMarker: '' });
+          this.setWindowTitle();
+        } catch (e) {
+          notifier.notify({
+            title: 'JSON IS NOT IN VALID FORMAT!',
+            message: 'Refer to the errors in the text editor!',
+          });
+          console.log(e);
+        }
       }
     });
   }
