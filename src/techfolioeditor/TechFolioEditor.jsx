@@ -74,16 +74,16 @@ export default class TechFolioEditor extends React.Component {
       } else {
         try {
           jsonlint.parse(this.state.value);
-          console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
-          this.setState({ fileChangedMarker: '' });
-          this.setWindowTitle();
         } catch (e) {
           notifier.notify({
             title: 'JSON IS NOT IN VALID FORMAT!',
-            message: 'Refer to the errors in the text editor!',
+            message: 'There is at least one JSON Error!!!',
           });
           console.log(e);
         }
+        console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
+        this.setState({ fileChangedMarker: '' });
+        this.setWindowTitle();
       }
     });
   }
