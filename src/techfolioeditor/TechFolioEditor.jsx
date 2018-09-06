@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import jsonlint from 'jsonlint';
+// import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
 const fs = require('fs');
+const jsonlint = require('jsonlint');
+const { clipboard } = require('electron');
+const { ks } = require('node-key-sender');
 // const notifier = require('node-notifier');
 
 require('codemirror/lib/codemirror.js');
@@ -16,12 +18,7 @@ require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
-
 require('../lib/autorefresh.ext');
-
-const jsonlint = require('jsonlint');
-const { clipboard } = require('electron');
-const { ks } = require('node-key-sender');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -86,10 +83,10 @@ export default class TechFolioEditor extends React.Component {
         try {
           jsonlint.parse(this.state.value);
         } catch (e) {
-          notifier.notify({
-            title: 'JSON IS NOT IN VALID FORMAT!',
-            message: 'There is at least one JSON Error!!!',
-          });
+          // notifier.notify({
+          //   title: 'JSON IS NOT IN VALID FORMAT!',
+          //   message: 'There is at least one JSON Error!!!',
+          // });
           console.log(e);
         }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
@@ -109,7 +106,7 @@ export default class TechFolioEditor extends React.Component {
   }
 
   paste() { // eslint-disable-line
-    console.log('PASTE!');
+    console.log('paste called');
     if (window.getSelection()) { // eslint-disable-line
       const readString = clipboard.readText();
       // console.log(readString);
