@@ -59,6 +59,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "codemirror": "^5.39.0",
+    "codemirror-spell-checker": "^1.1.2",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
     "electron-oauth2": "^3.0.0",
