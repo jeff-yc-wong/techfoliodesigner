@@ -52,6 +52,8 @@ export default class TechFolioEditor extends React.Component {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
+
+    this.instance = null;
   }
 
   onBeforeChange(editor, data, value) {
@@ -91,7 +93,8 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} />
+        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange}
+        options={this.options} editorDidMount={editor => this.instance = editor}/>
       </div>
     );
   }
