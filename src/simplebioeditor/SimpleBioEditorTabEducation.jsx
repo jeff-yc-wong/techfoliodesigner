@@ -38,23 +38,28 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       courses1c, courses2a, courses2b, courses2c,
     } = data;
     const bio = this.props.bio;
+    const entries = [];
+    const newCourses1 = _.compact([courses1a, courses1b, courses1c]);
     const entry1 = institution1 && {
       institution: institution1,
       area: area1,
       studyType: studyType1,
       endDate: endDate1,
-      courses: _.compact([courses1a, courses1b, courses1c]),
+      courses: bio.education[0].courses.splice(0, bio.education[0].courses.length, ...newCourses1),
     };
+    entries.push(entry1);
+    const newCourses2 = _.compact([courses2a, courses2b, courses2c]);
     const entry2 = institution2 && {
       institution: institution2,
       area: area2,
       studyType: studyType2,
       endDate: endDate2,
-      courses: _.compact([courses2a, courses2b, courses2c]),
+      courses: bio.education[1].courses.splice(0, bio.education[1].courses.length, ...newCourses2),
     };
-
-    bio.education = updateArray(bio.education, entry1, 0);
-    bio.education = updateArray(bio.education, entry2, 1);
+    entries.push(entry2);
+    for (let i = 0; i < entries.length; i += 1) {
+      bio.education = updateArray(bio.education, entries[i], i);
+    }
     writeBioFile(this.props.directory, bio, 'Updated education section of bio.');
     this.props.handleBioChange(bio);
   }
