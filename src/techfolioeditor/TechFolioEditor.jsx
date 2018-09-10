@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+//import { Controlled as CodeMirror } from 'react-codemirror2';
+import CodeMirror from 'CodeMirror';
+import CodeMirrorSpellChecker from 'codemirror-spell-checker';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
@@ -16,6 +18,7 @@ require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
+require('codemirror/addon/mode/overlay.js');
 
 require('../lib/autorefresh.ext');
 
@@ -37,7 +40,8 @@ export default class TechFolioEditor extends React.Component {
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '' };
-    this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
+    this.mode = [ this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json',
+      "spell-checker" ];
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
     extraKeys[saveKeyBinding] = () => this.saveFile();
@@ -48,12 +52,22 @@ export default class TechFolioEditor extends React.Component {
       autoRefresh: { force: true },
       extraKeys,
     };
+
     if (this.mode === 'application/json') {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
 
-    this.instance = null;
+    CodeMirrorSpellChecker({
+      codeMirrorInstance: CodeMirror,
+    });
+
+    let techFolioCM = CodeMirror(document.body, {
+      value: this.state.value,
+      mode:  this.mode,
+      backdrop: "gfm"
+    });
+
   }
 
   onBeforeChange(editor, data, value) {
@@ -93,8 +107,7 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange}
-        options={this.options} editorDidMount={editor => this.instance = editor}/>
+
       </div>
     );
   }
