@@ -16,7 +16,6 @@ require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
-
 require('../lib/autorefresh.ext');
 
 // const jsonlint = require('jsonlint');
@@ -29,10 +28,7 @@ export default class TechFolioEditor extends React.Component {
     this.saveFile = this.saveFile.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
-
-    window.JSHINT = JSHINT; // eslint-disable-line
-    window.jsonlint = jsonlint; // eslint-disable-line
-
+    window.JSHINT = JSHINT;  // eslint-disable-line
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
@@ -49,9 +45,10 @@ export default class TechFolioEditor extends React.Component {
       extraKeys,
     };
     if (this.mode === 'application/json') {
-      this.options.gutters = ['CodeMirror-lint-markers'];
-      this.options.lint = true;
+      window.jsonlint = jsonlint; // eslint-disable-line
     }
+    this.options.gutters = ['CodeMirror-lint-markers'];
+    this.options.lint = true;
   }
 
   onBeforeChange(editor, data, value) {
@@ -69,17 +66,25 @@ export default class TechFolioEditor extends React.Component {
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
+      const lines = this.state.value.split('\n');
+      let endCount = 0;
+      const yamlLines = [];
+      let yamlString = '';
+      let markdownLines;
+
       if (err) {
         throw err;
       } else {
-        try {
-          jsonlint.parse(this.state.value);
-        } catch (e) {
-          notifier.notify({
-            title: 'JSON IS NOT IN VALID FORMAT!',
-            message: 'There is at least one JSON Error!!!',
-          });
-          console.log(e);
+        if (this.mode === 'application/json') {
+          try {
+            jsonlint.parse(this.state.value);
+          } catch (e) {
+            notifier.notify({
+              title: 'JSON IS NOT IN VALID FORMAT!',
+              message: 'There is at least one JSON Error!!!',
+            });
+          }
+        } else {
         }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
