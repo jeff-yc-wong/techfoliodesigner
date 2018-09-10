@@ -5,6 +5,7 @@ import path from 'path';
 //import { Controlled as CodeMirror } from 'react-codemirror2';
 import CodeMirror from 'CodeMirror';
 import CodeMirrorSpellChecker from 'codemirror-spell-checker';
+import SimpleMDE from 'react-simplemde-editor';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
@@ -19,6 +20,7 @@ require('codemirror/mode/markdown/markdown');
 require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
 require('codemirror/addon/mode/overlay.js');
+//require('simplemde/dist/simplemde.min.css');
 
 require('../lib/autorefresh.ext');
 
@@ -57,16 +59,6 @@ export default class TechFolioEditor extends React.Component {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
-
-    CodeMirrorSpellChecker({
-      codeMirrorInstance: CodeMirror,
-    });
-
-    let techFolioCM = CodeMirror(document.body, {
-      value: this.state.value,
-      mode:  this.mode,
-      backdrop: "gfm"
-    });
 
   }
 
@@ -107,7 +99,9 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-
+        <SimpleMDE onChange={this.handleChange}
+        value={this.state.value}
+        />
       </div>
     );
   }
