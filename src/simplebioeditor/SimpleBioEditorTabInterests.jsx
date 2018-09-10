@@ -35,13 +35,15 @@ export default class SimpleBioEditorTabInterests extends React.Component {
     const newKeywords1 = _.compact([keywords1a, keywords1b, keywords1c]);
     const entry1 = name1 && {
       name: name1,
-      keywords: bio.interests[0].keywords.splice(0, bio.interests[0].keywords.length, ...newKeywords1),
+      keywords: (bio.interests[0] ?
+          bio.interests[0].keywords.splice(0, bio.interests[0].keywords.length, ...newKeywords1) : newKeywords1),
     };
     entries.push(entry1);
     const newKeywords2 = _.compact([keywords2a, keywords2b, keywords2c]);
     const entry2 = name2 && {
       name: name2,
-      keywords: bio.interests[1].keywords.splice(0, bio.interests[1].keywords.length, ...newKeywords2),
+      keywords: (bio.interests[1] ?
+          bio.interests[1].keywords.splice(0, bio.interests[1].keywords.length, ...newKeywords2) : newKeywords2),
     };
     entries.push(entry2);
     for (let i = 0; i < entries.length; i += 1) {

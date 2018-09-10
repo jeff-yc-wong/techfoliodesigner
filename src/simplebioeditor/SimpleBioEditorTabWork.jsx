@@ -64,7 +64,8 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate1,
       endDate: endDate1,
       summary: summary1,
-      highlights: bio.work[0].highlights.splice(0, bio.work[0].highlights.length, ...newHighlights1),
+      highlights: (bio.work[0] ?
+          bio.work[0].highlights.splice(0, bio.work[0].highlights.length, ...newHighlights1) : newHighlights1),
     };
     entries.push(entry1);
     const newHighlights2 = _.compact([highlights2a, highlights2b, highlights2c]);
@@ -75,7 +76,8 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate2,
       endDate: endDate2,
       summary: summary2,
-      highlights: bio.work[1].highlights.splice(0, bio.work[1].highlights.length, ...newHighlights2),
+      highlights: (bio.work[1] ?
+          bio.work[1].highlights.splice(0, bio.work[1].highlights.length, ...newHighlights2) : newHighlights2),
     };
     entries.push(entry2);
     const newHighlights3 = _.compact([highlights3a, highlights3b, highlights3c]);
@@ -86,7 +88,8 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate3,
       endDate: endDate3,
       summary: summary3,
-      highlights: bio.work[2].highlights.splice(0, bio.work[2].highlights.length, ...newHighlights3),
+      highlights: (bio.work[2] ?
+          bio.work[2].highlights.splice(0, bio.work[2].highlights.length, ...newHighlights3) : newHighlights3),
     };
     entries.push(entry3);
     for (let i = 0; i < entries.length; i += 1) {

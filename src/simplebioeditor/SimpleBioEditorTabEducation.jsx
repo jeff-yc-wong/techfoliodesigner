@@ -45,7 +45,8 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       area: area1,
       studyType: studyType1,
       endDate: endDate1,
-      courses: bio.education[0].courses.splice(0, bio.education[0].courses.length, ...newCourses1),
+      courses: (bio.education[0] ?
+          bio.education[0].courses.splice(0, bio.education[0].courses.length, ...newCourses1) : newCourses1),
     };
     entries.push(entry1);
     const newCourses2 = _.compact([courses2a, courses2b, courses2c]);
@@ -54,7 +55,8 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       area: area2,
       studyType: studyType2,
       endDate: endDate2,
-      courses: bio.education[1].courses.splice(0, bio.education[1].courses.length, ...newCourses2),
+      courses: (bio.education[1] ?
+          bio.education[1].courses.splice(0, bio.education[1].courses.length, ...newCourses2) : newCourses2),
     };
     entries.push(entry2);
     for (let i = 0; i < entries.length; i += 1) {
