@@ -8,6 +8,10 @@ import { JSHINT } from 'jshint';
 
 const fs = require('fs');
 const notifier = require('node-notifier');
+const yamlFront = require('yaml-front-matter');
+const report = require('vfile-reporter');
+const remark = require('remark');
+const styleGuide = require('remark-preset-lint-consistent');
 
 require('codemirror/lib/codemirror.js');
 require('codemirror/mode/css/css.js');
@@ -66,12 +70,6 @@ export default class TechFolioEditor extends React.Component {
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
-      const lines = this.state.value.split('\n');
-      let endCount = 0;
-      const yamlLines = [];
-      let yamlString = '';
-      let markdownLines;
-
       if (err) {
         throw err;
       } else {
@@ -85,6 +83,39 @@ export default class TechFolioEditor extends React.Component {
             });
           }
         } else {
+          let isValidYAML = false;
+          const lines = this.state.value.split('\n');
+          if (lines[0] !== '---') {
+            notifier.notify({
+              title: 'YAML FRONT-MATTER ERROR',
+              message: 'MISSING "---" on the first line!',
+            });
+          } else {
+            for (let i = 1; i < lines.length; i++) {
+              if (lines[i].includes('---')) {
+                isValidYAML = true;
+
+                break;
+              }
+            }
+            if (isValidYAML) {
+              try {
+                const result = yamlFront.loadFront(this.state.value);
+                const file = remark().use(styleGuide).processSync(result.__content);
+                console.log(report(file));
+              } catch (e) {
+                notifier.notify({
+                  title: 'YAML FRONT-MATTER ERROR',
+                  message: e.message,
+                });
+              }
+            } else {
+              notifier.notify({
+                title: 'YAML FRONT-MATTER ERROR',
+                message: 'MISSING "---" at the end of YAML',
+              });
+            }
+          }
         }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
