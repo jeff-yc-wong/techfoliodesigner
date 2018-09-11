@@ -112,6 +112,7 @@ export default class TechFolioEditor extends React.Component {
       // console.log(readString);
       // Throws error message: Uncaught TypeError: Cannot read property 'sendText' of undefined
       // However functionality still seems to work. Unsure what the solution should be.
+      console.log('This is the value of ks', ks);
       ks.sendText(readString);
     }
     // console.log(readString);
