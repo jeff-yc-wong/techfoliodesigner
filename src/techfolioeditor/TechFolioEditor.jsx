@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-// import jsonlint from 'jsonlint';
+import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
 const fs = require('fs');
-const jsonlint = require('jsonlint');
-const { clipboard } = require('electron');
-const { ks } = require('node-key-sender');
-// const notifier = require('node-notifier');
+// const { clipboard } = require('electron');
+// const { ks } = require('node-key-sender');
+const notifier = require('node-notifier');
 
 require('codemirror/lib/codemirror.js');
 require('codemirror/mode/css/css.js');
@@ -41,11 +40,11 @@ export default class TechFolioEditor extends React.Component {
     this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
-    const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
-    const pasteKeyBinding = (process.platform === 'darwin') ? 'Cmd-V' : 'Ctrl-V';
+    // const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
+    // const pasteKeyBinding = (process.platform === 'darwin') ? 'Cmd-V' : 'Ctrl-V';
     extraKeys[saveKeyBinding] = () => this.saveFile();
-    extraKeys[copyKeyBinding] = () => this.copy();
-    extraKeys[pasteKeyBinding] = () => this.paste();
+    // extraKeys[copyKeyBinding] = () => this.copy();
+    // extraKeys[pasteKeyBinding] = () => this.paste();
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -70,10 +69,6 @@ export default class TechFolioEditor extends React.Component {
   setWindowTitle() {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
   }
-
-  // saveFile() {
-  //   console.log('saveFile called');
-  // }
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
@@ -83,10 +78,10 @@ export default class TechFolioEditor extends React.Component {
         try {
           jsonlint.parse(this.state.value);
         } catch (e) {
-          // notifier.notify({
-          //   title: 'JSON IS NOT IN VALID FORMAT!',
-          //   message: 'There is at least one JSON Error!!!',
-          // });
+          notifier.notify({
+            title: 'JSON IS NOT IN VALID FORMAT!',
+            message: 'There is at least one JSON Error!!!',
+          });
           console.log(e);
         }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
@@ -96,28 +91,28 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
-  copy() {  // eslint-disable-line
-    console.log('copy called');
-    // Disable eslint here, I know window is defined even though eslint says it isn't
-    if (window.getSelection()) { // eslint-disable-line
-      const selectedText = window.getSelection().toString(); // eslint-disable-line
-      clipboard.writeText(selectedText);
-    }
-  }
-
-  paste() { // eslint-disable-line
-    console.log('paste called');
-    if (window.getSelection()) { // eslint-disable-line
-      const readString = clipboard.readText();
-      // console.log(readString);
-      // Throws error message: Uncaught TypeError: Cannot read property 'sendText' of undefined
-      // However functionality still seems to work. Unsure what the solution should be.
-      console.log('This is the value of ks', ks);
-      ks.sendText(readString);
-    }
-    // console.log(readString);
-    // clipboardy.readSync();
-  }
+  // copy() {  // eslint-disable-line
+  //   console.log('copy called');
+  //   // Disable eslint here, I know window is defined even though eslint says it isn't
+  //   if (window.getSelection()) { // eslint-disable-line
+  //     const selectedText = window.getSelection().toString(); // eslint-disable-line
+  //     clipboard.writeText(selectedText);
+  //   }
+  // }
+  //
+  // paste() { // eslint-disable-line
+  //   console.log('paste called');
+  //   if (window.getSelection()) { // eslint-disable-line
+  //     const readString = clipboard.readText();
+  //     // console.log(readString);
+  //     // Throws error message: Uncaught TypeError: Cannot read property 'sendText' of undefined
+  //     // However functionality still seems to work. Unsure what the solution should be.
+  //     console.log('This is the value of ks', ks);
+  //     ks.sendText(readString);
+  //   }
+  //   // console.log(readString);
+  //   // clipboardy.readSync();
+  // }
 
   render() {
     return (
