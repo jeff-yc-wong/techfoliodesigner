@@ -31,17 +31,22 @@ export default class SimpleBioEditorTabInterests extends React.Component {
   submit(data) {
     const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
+    const entries = [];
+    const newKeywords1 = _.compact([keywords1a, keywords1b, keywords1c]);
     const entry1 = name1 && {
       name: name1,
-      keywords: _.compact([keywords1a, keywords1b, keywords1c]),
+      keywords: bio.interests[0].keywords.splice(0, bio.interests[0].keywords.length, ...newKeywords1),
     };
+    entries.push(entry1);
+    const newKeywords2 = _.compact([keywords2a, keywords2b, keywords2c]);
     const entry2 = name2 && {
       name: name2,
-      keywords: _.compact([keywords2a, keywords2b, keywords2c]),
+      keywords: bio.interests[1].keywords.splice(0, bio.interests[1].keywords.length, ...newKeywords2),
     };
-
-    bio.interests = updateArray(bio.interests, entry1, 0);
-    bio.interests = updateArray(bio.interests, entry2, 1);
+    entries.push(entry2);
+    for (let i = 0; i < entries.length; i += 1) {
+      bio.interests = updateArray(bio.interests, entries[i], i);
+    }
     writeBioFile(this.props.directory, bio, 'Updated interests section of bio.');
     this.props.handleBioChange(bio);
   }
