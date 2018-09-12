@@ -56,14 +56,15 @@ function buildEditmenu(template) {
   const editSubMenu = [
     {
       label: 'Undo',
-      // click: () => 'undo:',
+      click: () => Menu.webContents.undo(),
       accelerator: 'CmdOrCtrl+Z',
-      role: 'undo:',
+      role: 'undo',
     },
     {
       label: 'Redo',
+      click: () => Menu.webContents.redo(),
       accelerator: 'Shift+CmdOrCtrl+Z',
-      role: 'redo:',
+      role: 'redo',
     },
     {
       type: 'separator',
@@ -71,22 +72,23 @@ function buildEditmenu(template) {
     {
       label: 'Cut',
       accelerator: 'CmdOrCtrl+X',
-      role: 'cut:',
+      role: 'cut',
     },
     {
       label: 'Copy',
       accelerator: 'CmdOrCtrl+C',
-      role: 'copy:',
+      role: 'copy',
     },
     {
       label: 'Paste',
       accelerator: 'CmdOrCtrl+V',
-      role: 'paste:',
+      role: 'paste',
     },
     {
       label: 'Select All',
+      click: () => Menu.webContents.selectAll(),
       accelerator: 'CmdOrCtrl+A',
-      role: 'selectAll:',
+      role: 'selectAll',
     },
   ];
   template[indexOfMenuItem(template, 'Edit')].submenu = editSubMenu;
