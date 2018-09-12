@@ -25,8 +25,8 @@ export default class TechFolioEditor extends React.Component {
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
-    this.copy = this.copy.bind(this);
-    this.paste = this.paste.bind(this);
+    // this.copy = this.copy.bind(this);
+    // this.paste = this.paste.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
 
