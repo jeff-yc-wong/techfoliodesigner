@@ -36,25 +36,31 @@ export default class SimpleBioEditorTabActivities extends React.Component {
       highlights1c, highlights2a, highlights2b, highlights2c,
     } = data;
     const bio = this.props.bio;
+    const volunteer = this.props.bio.volunteer;
     const entries = [];
-    const newHighlights1 = _.compact([highlights1a, highlights1b, highlights1c]);
+    let newHighlights1 = [highlights1a, highlights1b, highlights1c];
+    if (bio.volunteer[0]) {
+      volunteer[0].highlights.splice(0, newHighlights1.length, ...newHighlights1);
+      newHighlights1 = volunteer[0].highlights;
+    }
     const entry1 = organization1 && {
       organization: organization1,
       position: position1,
       summary: summary1,
-      highlights: (bio.volunteer[0] ?
-          bio.volunteer[0].highlights.splice(0, bio.volunteer[0].highlights.length, ...newHighlights1) :
-          newHighlights1),
+      highlights: _.compact(newHighlights1),
     };
     entries.push(entry1);
-    const newHighlights2 = _.compact([highlights2a, highlights2b, highlights2c]);
+
+    let newHighlights2 = [highlights2a, highlights2b, highlights2c];
+    if (bio.volunteer[1]) {
+      volunteer[1].highlights.splice(0, newHighlights2.length, ...newHighlights2);
+      newHighlights2 = volunteer[1].highlights;
+    }
     const entry2 = organization2 && {
       organization: organization2,
       position: position2,
       summary: summary2,
-      highlights: (bio.volunteer[1] ?
-          bio.volunteer[1].highlights.splice(0, bio.volunteer[1].highlights.length, ...newHighlights2) :
-          newHighlights2),
+      highlights: _.compact(newHighlights2),
     };
     entries.push(entry2);
     for (let i = 0; i < entries.length; i += 1) {
