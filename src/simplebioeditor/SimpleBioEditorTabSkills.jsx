@@ -46,7 +46,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
 
     let newKeywords2 = [keywords2a, keywords2b, keywords2c];
     if (bio.skills[1]) {
-      skills[1].keywords.splice(0, newKeywords1.length, ...newKeywords1);
+      skills[1].keywords.splice(0, newKeywords2.length, ...newKeywords2);
       newKeywords2 = skills[1].keywords;
     }
     const entry2 = name2 && {
