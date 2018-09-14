@@ -9,9 +9,29 @@ import { JSHINT } from 'jshint';
 const fs = require('fs');
 const notifier = require('node-notifier');
 const yamlFront = require('yaml-front-matter');
-const report = require('vfile-reporter');
-const remark = require('remark');
-const styleGuide = require('remark-preset-lint-consistent');
+const markdownlint = require('markdownlint');
+
+const mdLintOptions = {
+  'strings': { // eslint-disable-line
+    'mdString': '', // eslint-disable-line
+  },
+};
+
+function markerMaker(message) {
+  // {/*<div className="ui icon button" data-content="Add users to your feed">*/}
+  //   {/*<i className="add icon"></i>*/}
+  // {/*</div>*/}
+  let markerElt = document.createElement('div'); // eslint-disable-line
+  let markerError = document.createElement('div'); // eslint-disable-line
+  let markerMessage = document.createTextNode(message); // eslint-disable-line
+
+  markerElt.className = 'CodeMirror-gutter-elt';
+  markerError.className = 'CodeMirror-lint-marker-error';
+  markerElt.appendChild(markerError);
+  // markerError.appendChild(markerMessage);
+  console.log(message);
+  return markerElt;
+}
 
 require('codemirror/lib/codemirror.js');
 require('codemirror/mode/css/css.js');
@@ -22,11 +42,10 @@ require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
 require('../lib/autorefresh.ext');
 
-// const jsonlint = require('jsonlint');
-
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
     super(props);
+    this.instance = null;
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
@@ -51,7 +70,7 @@ export default class TechFolioEditor extends React.Component {
     if (this.mode === 'application/json') {
       window.jsonlint = jsonlint; // eslint-disable-line
     }
-    this.options.gutters = ['CodeMirror-lint-markers'];
+    this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
   }
 
@@ -69,6 +88,9 @@ export default class TechFolioEditor extends React.Component {
 
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
+    let notifierTitle = '';
+    let notifierMessage = '';
+
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
@@ -83,40 +105,63 @@ export default class TechFolioEditor extends React.Component {
             });
           }
         } else {
+          this.instance.clearGutter('CodeMirror-lint-markers');
           let isValidYAML = false;
           const lines = this.state.value.split('\n');
           if (lines[0] !== '---') {
-            notifier.notify({
-              title: 'YAML FRONT-MATTER ERROR',
-              message: 'MISSING "---" on the first line!',
-            });
+            this.instance.setGutterMarker(0,
+                'CodeMirror-lint-markers',
+                markerMaker('MISSING "---" on the first line!'));
           } else {
-            for (let i = 1; i < lines.length; i++) {
-              if (lines[i].includes('---')) {
+            for (let line = 1; line < lines.length; line += 1) {
+              if (lines[line].includes('---')) {
                 isValidYAML = true;
-
+                break;
+              }
+              if (lines[line] === '--') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker('MISSING "---" on the first line!'));
+                break;
+              }
+              if (lines[line] === '-') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker('MISSING "---" on the first line!'));
                 break;
               }
             }
             if (isValidYAML) {
+              var yamlResult;
               try {
-                const result = yamlFront.loadFront(this.state.value);
-                const file = remark().use(styleGuide).processSync(result.__content);
-                console.log(report(file));
+                yamlResult = yamlFront.loadFront(this.state.value);
+                mdLintOptions.strings.mdString = this.state.value;
+                const mdResult = markdownlint.sync(mdLintOptions);
+                if (mdResult.mdString.length === 0) {
+                  console.log('NO ERRORS');
+                } else {
+                  for (let i = 0; i < mdResult.mdString.length; i += 1) {
+                    this.instance.setGutterMarker(
+                        mdResult.mdString[i].lineNumber - 1,
+                        'CodeMirror-lint-markers',
+                        markerMaker(mdResult.mdString[i].errorDetail));
+                  }
+                }
               } catch (e) {
-                notifier.notify({
-                  title: 'YAML FRONT-MATTER ERROR',
-                  message: e.message,
-                });
+                this.instance.setGutterMarker(e.mark.line,
+                    'CodeMirror-lint-markers',
+                    markerMaker(e.message));
               }
             } else {
-              notifier.notify({
-                title: 'YAML FRONT-MATTER ERROR',
-                message: 'MISSING "---" at the end of YAML',
-              });
+              notifierTitle = 'YAML FRONT-MATTER ERROR';
+              notifierMessage = 'MISSING "---" at the end of YAML';
             }
           }
         }
+        notifier.notify({
+          title: notifierTitle,
+          message: notifierMessage,
+        });
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
@@ -127,7 +172,7 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} />
+        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} editorDidMount={(editor) => {  this.instance = editor; }} />
       </div>
     );
   }
