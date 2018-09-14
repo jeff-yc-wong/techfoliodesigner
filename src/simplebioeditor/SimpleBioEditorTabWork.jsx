@@ -55,6 +55,8 @@ export default class SimpleBioEditorTabWork extends React.Component {
       highlights3a, highlights3b, highlights3c,
     } = data;
     const bio = this.props.bio;
+    const entries = [];
+    const newHighlights1 = _.compact([highlights1a, highlights1b, highlights1c]);
     const entry1 = company1 && {
       company: company1,
       position: position1,
@@ -62,8 +64,10 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate1,
       endDate: endDate1,
       summary: summary1,
-      highlights: _.compact([highlights1a, highlights1b, highlights1c]),
+      highlights: bio.work[0].highlights.splice(0, bio.work[0].highlights.length, ...newHighlights1),
     };
+    entries.push(entry1);
+    const newHighlights2 = _.compact([highlights2a, highlights2b, highlights2c]);
     const entry2 = company2 && {
       company: company2,
       position: position2,
@@ -71,8 +75,10 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate2,
       endDate: endDate2,
       summary: summary2,
-      highlights: _.compact([highlights2a, highlights2b, highlights2c]),
+      highlights: bio.work[1].highlights.splice(0, bio.work[1].highlights.length, ...newHighlights2),
     };
+    entries.push(entry2);
+    const newHighlights3 = _.compact([highlights3a, highlights3b, highlights3c]);
     const entry3 = company3 && {
       company: company3,
       position: position3,
@@ -80,12 +86,12 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate3,
       endDate: endDate3,
       summary: summary3,
-      highlights: _.compact([highlights3a, highlights3b, highlights3c]),
+      highlights: bio.work[2].highlights.splice(0, bio.work[2].highlights.length, ...newHighlights3),
     };
-
-    bio.work = updateArray(bio.work, entry1, 0);
-    bio.work = updateArray(bio.work, entry2, 1);
-    bio.work = updateArray(bio.work, entry3, 2);
+    entries.push(entry3);
+    for (let i = 0; i < entries.length; i += 1) {
+      bio.work = updateArray(bio.work, entries[i], i);
+    }
     writeBioFile(this.props.directory, bio, 'Updated work section of bio.');
     this.props.handleBioChange(bio);
   }

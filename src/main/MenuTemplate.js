@@ -40,6 +40,10 @@ export default function makeMenuTemplate() {
       ],
     },
     {
+      label: 'Edit',
+      submenu: [],
+    },
+    {
       label: 'Config',
       submenu: [],
     },
