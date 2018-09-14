@@ -55,13 +55,13 @@ function buildConfigMenu(template) {
 function buildEditmenu(template) {
   const editSubMenu = [
     {
-      label: 'Undo',
+      label: 'Undo (broken)',
       click: () => Menu.webContents.undo(),
       accelerator: 'CmdOrCtrl+Z',
       role: 'undo',
     },
     {
-      label: 'Redo',
+      label: 'Redo (broken)',
       click: () => Menu.webContents.redo(),
       accelerator: 'Shift+CmdOrCtrl+Z',
       role: 'redo',
@@ -85,7 +85,7 @@ function buildEditmenu(template) {
       role: 'paste',
     },
     {
-      label: 'Select All',
+      label: 'Select All (broken)',
       click: () => Menu.webContents.selectAll(),
       accelerator: 'CmdOrCtrl+A',
       role: 'selectAll',
