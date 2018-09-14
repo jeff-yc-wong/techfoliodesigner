@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+// import fs from 'fs-extra';
+import SimpleMDE from 'react-simplemde-editor';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
@@ -10,13 +11,8 @@ const fs = require('fs');
 // const { ks } = require('node-key-sender');
 const notifier = require('node-notifier');
 
-require('codemirror/lib/codemirror.js');
-require('codemirror/mode/css/css.js');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/mode/xml/xml');
-require('codemirror/mode/markdown/markdown');
-require('codemirror/addon/lint/lint');
-require('codemirror/addon/lint/json-lint');
+//require('simplemde/dist/simplemde.min.css');
+
 require('../lib/autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
@@ -52,10 +48,12 @@ export default class TechFolioEditor extends React.Component {
       autoRefresh: { force: true },
       extraKeys,
     };
+
     if (this.mode === 'application/json') {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
+
   }
 
   onBeforeChange(editor, data, value) {
@@ -117,7 +115,7 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} />
+        <SimpleMDE onChange={this.handleChange} value={this.state.value}/>
       </div>
     );
   }
