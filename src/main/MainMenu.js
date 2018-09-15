@@ -6,6 +6,9 @@ import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindo
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
+import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
+
+const fs = require('file-system');
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -19,6 +22,33 @@ function processInvalidDirectory(template, techFolioFiles) {
   template[indexOfMenuItem(template, 'Bio')].submenu = [];
   template[indexOfMenuItem(template, 'Projects')].submenu = [];
   template[indexOfMenuItem(template, 'Essays')].submenu = [];
+}
+
+/** Prompts the user to select an image to import then moves that image to their local repo's /images/ folder. */
+function importImage() {
+  dialog.showOpenDialog({
+    title: 'Select an image',
+    properties: ['openFile'],
+  }, (fullPath) => {
+    const imageName = fullPath[0].split('\\').pop().split('/').pop(); // convert fullPath to just imageName
+    dialog.showErrorBox('title', techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`));
+    if (fullPath === undefined) {
+      dialog.showErrorBox('Error', 'No image selected');
+    } else {
+      fs.copyFile(fullPath[0], techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`), {
+        done(err) {
+          if (err) {
+            dialog.showErrorBox('Error', err);
+          } else {
+            dialog.showMessageBox({
+              title: 'Done',
+              message: 'Image has been imported',
+            });
+          }
+        },
+      });
+    }
+  });
 }
 
 function buildProjectsMenu(template, techFolioFiles) {
@@ -52,7 +82,7 @@ function buildConfigMenu(template) {
   template[indexOfMenuItem(template, 'Config')].submenu = buildConfigSubMenu();
 }
 
-function buildEditmenu(template) {
+function buildEditMenu(template) {
   const editSubMenu = [
     {
       label: 'Undo (broken)',
@@ -94,13 +124,31 @@ function buildEditmenu(template) {
   template[indexOfMenuItem(template, 'Edit')].submenu = editSubMenu;
 }
 
+function buildImagesMenu(template) {
+  const imagesSubMenu = [
+    {
+      label: 'Import Image',
+      click: importImage,
+    },
+    {
+      label: 'Remove Image',
+    },
+    {
+      label: 'Crop Image',
+    },
+  ];
+  template[indexOfMenuItem(template, 'Images')].submenu = imagesSubMenu;
+}
+
+
 /**
  * Builds (or rebuilds) the application menu based upon the current state of the application.
  */
 function buildMainMenu() {
   const template = makeMenuTemplate();
-  buildEditmenu(template);
+  buildEditMenu(template);
   buildConfigMenu(template);
+  buildImagesMenu(template);
   const directory = mainStore.getState().dir;
   if (directory) {
     const techFolioFiles = new TechFolioFiles(directory);
