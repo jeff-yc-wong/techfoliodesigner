@@ -38,23 +38,33 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       courses1c, courses2a, courses2b, courses2c,
     } = data;
     const bio = this.props.bio;
+    const education = this.props.bio.education;
     const entries = [];
-    const newCourses1 = _.compact([courses1a, courses1b, courses1c]);
+    let newCourses1 = [courses1a, courses1b, courses1c];
+    if (bio.education[0]) {
+      education[0].courses.splice(0, newCourses1.length, ...newCourses1);
+      newCourses1 = education[0].courses;
+    }
     const entry1 = institution1 && {
       institution: institution1,
       area: area1,
       studyType: studyType1,
       endDate: endDate1,
-      courses: bio.education[0].courses.splice(0, bio.education[0].courses.length, ...newCourses1),
+      courses: _.compact(newCourses1),
     };
     entries.push(entry1);
-    const newCourses2 = _.compact([courses2a, courses2b, courses2c]);
+
+    let newCourses2 = [courses2a, courses2b, courses2c];
+    if (bio.education[1]) {
+      education[1].courses.splice(0, newCourses2.length, ...newCourses2);
+      newCourses2 = education[1].courses;
+    }
     const entry2 = institution2 && {
       institution: institution2,
       area: area2,
       studyType: studyType2,
       endDate: endDate2,
-      courses: bio.education[1].courses.splice(0, bio.education[1].courses.length, ...newCourses2),
+      courses: _.compact(newCourses2),
     };
     entries.push(entry2);
     for (let i = 0; i < entries.length; i += 1) {

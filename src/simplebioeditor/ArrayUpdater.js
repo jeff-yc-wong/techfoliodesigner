@@ -26,7 +26,7 @@ export default function updateArray(arr, element, position) {
   }
   // If position exists, replace it with element. Otherwise just push it onto end of array.
   if (updatedArray.length > position) {
-    updatedArray[position] = element;
+    updatedArray[position] = element; // Object.assign(arr[position], element);
   } else {
     updatedArray.push(element);
   }

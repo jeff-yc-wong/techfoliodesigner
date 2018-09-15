@@ -55,8 +55,13 @@ export default class SimpleBioEditorTabWork extends React.Component {
       highlights3a, highlights3b, highlights3c,
     } = data;
     const bio = this.props.bio;
+    const work = this.props.bio.work;
     const entries = [];
-    const newHighlights1 = _.compact([highlights1a, highlights1b, highlights1c]);
+    let newHighlights1 = [highlights1a, highlights1b, highlights1c];
+    if (bio.work[0]) {
+      work[0].highlights.splice(0, newHighlights1.length, ...newHighlights1);
+      newHighlights1 = work[0].highlights;
+    }
     const entry1 = company1 && {
       company: company1,
       position: position1,
@@ -64,10 +69,15 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate1,
       endDate: endDate1,
       summary: summary1,
-      highlights: bio.work[0].highlights.splice(0, bio.work[0].highlights.length, ...newHighlights1),
+      highlights: _.compact(newHighlights1),
     };
     entries.push(entry1);
-    const newHighlights2 = _.compact([highlights2a, highlights2b, highlights2c]);
+
+    let newHighlights2 = [highlights2a, highlights2b, highlights2c];
+    if (bio.work[1]) {
+      work[1].highlights.splice(0, newHighlights2.length, ...newHighlights2);
+      newHighlights2 = work[1].highlights;
+    }
     const entry2 = company2 && {
       company: company2,
       position: position2,
@@ -75,10 +85,15 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate2,
       endDate: endDate2,
       summary: summary2,
-      highlights: bio.work[1].highlights.splice(0, bio.work[1].highlights.length, ...newHighlights2),
+      highlights: _.compact(newHighlights2),
     };
     entries.push(entry2);
-    const newHighlights3 = _.compact([highlights3a, highlights3b, highlights3c]);
+
+    let newHighlights3 = [highlights3a, highlights3b, highlights3c];
+    if (bio.work[2]) {
+      work[2].highlights.splice(0, newHighlights3.length, ...newHighlights3);
+      newHighlights3 = work[2].highlights;
+    }
     const entry3 = company3 && {
       company: company3,
       position: position3,
@@ -86,7 +101,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate3,
       endDate: endDate3,
       summary: summary3,
-      highlights: bio.work[2].highlights.splice(0, bio.work[2].highlights.length, ...newHighlights3),
+      highlights: _.compact(newHighlights3),
     };
     entries.push(entry3);
     for (let i = 0; i < entries.length; i += 1) {

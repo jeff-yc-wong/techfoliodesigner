@@ -31,17 +31,27 @@ export default class SimpleBioEditorTabInterests extends React.Component {
   submit(data) {
     const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
+    const interests = this.props.bio.interests;
     const entries = [];
-    const newKeywords1 = _.compact([keywords1a, keywords1b, keywords1c]);
+    let newKeywords1 = [keywords1a, keywords1b, keywords1c];
+    if (bio.interests[0]) {
+      interests[0].keywords.splice(0, newKeywords1.length, ...newKeywords1);
+      newKeywords1 = interests[0].keywords;
+    }
     const entry1 = name1 && {
       name: name1,
-      keywords: bio.interests[0].keywords.splice(0, bio.interests[0].keywords.length, ...newKeywords1),
+      keywords: _.compact(newKeywords1),
     };
     entries.push(entry1);
-    const newKeywords2 = _.compact([keywords2a, keywords2b, keywords2c]);
+
+    let newKeywords2 = [keywords2a, keywords2b, keywords2c];
+    if (bio.interests[1]) {
+      interests[1].keywords.splice(0, newKeywords2.length, ...newKeywords2);
+      newKeywords2 = interests[1].keywords;
+    }
     const entry2 = name2 && {
       name: name2,
-      keywords: bio.interests[1].keywords.splice(0, bio.interests[1].keywords.length, ...newKeywords2),
+      keywords: _.compact(newKeywords2),
     };
     entries.push(entry2);
     for (let i = 0; i < entries.length; i += 1) {
