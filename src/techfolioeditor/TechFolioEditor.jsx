@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+import SimpleMDE from 'react-simplemde-editor';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
@@ -169,11 +170,21 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} editorDidMount={(editor) => {  this.instance = editor; }} />
-      </div>
-    );
+    switch(this.mode) {
+      case "markdown":
+      return (
+        <div>
+          <SimpleMDE onChange={this.handleChange} value={this.state.value}/>
+        </div>
+      );
+
+      default:
+      return (
+        <div>
+          <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} editorDidMount={(editor) => {  this.instance = editor; }} />
+        </div>
+      );
+    }
   }
 }
 
