@@ -6,6 +6,7 @@ import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Grid } from 'semantic-ui-react';
+import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
 
@@ -30,12 +31,22 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     const
       { network1, network2, network3, username1, username2, username3, url1, url2, url3 } = data;
     const bio = this.props.bio;
+    const entries = [];
     const entry1 = network1 && { network: network1, username: username1, url: url1 };
+    entries.push(entry1);
     const entry2 = network2 && { network: network2, username: username2, url: url2 };
+    entries.push(entry2);
     const entry3 = network3 && { network: network3, username: username3, url: url3 };
-    bio.basics.profiles = updateArray(bio.basics.profiles, entry1, 0);
-    bio.basics.profiles = updateArray(bio.basics.profiles, entry2, 1);
-    bio.basics.profiles = updateArray(bio.basics.profiles, entry3, 2);
+    entries.push(entry3);
+
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.basics.profiles = updateArray(bio.basics.profiles, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
+    }
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.props.handleBioChange(bio);
   }

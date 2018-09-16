@@ -38,12 +38,12 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     bio.basics.email = email || '';
     bio.basics.website = website || '';
     bio.basics.summary = summary || '';
-    if (phone) bio.basics.phone = phone;
-    if (address && bio.basics.location) bio.basics.location.address = address;
-    if (postalCode && bio.basics.location) bio.basics.location.postalCode = postalCode;
-    if (city && bio.basics.location) bio.basics.location.city = city;
-    if (region && bio.basics.location) bio.basics.location.region = region;
-    if (countryCode && bio.basics.location) bio.basics.location.countryCode = countryCode;
+    if (bio.basics.phone) bio.basics.phone = phone;
+    if (bio.basics.location) bio.basics.location.address = address;
+    if (bio.basics.location) bio.basics.location.postalCode = postalCode;
+    if (bio.basics.location) bio.basics.location.city = city;
+    if (bio.basics.location) bio.basics.location.region = region;
+    if (bio.basics.location) bio.basics.location.countryCode = countryCode;
     writeBioFile(this.props.directory, bio, 'Updated basics section of bio.');
     this.props.handleBioChange(bio);
   }

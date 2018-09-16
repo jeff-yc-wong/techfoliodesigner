@@ -54,8 +54,13 @@ export default class SimpleBioEditorTabSkills extends React.Component {
       keywords: _.compact(newKeywords2),
     };
     entries.push(entry2);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.skills = updateArray(bio.skills, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.skills = updateArray(bio.skills, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated skills section of bio.');
     this.props.handleBioChange(bio);

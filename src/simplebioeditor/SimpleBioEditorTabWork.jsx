@@ -104,8 +104,13 @@ export default class SimpleBioEditorTabWork extends React.Component {
       highlights: _.compact(newHighlights3),
     };
     entries.push(entry3);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.work = updateArray(bio.work, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.work = updateArray(bio.work, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated work section of bio.');
     this.props.handleBioChange(bio);
