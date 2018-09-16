@@ -6,6 +6,7 @@ import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Grid } from 'semantic-ui-react';
+import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
 
@@ -38,8 +39,13 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     const entry3 = network3 && { network: network3, username: username3, url: url3 };
     entries.push(entry3);
 
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.basics.profiles = updateArray(bio.basics.profiles, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.basics.profiles = updateArray(bio.basics.profiles, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.props.handleBioChange(bio);

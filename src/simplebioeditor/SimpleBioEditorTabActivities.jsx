@@ -63,8 +63,13 @@ export default class SimpleBioEditorTabActivities extends React.Component {
       highlights: _.compact(newHighlights2),
     };
     entries.push(entry2);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.volunteer = updateArray(bio.volunteer, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.volunteer = updateArray(bio.volunteer, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated activities section of bio.');
     this.props.handleBioChange(bio);
