@@ -55,8 +55,10 @@ export default class TechFolioEditor extends React.Component {
     window.JSHINT = JSHINT;  // eslint-disable-line
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
-    this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
-      fileChangedMarker: '' };
+    this.state = {
+      value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
+      fileChangedMarker: '',
+    };
     this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
@@ -170,20 +172,34 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    switch(this.mode) {
-      case "markdown":
-      return (
-        <div>
-          <SimpleMDE onChange={this.handleChange} value={this.state.value}/>
-        </div>
-      );
-
+    switch (this.mode) {
+      case 'markdown':
+        return (
+          <div>
+            <SimpleMDE
+              onChange={this.handleChange}
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => {
+                this.instance = editor;
+              }}
+            />
+          </div>
+        );
       default:
-      return (
-        <div>
-          <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} editorDidMount={(editor) => {  this.instance = editor; }} />
-        </div>
-      );
+        return (
+          <div>
+            <CodeMirror
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => {
+                this.instance = editor;
+              }}
+            />
+          </div>
+        );
     }
   }
 }
