@@ -8,7 +8,7 @@ import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
-const fs = require('file-system');
+const fs = require('fs');
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -27,29 +27,53 @@ function processInvalidDirectory(template, techFolioFiles) {
 /** Prompts the user to select an image to import then moves that image to their local repo's /images/ folder. */
 function importImage() {
   dialog.showOpenDialog({
-    title: 'Select an image',
+    title: 'Select an Image',
     properties: ['openFile'],
   }, (fullPath) => {
+    /* This may not work on all machines, since there are a lot of different separators than just '/' */
     const imageName = fullPath[0].split('\\').pop().split('/').pop(); // convert fullPath to just imageName
-    dialog.showErrorBox('title', techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`));
     if (fullPath === undefined) {
-      dialog.showErrorBox('Error', 'No image selected');
+      dialog.showErrorBox('Error', 'No image selected.');
     } else {
-      fs.copyFile(fullPath[0], techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`), {
-        done(err) {
-          if (err) {
-            dialog.showErrorBox('Error', err);
-          } else {
-            dialog.showMessageBox({
-              title: 'Done',
-              message: 'Image has been imported',
-            });
-          }
-        },
+      fs.copyFile(fullPath[0], techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`), (err) => {
+        if (err) {
+          dialog.showErrorBox('Error', err);
+        } else {
+          dialog.showMessageBox({
+            title: 'Done',
+            message: 'Image has been imported',
+          });
+        }
       });
     }
   });
 }
+
+/** Prompts the user to select an image to remove from their local repo's /images/ folder. */
+function removeImage() {
+  dialog.showOpenDialog({
+    title: 'Select an Image',
+    properties: ['openFile'],
+    defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
+    buttonLabel: 'Remove',
+  }, (fullPath) => {
+    if (fullPath === undefined) {
+      dialog.showErrorBox('Error', 'No image selected.');
+    } else {
+      fs.unlink(fullPath[0], (err) => {
+        if (err) {
+          dialog.showErrorBox('Error', err);
+        } else {
+          dialog.showMessageBox({
+            title: 'Done',
+            message: 'Image successfully deleted',
+          });
+        }
+      });
+    }
+  });
+}
+
 
 function buildProjectsMenu(template, techFolioFiles) {
   const projectFiles = techFolioFiles.projectFileNames();
@@ -132,6 +156,7 @@ function buildImagesMenu(template) {
     },
     {
       label: 'Remove Image',
+      click: removeImage,
     },
     {
       label: 'Crop Image',
