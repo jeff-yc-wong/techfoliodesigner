@@ -11,7 +11,7 @@ const fs = require('fs');
 // const { ks } = require('node-key-sender');
 const notifier = require('node-notifier');
 
-//require('simplemde/dist/simplemde.min.css');
+// require('simplemde/dist/simplemde.min.css');
 
 require('../lib/autorefresh.ext');
 
@@ -53,7 +53,6 @@ export default class TechFolioEditor extends React.Component {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
-
   }
 
   onBeforeChange(editor, data, value) {
@@ -82,11 +81,19 @@ export default class TechFolioEditor extends React.Component {
           });
           console.log(e);
         }
+        this.tfLint();
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
       }
     });
+  }
+
+  tfLint() {
+    let bodyText = this.state.value;
+    bodyText = bodyText.split('---');
+    bodyText = bodyText.split('---');
+    console.log(bodyText);
   }
 
   // copy() {  // eslint-disable-line
@@ -115,7 +122,7 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-        <SimpleMDE onChange={this.handleChange} value={this.state.value}/>
+        <SimpleMDE onChange={this.handleChange} value={this.state.value} />
       </div>
     );
   }
