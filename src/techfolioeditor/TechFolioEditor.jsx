@@ -50,6 +50,7 @@ export default class TechFolioEditor extends React.Component {
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
     window.JSHINT = JSHINT;  // eslint-disable-line
@@ -72,6 +73,12 @@ export default class TechFolioEditor extends React.Component {
     };
     if (this.mode === 'application/json') {
       window.jsonlint = jsonlint; // eslint-disable-line
+    } else {
+      this.options = {
+        autofocus: true,
+        spellChecker: true,
+        lineWrapping: true,
+      };
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
@@ -89,11 +96,16 @@ export default class TechFolioEditor extends React.Component {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
   }
 
+  handleChange(value) {
+    this.setState({ value });
+    console.log(this);
+  }
+
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
     let notifierTitle = '';
     let notifierMessage = '';
-
+    console.log(this.state.value);
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
@@ -108,57 +120,7 @@ export default class TechFolioEditor extends React.Component {
             });
           }
         } else {
-          this.instance.clearGutter('CodeMirror-lint-markers');
-          let isValidYAML = false;
-          const lines = this.state.value.split('\n');
-          if (lines[0] !== '---') {
-            this.instance.setGutterMarker(0,
-                'CodeMirror-lint-markers',
-                markerMaker('MISSING "---" on the first line!'));
-          } else {
-            for (let line = 1; line < lines.length; line += 1) {
-              if (lines[line].includes('---')) {
-                isValidYAML = true;
-                break;
-              }
-              if (lines[line] === '--') {
-                this.instance.setGutterMarker(line,
-                    'CodeMirror-lint-markers',
-                    markerMaker('MISSING "---" on the first line!'));
-                break;
-              }
-              if (lines[line] === '-') {
-                this.instance.setGutterMarker(line,
-                    'CodeMirror-lint-markers',
-                    markerMaker('MISSING "---" on the first line!'));
-                break;
-              }
-            }
-            if (isValidYAML) {
-              try {
-                yamlFront.loadFront(this.state.value);
-                mdLintOptions.strings.mdString = this.state.value;
-                const mdResult = markdownlint.sync(mdLintOptions);
-                if (mdResult.mdString.length === 0) {
-                  console.log('NO ERRORS');
-                } else {
-                  for (let i = 0; i < mdResult.mdString.length; i += 1) {
-                    this.instance.setGutterMarker(
-                        mdResult.mdString[i].lineNumber - 1,
-                        'CodeMirror-lint-markers',
-                        markerMaker(mdResult.mdString[i].errorDetail));
-                  }
-                }
-              } catch (e) {
-                this.instance.setGutterMarker(e.mark.line,
-                    'CodeMirror-lint-markers',
-                    markerMaker(e.message));
-              }
-            } else {
-              notifierTitle = 'YAML FRONT-MATTER ERROR';
-              notifierMessage = 'MISSING "---" at the end of YAML';
-            }
-          }
+          //
         }
         notifier.notify({
           title: notifierTitle,
@@ -209,3 +171,57 @@ TechFolioEditor.propTypes = {
   fileType: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
 };
+
+/* Example Code of using CodeMirorr to validate
+this.instance.clearGutter('CodeMirror-lint-markers');
+          let isValidYAML = false;
+          const lines = this.state.value.split('\n');
+          if (lines[0] !== '---') {
+            this.instance.setGutterMarker(0,
+                'CodeMirror-lint-markers',
+                markerMaker('MISSING "---" on the first line!'));
+          } else {
+            for (let line = 1; line < lines.length; line += 1) {
+              if (lines[line].includes('---')) {
+                isValidYAML = true;
+                break;
+              }
+              if (lines[line] === '--') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker('MISSING "---" on the first line!'));
+                break;
+              }
+              if (lines[line] === '-') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker('MISSING "---" on the first line!'));
+                break;
+              }
+            }
+            if (isValidYAML) {
+              try {
+                yamlFront.loadFront(this.state.value);
+                mdLintOptions.strings.mdString = this.state.value;
+                const mdResult = markdownlint.sync(mdLintOptions);
+                if (mdResult.mdString.length === 0) {
+                  console.log('NO ERRORS');
+                } else {
+                  for (let i = 0; i < mdResult.mdString.length; i += 1) {
+                    this.instance.setGutterMarker(
+                        mdResult.mdString[i].lineNumber - 1,
+                        'CodeMirror-lint-markers',
+                        markerMaker(mdResult.mdString[i].errorDetail));
+                  }
+                }
+              } catch (e) {
+                this.instance.setGutterMarker(e.mark.line,
+                    'CodeMirror-lint-markers',
+                    markerMaker(e.message));
+              }
+            } else {
+              notifierTitle = 'YAML FRONT-MATTER ERROR';
+              notifierMessage = 'MISSING "---" at the end of YAML';
+            }
+          }
+ */
