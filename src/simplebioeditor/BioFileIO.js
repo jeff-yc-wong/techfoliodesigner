@@ -29,12 +29,9 @@ export function writeBioFile(directory, bio, msg = 'File saved') {  //eslint-dis
 
 export function removeEmptyFields(data) {
   for (let field in data) {
-    console.log(field);
     if (data[field] === null || data[field] === undefined) {
-      console.log('deleted ',field);
       delete data[field];
     } else if (data[field].length === 0) {
-      console.log('deleted 0',field);
       delete data[field];
     }
   }
