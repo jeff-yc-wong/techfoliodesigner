@@ -61,7 +61,7 @@ export default class TechFolioEditor extends React.Component {
       value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '',
     };
-    this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
+    this.mode = this.props.fileName.endsWith('.md') ? 'spell-check' : 'application/json';
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
     extraKeys[saveKeyBinding] = () => this.saveFile();
@@ -181,7 +181,8 @@ export default class TechFolioEditor extends React.Component {
     let aff_data = "";
     let dic_data = "";
     let typo;
-  	cm.defineMode("spell-checker", function(config) {
+
+  	cm.defineMode("spell-check", function(config) {
   		// Load AFF/DIC data
   		if(!aff_loading) {
   			aff_loading = true;
@@ -220,6 +221,41 @@ export default class TechFolioEditor extends React.Component {
   			};
   			xhr_dic.send(null);
   		}
+
+      // Define what separates a word
+      var rx_word = "!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ";
+
+
+      // Create the overlay and such
+      var overlay = {
+        token: function(stream) {
+          var ch = stream.peek();
+          var word = "";
+
+          if(rx_word.includes(ch)) {
+            stream.next();
+            return null;
+          }
+
+          while((ch = stream.peek()) != null && !rx_word.includes(ch)) {
+            word += ch;
+            stream.next();
+          }
+
+          if(typo && !typo.check(word)) {
+            console.log(word);
+            return "spell-error"; // CSS class: cm-spell-error
+          }
+
+          return null;
+        }
+      };
+
+      var mode = cm.getMode(
+        config, config.backdrop || 'markdown'
+      );
+      //console.log(mode);
+      return cm.overlayMode(mode, overlay, true);
   	});
   }
 
