@@ -9,6 +9,9 @@ const fs = require('fs');
  * @param bio An object containing the bio.json data.
  */
 export function writeBioFile(directory, bio, msg = 'File saved') {  //eslint-disable-line
+  // Removes fields that are blank from the bio.json object before they are written to disk
+  removeEmptyFields(bio);
+
   const fileType = '_data';
   const fileName = 'bio.json';
   const filePath = path.join(directory, fileType, fileName);
@@ -22,6 +25,19 @@ export function writeBioFile(directory, bio, msg = 'File saved') {  //eslint-dis
       Notify.requestPermission(() => notification.show(), () => console.log('notification denied')); // eslint-disable-line
     }
   });
+}
+
+export function removeEmptyFields(data) {
+  for (let field in data) {
+    console.log(field);
+    if (data[field] === null || data[field] === undefined) {
+      console.log('deleted ',field);
+      delete data[field];
+    } else if (data[field].length === 0) {
+      console.log('deleted 0',field);
+      delete data[field];
+    }
+  }
 }
 
 // /**
