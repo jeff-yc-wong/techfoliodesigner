@@ -34,7 +34,9 @@ export default class SimpleBioEditorTabInterests extends React.Component {
   submit(data) {
     const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
-    bio.interests = [];
+    if(bio.interests === undefined) {
+      bio.interests = []
+    }
     const interests = this.props.bio.interests;
     const entries = [];
     let newKeywords1 = [keywords1a, keywords1b, keywords1c];
