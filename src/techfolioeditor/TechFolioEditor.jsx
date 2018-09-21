@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
+import cm from 'codemirror';
 import SimpleMDE from 'react-simplemde-editor';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
+const Typo = require('typo-js');
 const fs = require('fs');
 const notifier = require('node-notifier');
 const yamlFront = require('yaml-front-matter');
@@ -169,6 +171,56 @@ export default class TechFolioEditor extends React.Component {
         this.setWindowTitle();
       }
     });
+  }
+
+  spellCheck() {
+  	// Define the new mode
+    let num_loaded = 0;
+    let aff_loading = false;
+    let dic_loading = false;
+    let aff_data = "";
+    let dic_data = "";
+    let typo;
+  	cm.defineMode("spell-checker", function(config) {
+  		// Load AFF/DIC data
+  		if(!aff_loading) {
+  			aff_loading = true;
+  			var xhr_aff = new XMLHttpRequest();
+  			xhr_aff.open("GET", "https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff", true);
+  			xhr_aff.onload = function() {
+  				if(xhr_aff.readyState === 4 && xhr_aff.status === 200) {
+  					aff_data = xhr_aff.responseText;
+  					num_loaded++;
+
+  					if(num_loaded == 2) {
+  						typo = new Typo("en_US", aff_data, dic_data, {
+  							platform: "any"
+  						});
+  					}
+  				}
+  			};
+  			xhr_aff.send(null);
+  		}
+
+  		if(!dic_loading) {
+  			dic_loading = true;
+  			var xhr_dic = new XMLHttpRequest();
+  			xhr_dic.open("GET", "https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic", true);
+  			xhr_dic.onload = function() {
+  				if(xhr_dic.readyState === 4 && xhr_dic.status === 200) {
+  					dic_data = xhr_dic.responseText;
+  					num_loaded++;
+
+  					if(num_loaded == 2) {
+  						typo = new Typo("en_US", aff_data, dic_data, {
+  							platform: "any"
+  						});
+  					}
+  				}
+  			};
+  			xhr_dic.send(null);
+  		}
+  	});
   }
 
   render() {
