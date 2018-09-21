@@ -2,6 +2,7 @@ import { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
+import { createImgEditorWindow } from '../imgeditor/imgEditorWindow';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
@@ -70,6 +71,23 @@ function removeImage() {
           });
         }
       });
+    }
+  });
+}
+
+function cropImage() {
+  dialog.showOpenDialog({
+    title: 'Select an Image',
+    properties: ['openFile'],
+    defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
+    buttonLabel: 'Crop',
+  }, (fullPath) => {
+    if (fullPath === undefined) {
+      dialog.showErrorBox('Error', 'No image selected.');
+    } else {
+      let fileName = fullPath.toString();
+      fileName = fileName.split('/');
+      createImgEditorWindow({ fileType: 'images', fileName: fileName[fileName.length - 1] });
     }
   });
 }
@@ -160,6 +178,7 @@ function buildImagesMenu(template) {
     },
     {
       label: 'Crop Image',
+      click: cropImage,
     },
   ];
   template[indexOfMenuItem(template, 'Images')].submenu = imagesSubMenu;
@@ -171,10 +190,10 @@ function buildImagesMenu(template) {
  */
 function buildMainMenu() {
   const template = makeMenuTemplate();
+  const directory = mainStore.getState().dir;
   buildEditMenu(template);
   buildConfigMenu(template);
   buildImagesMenu(template);
-  const directory = mainStore.getState().dir;
   if (directory) {
     const techFolioFiles = new TechFolioFiles(directory);
     if (techFolioFiles.isInvalidDirectory()) {

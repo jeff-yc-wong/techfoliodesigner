@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="../../node_modules/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="../../node_modules/codemirror/addon/lint/lint.css">
+  <link rel="stylesheet" href="../../node_modules/codemirror/theme/material.css">
+  <link rel="stylesheet" href="../../node_modules/simplemde/dist/simplemde.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<style>
+  .editorWrapper {
+    display: grid;
+    grid-template-columns: 50% 50%;
+  }
+  .pictureWrapper {
+    grid-template-rows: 70% 30%;
+  }
+  .picture {
+    background-color: rgba(0,255,255, 10);
+  }
+  .properties {
+    background-color: rgba(0,0, 255, 10);
+  }
+  .edit {
+    background-color: rgba(255,0, 255, 10);
+  }
+</style>
+<body style="background-color: rgba(0,0,0,0); margin: 0" >
+<div class="editorWrapper">
+  <div class="pictureWrapper">
+    <div class="picture">
+      <h1>PICTURE GOES HERE</h1>
+    </div>
+    <div class="properties">
+      <h1>PROPERTIES GO HERE</h1>
+    </div>
+  </div>
+  <div class="edit">
+    <h1>EDIT PICTURES GO HERE</h1>
+  </div>
+</div>
+</body>
+<script type="text/jsx">
+  import React from 'react';
+  import ReactDOM from 'react-dom';
+  import { AppContainer } from 'react-hot-loader';
+  import queryString from 'query-string';
+  const app = require('electron').remote.app
+
+  const queryObject = queryString.parse(window.location.search);
+  const fileType = queryObject.fileType || 'unknown';
+  const fileName = queryObject.fileName  || 'unknown';
+  const directory = queryObject.directory || 'unknown';
+
+  const render = () => {
+    const imgEditor = require('./imgEditor').default;
+    ReactDOM.render(
+        <AppContainer>
+          <imgEditor directory={directory} fileType={fileType} fileName={fileName}/>
+        </AppContainer>, document.getElementById('picture'));
+  }
+
+  render();
+
+  if (module.hot) {
+    module.hot.accept(render);
+  }
+</script>
+</html>
