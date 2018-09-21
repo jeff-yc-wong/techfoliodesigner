@@ -4,7 +4,6 @@ import path from 'path';
 // import fs from 'fs-extra';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import cm from 'codemirror';
-import SimpleMDE from 'react-simplemde-editor';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
@@ -41,6 +40,7 @@ require('codemirror/mode/css/css.js');
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/markdown/markdown');
+require('codemirror/addon/mode/overlay');
 require('codemirror/addon/lint/lint');
 require('codemirror/addon/lint/json-lint');
 require('../lib/autorefresh.ext');
@@ -260,35 +260,19 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    switch (this.mode) {
-      case 'markdown':
-        return (
-          <div>
-            <SimpleMDE
-              onChange={this.handleChange}
-              value={this.state.value}
-              onBeforeChange={this.onBeforeChange}
-              options={this.options}
-              editorDidMount={(editor) => {
-                this.instance = editor;
-              }}
-            />
-          </div>
-        );
-      default:
-        return (
+      return (
           <div>
             <CodeMirror
               value={this.state.value}
               onBeforeChange={this.onBeforeChange}
               options={this.options}
               editorDidMount={(editor) => {
-                this.instance = editor;
-              }}
+                this.instance = editor;}}
+              defineMode={{name: 'spell-check',
+                           fn: this.spellCheck()}}
             />
           </div>
-        );
-    }
+      );
   }
 }
 
