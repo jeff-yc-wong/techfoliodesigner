@@ -7,6 +7,7 @@ import cm from 'codemirror';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
+const { dialog } = require('electron');
 const Typo = require('typo-js');
 const fs = require('fs');
 const notifier = require('node-notifier');
@@ -20,9 +21,6 @@ const mdLintOptions = {
 };
 
 function markerMaker(message) {
-  // {/*<div className="ui icon button" data-content="Add users to your feed">*/}
-  //   {/*<i className="add icon"></i>*/}
-  // {/*</div>*/}
   let markerElt = document.createElement('div'); // eslint-disable-line
   let markerError = document.createElement('div'); // eslint-disable-line
   let markerMessage = document.createTextNode(message); // eslint-disable-line
@@ -30,8 +28,7 @@ function markerMaker(message) {
   markerElt.className = 'CodeMirror-gutter-elt';
   markerError.className = 'CodeMirror-lint-marker-error';
   markerElt.appendChild(markerError);
-  // markerError.appendChild(markerMessage);
-  console.log(message);
+
   return markerElt;
 }
 
@@ -75,12 +72,6 @@ export default class TechFolioEditor extends React.Component {
     };
     if (this.mode === 'application/json') {
       window.jsonlint = jsonlint; // eslint-disable-line
-    } else {
-      this.options = {
-        autofocus: true,
-        spellChecker: true,
-        lineWrapping: true,
-      };
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
@@ -100,14 +91,12 @@ export default class TechFolioEditor extends React.Component {
 
   handleChange(value) {
     this.setState({ value });
-    console.log(this);
   }
 
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
     let notifierTitle = '';
     let notifierMessage = '';
-    console.log(this.state.value);
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
@@ -122,7 +111,57 @@ export default class TechFolioEditor extends React.Component {
             });
           }
         } else {
-          //
+          this.instance.clearGutter('CodeMirror-lint-markers');
+          let isValidYAML = false;
+          const lines = this.state.value.split('\n');
+          if (lines[0] !== '---') {
+            this.instance.setGutterMarker(0,
+                'CodeMirror-lint-markers',
+                markerMaker('MISSING "---" on the first line!'));
+          } else {
+            for (let line = 1; line < lines.length; line += 1) {
+              if (lines[line].includes('---')) {
+                isValidYAML = true;
+                break;
+              }
+              if (lines[line] === '--') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker('MISSING "---" on the first line!'));
+                break;
+              }
+              if (lines[line] === '-') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker('MISSING "---" on the first line!'));
+                break;
+              }
+            }
+            if (isValidYAML) {
+              try {
+                yamlFront.loadFront(this.state.value);
+                mdLintOptions.strings.mdString = this.state.value;
+                const mdResult = markdownlint.sync(mdLintOptions);
+                if (mdResult.mdString.length === 0) {
+                  console.log('NO ERRORS');
+                } else {
+                  for (let i = 0; i < mdResult.mdString.length; i += 1) {
+                    this.instance.setGutterMarker(
+                        mdResult.mdString[i].lineNumber - 1,
+                        'CodeMirror-lint-markers',
+                        markerMaker(mdResult.mdString[i].errorDetail));
+                  }
+                }
+              } catch (e) {
+                this.instance.setGutterMarker(e.mark.line,
+                    'CodeMirror-lint-markers',
+                    markerMaker(e.message));
+              }
+            } else {
+              notifierTitle = 'YAML FRONT-MATTER ERROR';
+              notifierMessage = 'MISSING "---" at the end of YAML';
+            }
+          }
         }
         notifier.notify({
           title: notifierTitle,
@@ -136,12 +175,12 @@ export default class TechFolioEditor extends React.Component {
   }
 
   spellCheck() {
-  	// Define the new mode
+    // Define the new mode
     let num_loaded = 0;
     let aff_loading = false;
     let dic_loading = false;
-    let aff_data = "";
-    let dic_data = "";
+    let aff_data = '';
+    let dic_data = '';
     let typo;
 
   	cm.defineMode("spell-check", function(config) {
@@ -222,19 +261,17 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-      return (
-          <div>
-            <CodeMirror
-              value={this.state.value}
-              onBeforeChange={this.onBeforeChange}
-              options={this.options}
-              editorDidMount={(editor) => {
-                this.instance = editor;}}
-              defineMode={{name: 'spell-check',
-                           fn: this.spellCheck()}}
-            />
-          </div>
-      );
+    return (
+      <div>
+        <CodeMirror
+          value={this.state.value}
+          onBeforeChange={this.onBeforeChange}
+          options={this.options}
+          editorDidMount={(editor) => { this.instance = editor; }}
+          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+        />
+      </div>
+    );
   }
 }
 
@@ -243,57 +280,3 @@ TechFolioEditor.propTypes = {
   fileType: PropTypes.string.isRequired,
   fileName: PropTypes.string.isRequired,
 };
-
-/* Example Code of using CodeMirorr to validate
-this.instance.clearGutter('CodeMirror-lint-markers');
-          let isValidYAML = false;
-          const lines = this.state.value.split('\n');
-          if (lines[0] !== '---') {
-            this.instance.setGutterMarker(0,
-                'CodeMirror-lint-markers',
-                markerMaker('MISSING "---" on the first line!'));
-          } else {
-            for (let line = 1; line < lines.length; line += 1) {
-              if (lines[line].includes('---')) {
-                isValidYAML = true;
-                break;
-              }
-              if (lines[line] === '--') {
-                this.instance.setGutterMarker(line,
-                    'CodeMirror-lint-markers',
-                    markerMaker('MISSING "---" on the first line!'));
-                break;
-              }
-              if (lines[line] === '-') {
-                this.instance.setGutterMarker(line,
-                    'CodeMirror-lint-markers',
-                    markerMaker('MISSING "---" on the first line!'));
-                break;
-              }
-            }
-            if (isValidYAML) {
-              try {
-                yamlFront.loadFront(this.state.value);
-                mdLintOptions.strings.mdString = this.state.value;
-                const mdResult = markdownlint.sync(mdLintOptions);
-                if (mdResult.mdString.length === 0) {
-                  console.log('NO ERRORS');
-                } else {
-                  for (let i = 0; i < mdResult.mdString.length; i += 1) {
-                    this.instance.setGutterMarker(
-                        mdResult.mdString[i].lineNumber - 1,
-                        'CodeMirror-lint-markers',
-                        markerMaker(mdResult.mdString[i].errorDetail));
-                  }
-                }
-              } catch (e) {
-                this.instance.setGutterMarker(e.mark.line,
-                    'CodeMirror-lint-markers',
-                    markerMaker(e.message));
-              }
-            } else {
-              notifierTitle = 'YAML FRONT-MATTER ERROR';
-              notifierMessage = 'MISSING "---" at the end of YAML';
-            }
-          }
- */
