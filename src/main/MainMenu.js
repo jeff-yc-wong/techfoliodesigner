@@ -9,6 +9,9 @@ import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
 const fs = require('fs');
+const imagemin = require('imagemin');
+const imageminJpegtran = require('imagemin-jpegtran');
+const imageminPngquant = require('imagemin-pngquant');
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -32,10 +35,24 @@ function importImage() {
   }, (fullPath) => {
     /* This may not work on all machines, since there are a lot of different separators than just '/' */
     const imageName = fullPath[0].split('\\').pop().split('/').pop(); // convert fullPath to just imageName
+    const localImgDir = techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`);
     if (fullPath === undefined) {
       dialog.showErrorBox('Error', 'No image selected.');
     } else {
-      fs.copyFile(fullPath[0], techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`), (err) => {
+      let imageSize = fs.statSync(fullPath[0]).size / 1000;
+
+      while (imageSize > 500) {
+        imagemin(fullPath[0], localImgDir, {
+          plugins: [
+            imageminJpegtran(),
+            imageminPngquant({ quality: '65-80' }),
+          ],
+        });
+
+        imageSize = fs.statSync(localImgDir).size / 1000;
+        console.log(imageSize);
+      }
+      fs.copyFile(fullPath[0], localImgDir, (err) => {
         if (err) {
           dialog.showErrorBox('Error', err);
         } else {
