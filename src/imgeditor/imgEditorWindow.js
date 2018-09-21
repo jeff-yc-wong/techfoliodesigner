@@ -28,7 +28,8 @@ export async function createImgEditorWindow({ isDevMode = true, fileType = '', f
       title: 'TechFolio Image Editor',
     });
 
-    window.loadURL(`file://${__dirname}/imgEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
+    window.loadURL(
+        `file://${__dirname}/imgEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
     if (isDevMode) {
       await installExtension(REACT_DEVELOPER_TOOLS);
         // mainWindow.webContents.openDevTools();
