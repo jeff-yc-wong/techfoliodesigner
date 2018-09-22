@@ -27,6 +27,11 @@ function processInvalidDirectory(template, techFolioFiles) {
   template[indexOfMenuItem(template, 'Essays')].submenu = [];
 }
 
+// Work on the compression when importing...?
+// Cannot import image from /images self-directory...?
+// Culprit: copyFile function...?
+// Look into image min...?
+
 /** Prompts the user to select an image to import then moves that image to their local repo's /images/ folder. */
 function importImage() {
   dialog.showOpenDialog({
