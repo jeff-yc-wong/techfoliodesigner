@@ -40,7 +40,6 @@ function importImage() {
       dialog.showErrorBox('Error', 'No image selected.');
     } else {
       let imageSize = fs.statSync(fullPath[0]).size / 1000;
-
       while (imageSize > 500) {
         imagemin(fullPath[0], localImgDir, {
           plugins: [
@@ -48,9 +47,7 @@ function importImage() {
             imageminPngquant({ quality: '65-80' }),
           ],
         });
-
         imageSize = fs.statSync(localImgDir).size / 1000;
-        console.log(imageSize);
       }
       fs.copyFile(fullPath[0], localImgDir, (err) => {
         if (err) {
