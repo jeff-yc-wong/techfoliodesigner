@@ -2,24 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
-import { Controlled as CodeMirror } from 'react-codemirror2';
+import SimpleMDE from 'react-simplemde-editor';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
 const fs = require('fs');
+// const { clipboard } = require('electron');
+// const { ks } = require('node-key-sender');
 const notifier = require('node-notifier');
 
-require('codemirror/lib/codemirror.js');
-require('codemirror/mode/css/css.js');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/mode/xml/xml');
-require('codemirror/mode/markdown/markdown');
-require('codemirror/addon/lint/lint');
-require('codemirror/addon/lint/json-lint');
+//require('simplemde/dist/simplemde.min.css');
 
 require('../lib/autorefresh.ext');
-
-// const jsonlint = require('jsonlint');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
@@ -27,6 +21,8 @@ export default class TechFolioEditor extends React.Component {
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
+    // this.copy = this.copy.bind(this);
+    // this.paste = this.paste.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
 
@@ -40,7 +36,11 @@ export default class TechFolioEditor extends React.Component {
     this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
+    // const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
+    // const pasteKeyBinding = (process.platform === 'darwin') ? 'Cmd-V' : 'Ctrl-V';
     extraKeys[saveKeyBinding] = () => this.saveFile();
+    // extraKeys[copyKeyBinding] = () => this.copy();
+    // extraKeys[pasteKeyBinding] = () => this.paste();
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -48,10 +48,12 @@ export default class TechFolioEditor extends React.Component {
       autoRefresh: { force: true },
       extraKeys,
     };
+
     if (this.mode === 'application/json') {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
+
   }
 
   onBeforeChange(editor, data, value) {
@@ -65,7 +67,6 @@ export default class TechFolioEditor extends React.Component {
   setWindowTitle() {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
   }
-
   saveFile() {
     console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
@@ -88,10 +89,33 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
+  // copy() {  // eslint-disable-line
+  //   console.log('copy called');
+  //   // Disable eslint here, I know window is defined even though eslint says it isn't
+  //   if (window.getSelection()) { // eslint-disable-line
+  //     const selectedText = window.getSelection().toString(); // eslint-disable-line
+  //     clipboard.writeText(selectedText);
+  //   }
+  // }
+  //
+  // paste() { // eslint-disable-line
+  //   console.log('paste called');
+  //   if (window.getSelection()) { // eslint-disable-line
+  //     const readString = clipboard.readText();
+  //     // console.log(readString);
+  //     // Throws error message: Uncaught TypeError: Cannot read property 'sendText' of undefined
+  //     // However functionality still seems to work. Unsure what the solution should be.
+  //     console.log('This is the value of ks', ks);
+  //     ks.sendText(readString);
+  //   }
+  //   // console.log(readString);
+  //   // clipboardy.readSync();
+  // }
+
   render() {
     return (
       <div>
-        <CodeMirror value={this.state.value} onBeforeChange={this.onBeforeChange} options={this.options} />
+        <SimpleMDE onChange={this.handleChange} value={this.state.value}/>
       </div>
     );
   }
