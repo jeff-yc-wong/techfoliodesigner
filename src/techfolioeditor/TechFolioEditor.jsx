@@ -7,10 +7,9 @@ import cm from 'codemirror';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
-const { dialog } = require('electron');
+const { dialog } = require('electron').remote;
 const Typo = require('typo-js');
 const fs = require('fs');
-const notifier = require('node-notifier');
 const yamlFront = require('yaml-front-matter');
 const markdownlint = require('markdownlint');
 
@@ -20,10 +19,9 @@ const mdLintOptions = {
   },
 };
 
-function markerMaker(message) {
+function markerMaker() {
   let markerElt = document.createElement('div'); // eslint-disable-line
   let markerError = document.createElement('div'); // eslint-disable-line
-  let markerMessage = document.createTextNode(message); // eslint-disable-line
 
   markerElt.className = 'CodeMirror-gutter-elt';
   markerError.className = 'CodeMirror-lint-marker-error';
@@ -94,9 +92,7 @@ export default class TechFolioEditor extends React.Component {
   }
 
   saveFile() {
-    console.log('saveFile called'); //eslint-disable-line
-    let notifierTitle = '';
-    let notifierMessage = '';
+    // console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
@@ -105,10 +101,7 @@ export default class TechFolioEditor extends React.Component {
           try {
             jsonlint.parse(this.state.value);
           } catch (e) {
-            notifier.notify({
-              title: 'JSON IS NOT IN VALID FORMAT!',
-              message: 'There is at least one JSON Error!!!',
-            });
+            dialog.showErrorBox('JSON File is not in a valid format!', 'There is at least one JSON error!');
           }
         } else {
           this.instance.clearGutter('CodeMirror-lint-markers');
@@ -117,7 +110,7 @@ export default class TechFolioEditor extends React.Component {
           if (lines[0] !== '---') {
             this.instance.setGutterMarker(0,
                 'CodeMirror-lint-markers',
-                markerMaker('MISSING "---" on the first line!'));
+                markerMaker());
           } else {
             for (let line = 1; line < lines.length; line += 1) {
               if (lines[line].includes('---')) {
@@ -127,13 +120,13 @@ export default class TechFolioEditor extends React.Component {
               if (lines[line] === '--') {
                 this.instance.setGutterMarker(line,
                     'CodeMirror-lint-markers',
-                    markerMaker('MISSING "---" on the first line!'));
+                    markerMaker());
                 break;
               }
               if (lines[line] === '-') {
                 this.instance.setGutterMarker(line,
                     'CodeMirror-lint-markers',
-                    markerMaker('MISSING "---" on the first line!'));
+                    markerMaker());
                 break;
               }
             }
@@ -143,30 +136,32 @@ export default class TechFolioEditor extends React.Component {
                 mdLintOptions.strings.mdString = this.state.value;
                 const mdResult = markdownlint.sync(mdLintOptions);
                 if (mdResult.mdString.length === 0) {
-                  console.log('NO ERRORS');
+                  // Result is correct, no errors
                 } else {
+                  let errorDetails = '';
+                  let errorLine = 0;
                   for (let i = 0; i < mdResult.mdString.length; i += 1) {
+                    errorLine = mdResult.mdString[i].lineNumber;
+                    errorDetails = `${errorDetails + 'Rule: ' + mdResult.mdString[i].ruleNames[0] + ' => Error: ' + mdResult.mdString[i].ruleDescription + ' => Line: ' + errorLine}\n`; // eslint-disable-line
                     this.instance.setGutterMarker(
-                        mdResult.mdString[i].lineNumber - 1,
+                        errorLine - 1,
                         'CodeMirror-lint-markers',
-                        markerMaker(mdResult.mdString[i].errorDetail));
+                        markerMaker());
                   }
+                  dialog.showErrorBox(
+                      'Markdown File is not in a valid format!', `${errorDetails}\nFor more information about Markdown Rules: https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md`); // eslint-disable-line
                 }
               } catch (e) {
+                dialog.showErrorBox('Markdown File is not in a valid format!', e.message);
                 this.instance.setGutterMarker(e.mark.line,
                     'CodeMirror-lint-markers',
-                    markerMaker(e.message));
+                    markerMaker());
               }
             } else {
-              notifierTitle = 'YAML FRONT-MATTER ERROR';
-              notifierMessage = 'MISSING "---" at the end of YAML';
+              dialog.showErrorBox('YAML front-matter is not in a valid format!', 'MISSING "---" at the end of YAML!');
             }
           }
         }
-        notifier.notify({
-          title: notifierTitle,
-          message: notifierMessage,
-        });
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
@@ -175,89 +170,84 @@ export default class TechFolioEditor extends React.Component {
   }
 
   spellCheck() {
-    // Define the new mode
-    let num_loaded = 0;
-    let aff_loading = false;
-    let dic_loading = false;
-    let aff_data = '';
-    let dic_data = '';
+  // Define the new mode
+    let numLoaded = 0;
+    let affLoading = false;
+    let dicLoading = false;
+    let affData = '';
+    let dicData = '';
     let typo;
 
-  	cm.defineMode("spell-check", function(config) {
-  		// Load AFF/DIC data
-  		if(!aff_loading) {
-  			aff_loading = true;
-  			var xhr_aff = new XMLHttpRequest();
-  			xhr_aff.open("GET", "https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff", true);
-  			xhr_aff.onload = function() {
-  				if(xhr_aff.readyState === 4 && xhr_aff.status === 200) {
-  					aff_data = xhr_aff.responseText;
-  					num_loaded++;
-
-  					if(num_loaded == 2) {
-  						typo = new Typo("en_US", aff_data, dic_data, {
-  							platform: "any"
-  						});
-  					}
-  				}
-  			};
-  			xhr_aff.send(null);
-  		}
-
-  		if(!dic_loading) {
-  			dic_loading = true;
-  			var xhr_dic = new XMLHttpRequest();
-  			xhr_dic.open("GET", "https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic", true);
-  			xhr_dic.onload = function() {
-  				if(xhr_dic.readyState === 4 && xhr_dic.status === 200) {
-  					dic_data = xhr_dic.responseText;
-  					num_loaded++;
-
-  					if(num_loaded == 2) {
-  						typo = new Typo("en_US", aff_data, dic_data, {
-  							platform: "any"
-  						});
-  					}
-  				}
-  			};
-  			xhr_dic.send(null);
-  		}
+    cm.defineMode('spell-check', (config) => {
+      // Load AFF/DIC data
+      if (!affLoading) {
+        affLoading = true;
+        const xhrAff = new XMLHttpRequest();
+        xhrAff.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff', true);
+        xhrAff.onload = function () {
+          if (xhrAff.readyState === 4 && xhrAff.status === 200) {
+            affData = xhrAff.responseText;
+            numLoaded += 1;
+            if (numLoaded === 2) {
+              typo = new Typo('en_US', affData, dicData, {
+                platform: 'any',
+              });
+            }
+          }
+        };
+        xhrAff.send(null);
+      }
+      if (!dicLoading) {
+        dicLoading = true;
+        const xhrDic = new XMLHttpRequest();
+        xhrDic.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic', true);
+        xhrDic.onload = function () {
+          if (xhrDic.readyState === 4 && xhrDic.status === 200) {
+            dicData = xhrDic.responseText;
+            numLoaded += 1;
+            if (numLoaded === 2) {
+              typo = new Typo('en_US', affData, dicData, {
+                platform: 'any',
+              });
+            }
+          }
+        };
+        xhrDic.send(null);
+      }
 
       // Define what separates a word
-      var rx_word = "!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ";
-
+      const rxWord = '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ';
 
       // Create the overlay and such
-      var overlay = {
-        token: function(stream) {
-          var ch = stream.peek();
-          var word = "";
+      const overlay = {
+        token(stream) {
+          let ch = stream.peek();
+          let word = '';
 
-          if(rx_word.includes(ch)) {
+          if (rxWord.includes(ch)) {
             stream.next();
             return null;
           }
 
-          while((ch = stream.peek()) != null && !rx_word.includes(ch)) {
+          while ((ch = stream.peek()) != null && !rxWord.includes(ch)) {
             word += ch;
             stream.next();
           }
 
-          if(typo && !typo.check(word)) {
-            console.log(word);
-            return "spell-error"; // CSS class: cm-spell-error
+          if (typo && !typo.check(word)) {
+          // console.log(word);
+            return 'spell-error'; // CSS class: cm-spell-error
           }
 
           return null;
-        }
+        },
       };
-
-      var mode = cm.getMode(
-        config, config.backdrop || 'markdown'
+      const mode = cm.getMode(
+        config, config.backdrop || 'markdown',
       );
-      //console.log(mode);
+      // console.log(mode);
       return cm.overlayMode(mode, overlay, true);
-  	});
+    });
   }
 
   render() {
