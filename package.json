@@ -70,6 +70,7 @@
     "electron-store": "^2.0.0",
     "is-directory": "^0.3.1",
     "jsonlint": "^1.6.3",
+    "markdownlint": "^0.11.0",
     "moment": "^2.22.2",
     "node-notifier": "^5.2.1",
     "notifyjs": "^3.0.0",
@@ -88,7 +89,9 @@
     "simplemde": "^1.11.2",
     "underscore": "^1.9.1",
     "uniforms": "^1.25.0-rc.3",
-    "uniforms-semantic": "^1.25.0-rc.3"
+    "uniforms-semantic": "^1.25.0-rc.3",
+    "vfile-reporter": "^5.0.0",
+    "yaml-front-matter": "^4.0.0"
   },
   "devDependencies": {
     "electron-forge": "^5.2.2",
