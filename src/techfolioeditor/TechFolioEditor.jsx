@@ -113,6 +113,7 @@ export default class TechFolioEditor extends React.Component {
           let isValidYAML = false;
           const lines = this.state.value.split('\n');
           if (lines[0] !== '---') {
+            dialog.showErrorBox('YAML front-matter is not in a valid format!', 'MISSING "---" at the start of YAML!');
             this.instance.setGutterMarker(0,
                 'CodeMirror-lint-markers',
                 markerMaker());
