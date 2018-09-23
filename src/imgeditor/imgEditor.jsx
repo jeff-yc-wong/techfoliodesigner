@@ -17,7 +17,8 @@ export default class imgEditor extends React.Component {
     // this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     // this.window.setTitle(this.props.fileName);
   }
-
+  // figure out how to change image after initial rendering
+  // how to import image from /images/
   render() {
     return (
         <imgEditor></imgEditor>
