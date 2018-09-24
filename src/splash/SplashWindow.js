@@ -4,8 +4,8 @@ import techFolioWindowManager from '../shared/TechFolioWindowManager';
 async function createSplashWindow() {
   // Create the browser window.
   const window = new BrowserWindow({
-    width: 700,
-    height: 600,
+    width: 1400,
+    height: 720,
     title: 'TechFolio Designer',
   });
 

@@ -5,7 +5,8 @@
   <link rel="stylesheet" href="../../node_modules/semantic-ui-css/semantic.css">
 </head>
 <body>
-<div id="SplashPage"></div>
+<div id="SplashPage" style="position: absolute; width: 50%; left: 0px"></div>
+<div id="FileExplorer" style="position: absolute; width: 50%; right: 0px"></div>
 </body>
 
 <script type="text/jsx">
@@ -19,6 +20,7 @@
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
+  import FileExplorer from './FileExplorer';
   const app = require('electron').remote.app
 
   // Set up renderer-side redux
@@ -39,7 +41,18 @@
         </Grid>
       </Provider>,
       document.getElementById('SplashPage'));
-  }
+
+    ReactDOM.render(
+      <Provider store={store}>
+        <Grid style={{padding: "20px"}}>
+          <Grid.Column textAlign="center">
+            <Header as="h1">Start Editing Files Here</Header>
+            <FileExplorer/>
+          </Grid.Column>
+        </Grid>
+      </Provider>,
+      document.getElementById('FileExplorer'));
+  };
   render();
 </script>
 </html>
