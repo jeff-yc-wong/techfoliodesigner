@@ -38,5 +38,14 @@ export function clearAll() {
   return { type: 'CLEAR_ALL', payload: null };
 }
 
+export function setProjects(projects) {
+  return { type: 'SET_PROJECTS', payload: projects };
+}
+
+export function setEssays(essays) {
+  return { type: 'SET_ESSAYS', payload: essays };
+}
+
+
 // Overload console.log so that it prints to the Command Log window instead
 console.log = function (text) { mainStore.dispatch(addLog(text)); };

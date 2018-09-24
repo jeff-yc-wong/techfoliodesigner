@@ -8,6 +8,8 @@ export const emptyState = {
   status: null,
   token: null,
   logs: [],
+  projects: [],
+  essays: [],
 };
 
 export function initialState() {
