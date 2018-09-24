@@ -2,38 +2,62 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import path from 'path';
 // import fs from 'fs-extra';
-import SimpleMDE from 'react-simplemde-editor';
+import { Controlled as CodeMirror } from 'react-codemirror2';
+import cm from 'codemirror';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
 
+const { dialog } = require('electron').remote;
+const Typo = require('typo-js');
 const fs = require('fs');
-// const { clipboard } = require('electron');
-// const { ks } = require('node-key-sender');
-const notifier = require('node-notifier');
+const yamlFront = require('yaml-front-matter');
+const markdownlint = require('markdownlint');
 
-// require('simplemde/dist/simplemde.min.css');
+const mdLintOptions = {
+  'strings': { // eslint-disable-line
+    'mdString': '', // eslint-disable-line
+  },
+};
 
+function markerMaker() {
+  let markerElt = document.createElement('div'); // eslint-disable-line
+  let markerError = document.createElement('div'); // eslint-disable-line
+
+  markerElt.className = 'CodeMirror-gutter-elt';
+  markerError.className = 'CodeMirror-lint-marker-error';
+  markerElt.appendChild(markerError);
+
+  return markerElt;
+}
+
+require('codemirror/lib/codemirror.js');
+require('codemirror/mode/css/css.js');
+require('codemirror/mode/javascript/javascript');
+require('codemirror/mode/xml/xml');
+require('codemirror/mode/markdown/markdown');
+require('codemirror/addon/mode/overlay');
+require('codemirror/addon/lint/lint');
+require('codemirror/addon/lint/json-lint');
 require('../lib/autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
     super(props);
+    this.instance = null;
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
-    // this.copy = this.copy.bind(this);
-    // this.paste = this.paste.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
-
-    window.JSHINT = JSHINT; // eslint-disable-line
-    window.jsonlint = jsonlint; // eslint-disable-line
-
+    window.JSHINT = JSHINT;  // eslint-disable-line
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
-    this.state = { value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
-      fileChangedMarker: '' };
-    this.mode = this.props.fileName.endsWith('.md') ? 'markdown' : 'application/json';
+    this.state = {
+      value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
+      fileChangedMarker: '',
+    };
+    this.mode = this.props.fileName.endsWith('.md') ? 'spell-check' : 'application/json';
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
     // const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
@@ -50,9 +74,13 @@ export default class TechFolioEditor extends React.Component {
     };
 
     if (this.mode === 'application/json') {
-      this.options.gutters = ['CodeMirror-lint-markers'];
-      this.options.lint = true;
+      window.jsonlint = jsonlint; // eslint-disable-line
     }
+<<<<<<< HEAD
+=======
+    this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
+    this.options.lint = true;
+>>>>>>> master
   }
 
   onBeforeChange(editor, data, value) {
@@ -66,20 +94,82 @@ export default class TechFolioEditor extends React.Component {
   setWindowTitle() {
     this.window.setTitle(`${this.state.fileChangedMarker}${this.props.fileName}`);
   }
+
+  handleChange(value) {
+    this.setState({ value });
+  }
+
   saveFile() {
-    console.log('saveFile called'); //eslint-disable-line
+    // console.log('saveFile called'); //eslint-disable-line
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
       } else {
-        try {
-          jsonlint.parse(this.state.value);
-        } catch (e) {
-          notifier.notify({
-            title: 'JSON IS NOT IN VALID FORMAT!',
-            message: 'There is at least one JSON Error!!!',
-          });
-          console.log(e);
+        if (this.mode === 'application/json') {
+          try {
+            jsonlint.parse(this.state.value);
+          } catch (e) {
+            dialog.showErrorBox('JSON File is not in a valid format!', 'There is at least one JSON error!');
+          }
+        } else {
+          this.instance.clearGutter('CodeMirror-lint-markers');
+          let isValidYAML = false;
+          const lines = this.state.value.split('\n');
+          if (lines[0] !== '---') {
+            dialog.showErrorBox('YAML front-matter is not in a valid format!', 'MISSING "---" at the start of YAML!');
+            this.instance.setGutterMarker(0,
+                'CodeMirror-lint-markers',
+                markerMaker());
+          } else {
+            for (let line = 1; line < lines.length; line += 1) {
+              if (lines[line].includes('---')) {
+                isValidYAML = true;
+                break;
+              }
+              if (lines[line] === '--') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker());
+                break;
+              }
+              if (lines[line] === '-') {
+                this.instance.setGutterMarker(line,
+                    'CodeMirror-lint-markers',
+                    markerMaker());
+                break;
+              }
+            }
+            if (isValidYAML) {
+              try {
+                yamlFront.loadFront(this.state.value);
+                mdLintOptions.strings.mdString = this.state.value;
+                const mdResult = markdownlint.sync(mdLintOptions);
+                if (mdResult.mdString.length === 0) {
+                  // Result is correct, no errors
+                } else {
+                  let errorDetails = '';
+                  let errorLine = 0;
+                  for (let i = 0; i < mdResult.mdString.length; i += 1) {
+                    errorLine = mdResult.mdString[i].lineNumber;
+                    errorDetails = `${errorDetails + 'Rule: ' + mdResult.mdString[i].ruleNames[0] + ' => Error: ' + mdResult.mdString[i].ruleDescription + ' => Line: ' + errorLine}\n`; // eslint-disable-line
+                    this.instance.setGutterMarker(
+                        errorLine - 1,
+                        'CodeMirror-lint-markers',
+                        markerMaker());
+                  }
+                  dialog.showErrorBox(
+                      'Markdown File is not in a valid format!', `${errorDetails}\nFor more information about Markdown Rules: https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md`); // eslint-disable-line
+                }
+              } catch (e) {
+                dialog.showErrorBox('Markdown File is not in a valid format!', e.message);
+                this.instance.setGutterMarker(e.mark.line,
+                    'CodeMirror-lint-markers',
+                    markerMaker());
+              }
+            } else {
+              dialog.showErrorBox('YAML front-matter is not in a valid format!', 'MISSING "---" at the end of YAML!');
+            }
+          }
         }
         this.tfLint();
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
@@ -89,6 +179,7 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
+<<<<<<< HEAD
   tfLint() {
     let bodyText = this.state.value;
     bodyText = bodyText.split('---');
@@ -118,11 +209,103 @@ export default class TechFolioEditor extends React.Component {
   //   // console.log(readString);
   //   // clipboardy.readSync();
   // }
+=======
+  spellCheck() {
+  // Define the new mode
+    let numLoaded = 0;
+    let affLoading = false;
+    let dicLoading = false;
+    let affData = '';
+    let dicData = '';
+    let typo;
+
+    cm.defineMode('spell-check', (config) => {
+      // Load AFF/DIC data
+      if (!affLoading) {
+        affLoading = true;
+        const xhrAff = new XMLHttpRequest();
+        xhrAff.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff', true);
+        xhrAff.onload = function () {
+          if (xhrAff.readyState === 4 && xhrAff.status === 200) {
+            affData = xhrAff.responseText;
+            numLoaded += 1;
+            if (numLoaded === 2) {
+              typo = new Typo('en_US', affData, dicData, {
+                platform: 'any',
+              });
+            }
+          }
+        };
+        xhrAff.send(null);
+      }
+      if (!dicLoading) {
+        dicLoading = true;
+        const xhrDic = new XMLHttpRequest();
+        xhrDic.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic', true);
+        xhrDic.onload = function () {
+          if (xhrDic.readyState === 4 && xhrDic.status === 200) {
+            dicData = xhrDic.responseText;
+            numLoaded += 1;
+            if (numLoaded === 2) {
+              typo = new Typo('en_US', affData, dicData, {
+                platform: 'any',
+              });
+            }
+          }
+        };
+        xhrDic.send(null);
+      }
+
+      // Define what separates a word
+      const rxWord = '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ';
+
+      // Create the overlay and such
+      const overlay = {
+        token(stream) {
+          let ch = stream.peek();
+          let word = '';
+
+          if (rxWord.includes(ch)) {
+            stream.next();
+            return null;
+          }
+
+          while ((ch = stream.peek()) != null && !rxWord.includes(ch)) {
+            word += ch;
+            stream.next();
+          }
+
+          if (typo && !typo.check(word)) {
+          // console.log(word);
+            return 'spell-error'; // CSS class: cm-spell-error
+          }
+
+          return null;
+        },
+      };
+      const mode = cm.getMode(
+        config, config.backdrop || 'markdown',
+      );
+      // console.log(mode);
+      return cm.overlayMode(mode, overlay, true);
+    });
+  }
+>>>>>>> master
 
   render() {
     return (
       <div>
+<<<<<<< HEAD
         <SimpleMDE onChange={this.handleChange} value={this.state.value} />
+=======
+        <CodeMirror
+          value={this.state.value}
+          onBeforeChange={this.onBeforeChange}
+          options={this.options}
+          editorDidMount={(editor) => { this.instance = editor; }}
+          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+        />
+>>>>>>> master
       </div>
     );
   }
