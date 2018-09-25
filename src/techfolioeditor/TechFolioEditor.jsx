@@ -76,11 +76,8 @@ export default class TechFolioEditor extends React.Component {
     if (this.mode === 'application/json') {
       window.jsonlint = jsonlint; // eslint-disable-line
     }
-<<<<<<< HEAD
-=======
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
->>>>>>> master
   }
 
   onBeforeChange(editor, data, value) {
@@ -179,7 +176,6 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
-<<<<<<< HEAD
   tfLint() {
     let bodyText = this.state.value;
     bodyText = bodyText.split('---');
@@ -187,29 +183,6 @@ export default class TechFolioEditor extends React.Component {
     console.log(bodyText);
   }
 
-  // copy() {  // eslint-disable-line
-  //   console.log('copy called');
-  //   // Disable eslint here, I know window is defined even though eslint says it isn't
-  //   if (window.getSelection()) { // eslint-disable-line
-  //     const selectedText = window.getSelection().toString(); // eslint-disable-line
-  //     clipboard.writeText(selectedText);
-  //   }
-  // }
-  //
-  // paste() { // eslint-disable-line
-  //   console.log('paste called');
-  //   if (window.getSelection()) { // eslint-disable-line
-  //     const readString = clipboard.readText();
-  //     // console.log(readString);
-  //     // Throws error message: Uncaught TypeError: Cannot read property 'sendText' of undefined
-  //     // However functionality still seems to work. Unsure what the solution should be.
-  //     console.log('This is the value of ks', ks);
-  //     ks.sendText(readString);
-  //   }
-  //   // console.log(readString);
-  //   // clipboardy.readSync();
-  // }
-=======
   spellCheck() {
   // Define the new mode
     let numLoaded = 0;
@@ -290,14 +263,10 @@ export default class TechFolioEditor extends React.Component {
       return cm.overlayMode(mode, overlay, true);
     });
   }
->>>>>>> master
 
   render() {
     return (
       <div>
-<<<<<<< HEAD
-        <SimpleMDE onChange={this.handleChange} value={this.state.value} />
-=======
         <CodeMirror
           value={this.state.value}
           onBeforeChange={this.onBeforeChange}
@@ -305,7 +274,6 @@ export default class TechFolioEditor extends React.Component {
           editorDidMount={(editor) => { this.instance = editor; }}
           defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
         />
->>>>>>> master
       </div>
     );
   }
