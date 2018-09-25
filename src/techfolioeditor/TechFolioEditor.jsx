@@ -168,7 +168,10 @@ export default class TechFolioEditor extends React.Component {
             }
           }
         }
-        this.tfLint();
+        if (this.mode !== 'application/json') {
+          const results = this.tfLint();
+          this.printResultsBox(results);
+        }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
@@ -177,10 +180,48 @@ export default class TechFolioEditor extends React.Component {
   }
 
   tfLint() {
-    let bodyText = this.state.value;
-    bodyText = bodyText.split('---');
-    bodyText = bodyText.split('---');
-    console.log(bodyText);
+    const results = new Map();
+    const actualText = this.state.value.split('---');
+    const wordCount = actualText[2].split(/\s+/).length - 2;
+
+    if (wordCount < 50) {
+      results.set('lessThan50Words', true);
+    } else results.set('lessThan50Words', false);
+
+    const lineByLine = actualText[2].split(/\n+/);
+    let paragraphCount = lineByLine.length;
+
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].startsWith('#')) {
+        paragraphCount -= 1;
+      }
+    }
+
+    if (paragraphCount <= 1) {
+      results.set('singleParagraph', true);
+    } else results.set('singleParagraph', false);
+
+    console.log(results);
+    return results;
+  }
+
+  printResultsBox(results) {
+    const error = '';
+    if (results.get('lessThan50Words') === true) {
+      error.concat(error, 'Word Count is less than 50.\n');
+    }
+    if (results.get('singleParagraph') === true) {
+      error.concat(error, 'Only a single paragraph.\n');
+    }
+    // if (results.get('badUrl') === true) {
+    //   error.concat(error, 'Contains a URL not in Markdown format.\n');
+    // }
+    // if (results.get('badImg') === true) {
+    //   error.concat(error, 'Contains an img tag without the responsive ui image class.\n');
+    // }
+    if (error !== '') {
+        dialog.showErrorBox('One or more errors were found in your file.', `TFLint detects the following errors: \n${error}`); // eslint-disable-line
+    }
   }
 
   spellCheck() {
