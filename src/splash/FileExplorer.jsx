@@ -7,18 +7,15 @@ class FileExplorer extends React.Component {
 
   render() {
     return (
-      <Table celled unstackable>
+      <Table celled unstackable sortable>
         <Table.Header>
           <Table.Row>
-            <Table.Cell width="8">Projects</Table.Cell>
-            <Table.Cell width="8">Essays</Table.Cell>
+            <Table.Cell center align>File Explorer</Table.Cell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          <Table.Row>
-            <Table.Cell><List>{this.props.projects}</List></Table.Cell>
-            <Table.Cell><List>{this.props.essays}</List></Table.Cell>
-          </Table.Row>
+          {this.props.projects.map(project => <Table.Row> <Table.Cell>{project}</Table.Cell></Table.Row>)}
+          {this.props.essays.map(essay => <Table.Row><Table.Cell>{essay}</Table.Cell></Table.Row>)}
         </Table.Body>
         <Table.Footer>
           <Table.Row>
