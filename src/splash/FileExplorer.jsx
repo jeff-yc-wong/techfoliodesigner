@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table } from 'semantic-ui-react';
+import { Table, List } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
 class FileExplorer extends React.Component {
@@ -8,16 +8,24 @@ class FileExplorer extends React.Component {
   render() {
     return (
       <Table celled unstackable>
+        <Table.Header>
+          <Table.Row>
+            <Table.Cell width="8">Projects</Table.Cell>
+            <Table.Cell width="8">Essays</Table.Cell>
+          </Table.Row>
+        </Table.Header>
         <Table.Body>
           <Table.Row>
-            <Table.Cell>Projects</Table.Cell>
-            <Table.Cell>Essays</Table.Cell>
-          </Table.Row>
-          <Table.Row>
-            <Table.Cell>{this.props.projects}</Table.Cell>
-            <Table.Cell>{this.props.essays}</Table.Cell>
+            <Table.Cell><List>{this.props.projects}</List></Table.Cell>
+            <Table.Cell><List>{this.props.essays}</List></Table.Cell>
           </Table.Row>
         </Table.Body>
+        <Table.Footer>
+          <Table.Row>
+            <Table.Cell>Create a new project</Table.Cell>
+            <Table.Cell>Create a new essay</Table.Cell>
+          </Table.Row>
+        </Table.Footer>
       </Table>
     );
   }
@@ -29,8 +37,8 @@ FileExplorer.defaultProps = {
 };
 
 FileExplorer.propTypes = {
-  projects: PropTypes.arrayOf(PropTypes.object),
-  essays: PropTypes.arrayOf(PropTypes.object),
+  projects: PropTypes.arrayOf(PropTypes.string),
+  essays: PropTypes.arrayOf(PropTypes.string),
 };
 
 function mapStateToProps(state) {

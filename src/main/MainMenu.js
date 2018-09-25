@@ -5,6 +5,7 @@ import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/Te
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
+import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 
 /** Helper function to return the index of the element in template with the passed label. */
@@ -28,6 +29,7 @@ function buildProjectsMenu(template, techFolioFiles) {
   projectsSubMenu.push({ type: 'separator' });
   projectsSubMenu.push({ label: 'New Project', click: () => newTechFolioWindow({ fileType: 'projects' }) });
   template[indexOfMenuItem(template, 'Projects')].submenu = projectsSubMenu;
+  mainStore.dispatch(action.setProjects(projectFiles));
 }
 
 function buildEssaysMenu(template, techFolioFiles) {
@@ -37,6 +39,7 @@ function buildEssaysMenu(template, techFolioFiles) {
   essaysSubMenu.push({ type: 'separator' });
   essaysSubMenu.push({ label: 'New Essay', click: () => newTechFolioWindow({ fileType: 'essays' }) });
   template[indexOfMenuItem(template, 'Essays')].submenu = essaysSubMenu;
+  mainStore.dispatch(action.setEssays(essayFiles));
 }
 
 function buildBioMenu(template) {
