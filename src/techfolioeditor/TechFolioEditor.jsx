@@ -182,45 +182,69 @@ export default class TechFolioEditor extends React.Component {
   tfLint() {
     const results = new Map();
     const actualText = this.state.value.split('---');
-    const wordCount = actualText[2].split(/\s+/).length - 2;
+    const wordByWord = actualText[2].split(/\s+/);
+    const lineByLine = actualText[2].split(/\n+/);
 
+    // Check if word count is less than 50
+    const wordCount = wordByWord.length - 2;
     if (wordCount < 50) {
       results.set('lessThan50Words', true);
     } else results.set('lessThan50Words', false);
 
-    const lineByLine = actualText[2].split(/\n+/);
-    let paragraphCount = lineByLine.length;
+    // Check if paragraph count is >1
+    let paragraphCount = lineByLine.length - 1;
 
+    // Headers don't count as paragraphs
     for (let i = 0; i < lineByLine.length; i += 1) {
       if (lineByLine[i].startsWith('#')) {
         paragraphCount -= 1;
       }
     }
-
     if (paragraphCount <= 1) {
       results.set('singleParagraph', true);
     } else results.set('singleParagraph', false);
+
+    // Check if img html uses ui image class
+    results.set('badImg', false);
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].includes('<img')) {
+        if (!lineByLine[i].includes('ui image')) {
+          results.set('badImg', true);
+        }
+      }
+    }
+
+    // Check if URL used proper MD format
+    results.set('badUrl', false);
+    for (let i = 0; i < wordByWord.length; i += 1) {
+      if (wordByWord[i].includes('http://') || wordByWord[i].includes('https://')) {
+        if (!wordByWord[i].match(/\[.+\]\(https?:\/\/.*\/?\).*/)) {
+          results.set('badUrl', true);
+        }
+      }
+    }
 
     console.log(results);
     return results;
   }
 
   printResultsBox(results) {
-    const error = '';
+    let error = '';
     if (results.get('lessThan50Words') === true) {
-      error.concat(error, 'Word Count is less than 50.\n');
+      error = error.concat('Word Count is less than 50.\n');
     }
     if (results.get('singleParagraph') === true) {
-      error.concat(error, 'Only a single paragraph.\n');
+      error = error.concat('Only a single paragraph.\n');
     }
-    // if (results.get('badUrl') === true) {
-    //   error.concat(error, 'Contains a URL not in Markdown format.\n');
-    // }
-    // if (results.get('badImg') === true) {
-    //   error.concat(error, 'Contains an img tag without the responsive ui image class.\n');
-    // }
+    if (results.get('badUrl') === true) {
+      error = error.concat('Contains a URL not in Markdown format.\n');
+    }
+    if (results.get('badImg') === true) {
+      error = error.concat('Contains an img tag without the responsive ui image class.\n');
+    }
     if (error !== '') {
-        dialog.showErrorBox('One or more errors were found in your file.', `TFLint detects the following errors: \n${error}`); // eslint-disable-line
+      console.log(error);
+        dialog.showErrorBox('One or more errors were found in your file.', 'TFLint detects the following errors: \n' + error); // eslint-disable-line
     }
   }
 
