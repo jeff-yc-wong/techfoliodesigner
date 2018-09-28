@@ -147,3 +147,19 @@ export async function newTechFolioWindow({ fileType }) {
   return null;
 }
 
+export function deleteFile(fileType, fileName) {
+  const options = {
+    type: 'warning',
+    title: 'Do you really want to delete this file?',
+    message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
+    buttons: ['OK', 'Cancel'],
+  };
+  dialog.showMessageBox(options, (index) => {
+    if (index === 0) {
+      fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
+        if (err) throw err;
+        console.log(`Successfully deleted ${fileType} ${fileName}`);
+      });
+    }
+  });
+}
