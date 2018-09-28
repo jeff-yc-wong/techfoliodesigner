@@ -11,6 +11,7 @@ import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
 const fs = require('fs');
+const Jimp = require('jimp');
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -30,23 +31,46 @@ function processInvalidDirectory(template, techFolioFiles) {
 function importImage() {
   dialog.showOpenDialog({
     title: 'Select an Image',
-    properties: ['openFile'],
+    properties: ['openFile', 'multiSelections'],
+    // defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
+    defaultPath: 'Downloads',
+    buttonLabel: 'Import',
+    filters: [
+      { name: 'Images', extensions: ['jpg', 'png', 'gif', 'jpeg'] },
+    ],
   }, (fullPath) => {
-    /* This may not work on all machines, since there are a lot of different separators than just '/' */
-    const imageName = fullPath[0].split('\\').pop().split('/').pop(); // convert fullPath to just imageName
-    if (fullPath === undefined) {
-      dialog.showErrorBox('Error', 'No image selected.');
-    } else {
-      fs.copyFile(fullPath[0], techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`), (err) => {
-        if (err) {
-          dialog.showErrorBox('Error', err);
+    if (fullPath !== undefined) {
+      for (let path = 0; path < fullPath.length; path += 1) {
+        const imageName = fullPath[path].split('\\').pop().split('/').pop(); // convert fullPath to just imageName
+        const localImgDir = techFolioGitHubManager.getSavedState().dir.concat('/images/');
+        const localImgLoc = techFolioGitHubManager.getSavedState().dir.concat(`/images/${imageName}`);
+        if (fullPath[path].toString() !== localImgLoc) {
+          if (fs.statSync(fullPath[path].toString()).size > 500000) {
+            Jimp.read(fullPath[path].toString(), (err, image) => {
+              if (err) throw err;
+              image
+                  .quality(0)
+                  .scale(0.45)
+                  .write(localImgLoc);
+            });
+          } else {
+            Jimp.read(fullPath[path].toString(), (err, lenna) => {
+              if (err) throw err;
+              lenna.write(localImgLoc); // save
+            });
+          }
+          if (path === fullPath.length - 1) {
+            dialog.showMessageBox({
+              type: 'question',
+              message: 'Success!',
+              detail: 'The image has been successfully imported!',
+            });
+          }
         } else {
-          dialog.showMessageBox({
-            title: 'Done',
-            message: 'Image has been imported',
-          });
+          dialog.showErrorBox('Error', `Image already exists in ${localImgDir}`);
+          break;
         }
-      });
+      }
     }
   });
 }
@@ -55,23 +79,29 @@ function importImage() {
 function removeImage() {
   dialog.showOpenDialog({
     title: 'Select an Image',
-    properties: ['openFile'],
+    properties: ['openFile', 'multiSelections'],
     defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
-    buttonLabel: 'Remove',
+    buttonLabel: 'Delete',
+    filters: [
+      { name: 'Images', extensions: ['jpg', 'png', 'gif', 'jpeg'] },
+    ],
   }, (fullPath) => {
-    if (fullPath === undefined) {
-      dialog.showErrorBox('Error', 'No image selected.');
-    } else {
-      fs.unlink(fullPath[0], (err) => {
-        if (err) {
-          dialog.showErrorBox('Error', err);
-        } else {
-          dialog.showMessageBox({
-            title: 'Done',
-            message: 'Image successfully deleted',
-          });
-        }
-      });
+    if (fullPath !== undefined) {
+      for (let path = 0; path < fullPath.length; path += 1) {
+        fs.unlink(fullPath[path], (err) => {
+          if (!err) {
+            if (path === fullPath.length - 1) {
+              dialog.showMessageBox({
+                type: 'question',
+                message: 'Success!',
+                detail: 'The image(s) has been successfully deleted!',
+              });
+            }
+          } else {
+            dialog.showErrorBox('Error', err);
+          }
+        });
+      }
     }
   });
 }
@@ -94,11 +124,10 @@ function cropImage() {
   });
 }
 
-
 function buildProjectsMenu(template, techFolioFiles) {
   const projectFiles = techFolioFiles.projectFileNames();
   const projectsSubMenu = projectFiles.map(
-    fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
+      fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'projects', fileName }) }));
   projectsSubMenu.push({ type: 'separator' });
   projectsSubMenu.push({ label: 'New Project', click: () => newTechFolioWindow({ fileType: 'projects' }) });
   template[indexOfMenuItem(template, 'Projects')].submenu = projectsSubMenu;
@@ -107,7 +136,7 @@ function buildProjectsMenu(template, techFolioFiles) {
 function buildEssaysMenu(template, techFolioFiles) {
   const essayFiles = techFolioFiles.essayFileNames();
   const essaysSubMenu = essayFiles.map(
-    fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
+      fileName => ({ label: fileName, click: () => createTechFolioWindow({ fileType: 'essays', fileName }) }));
   essaysSubMenu.push({ type: 'separator' });
   essaysSubMenu.push({ label: 'New Essay', click: () => newTechFolioWindow({ fileType: 'essays' }) });
   template[indexOfMenuItem(template, 'Essays')].submenu = essaysSubMenu;
@@ -185,7 +214,6 @@ function buildImagesMenu(template) {
   ];
   template[indexOfMenuItem(template, 'Images')].submenu = imagesSubMenu;
 }
-
 
 /**
  * Builds (or rebuilds) the application menu based upon the current state of the application.
