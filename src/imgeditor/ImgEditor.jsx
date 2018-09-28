@@ -7,24 +7,12 @@ import PropTypes from 'prop-types';
 require('../lib/autorefresh.ext');
 
 export default class ImgEditor extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   console.log(props.fileName);
-  //   // this.props.image;
-  //   // this.onBeforeChange = this.onBeforeChange.bind(this);
-  //   // this.setWindowTitle = this.setWindowTitle.bind(this);
-  //   // // this.copy = this.copy.bind(this);
-  //   // // this.paste = this.paste.bind(this);
-  //   // this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
-  //   // this.window.setTitle(this.props.fileName);
-  // }
-  // figure out how to change image after initial rendering
-  // how to import image from /images/
+
   render() {
     return (
       <div>
         <img src={this.props.image} alt="Preview" className="cropimage" />
-        <h2>BADA BING BADA BOOM</h2>
+        <h2>{ this.props.fileName }</h2>
       </div>
     );
   }
@@ -33,7 +21,7 @@ export default class ImgEditor extends React.Component {
 ImgEditor.propTypes = {
   // directory: PropTypes.string.isRequired,
   // fileType: PropTypes.string.isRequired,
-  // fileName: PropTypes.string.isRequired,
+  fileName: PropTypes.string.isRequired,
   image: PropTypes.string,
 };
 

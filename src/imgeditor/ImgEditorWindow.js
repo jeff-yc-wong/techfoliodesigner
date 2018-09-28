@@ -11,7 +11,7 @@ import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 const fs = require('fs');
 
-export default async function createImgEditorWindow({ isDevMode = true, fileType = '', fileName = '' }) {
+export async function createImgEditorWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
