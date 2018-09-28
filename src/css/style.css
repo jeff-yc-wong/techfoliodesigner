@@ -54,3 +54,8 @@
 .Resizer.disabled:hover {
   border-color: transparent;
 }
+
+.pane {
+  height: 100vh;
+  overflow: scroll;
+}

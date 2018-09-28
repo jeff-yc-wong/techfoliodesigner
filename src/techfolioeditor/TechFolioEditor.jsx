@@ -263,7 +263,7 @@ export default class TechFolioEditor extends React.Component {
     return (
       <SplitPane split="vertical"
                  defaultSize={575}>
-        <div>
+        <div className="pane">
           <CodeMirror
             value={this.state.value}
             onBeforeChange={this.onBeforeChange}
@@ -272,7 +272,7 @@ export default class TechFolioEditor extends React.Component {
             defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
           />
         </div>
-        <div dangerouslySetInnerHTML={{__html: result}}>
+        <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
         </div>
       </SplitPane>
     );
