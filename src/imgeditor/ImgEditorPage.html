@@ -25,11 +25,15 @@
   .edit {
     background-color: rgba(255,0, 255, 10);
   }
+  .cropimage {
+    width: 100%;
+    height: 2px;
+  }
 </style>
 <body style="background-color: rgba(0,0,0,0); margin: 0" >
 <div class="editorWrapper">
   <div class="pictureWrapper">
-    <div class="picture">
+    <div class="picture" id="picture">
       <h1>PICTURE GOES HERE</h1>
     </div>
     <div class="properties">
@@ -46,7 +50,9 @@
   import ReactDOM from 'react-dom';
   import { AppContainer } from 'react-hot-loader';
   import queryString from 'query-string';
-  const app = require('electron').remote.app
+
+  import ImgEditor from './ImgEditor.jsx';
+  const app = require('electron').remote.app;
 
   const queryObject = queryString.parse(window.location.search);
   const fileType = queryObject.fileType || 'unknown';
@@ -54,11 +60,8 @@
   const directory = queryObject.directory || 'unknown';
 
   const render = () => {
-    const imgEditor = require('./imgEditor').default;
-    ReactDOM.render(
-        <AppContainer>
-          <imgEditor directory={directory} fileType={fileType} fileName={fileName}/>
-        </AppContainer>, document.getElementById('picture'));
+    // const imgEditor = require('./ImgEditor').default;
+    ReactDOM.render( <ImgEditor directory={directory} fileType={fileType} fileName={fileName} />, document.getElementById('picture'));
   }
 
   render();

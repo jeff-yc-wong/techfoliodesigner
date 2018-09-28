@@ -11,7 +11,7 @@ import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 const fs = require('fs');
 
-export async function createImgEditorWindow({ isDevMode = true, fileType = '', fileName = '' }) {
+export default async function createImgEditorWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
@@ -29,7 +29,7 @@ export async function createImgEditorWindow({ isDevMode = true, fileType = '', f
     });
 
     window.loadURL(
-        `file://${__dirname}/imgEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
+        `file://${__dirname}/ImgEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
     if (isDevMode) {
       await installExtension(REACT_DEVELOPER_TOOLS);
         // mainWindow.webContents.openDevTools();
@@ -41,7 +41,7 @@ export async function createImgEditorWindow({ isDevMode = true, fileType = '', f
         type: 'info',
         title: 'Do you really want to close this window?',
         message: 'This window has unsaved changes. Close anyway?',
-        buttons: ['No', 'Yes, lose my changes'],
+        buttons: ['No', 'Yes, lose my changes cause im too cool for saving'],
       };
       dialog.showMessageBox(options, (index) => {
         if (index === 1) {

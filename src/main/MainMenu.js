@@ -2,7 +2,8 @@ import { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
-import { createImgEditorWindow } from '../imgeditor/imgEditorWindow';
+import { createImgEditorWindow } from '../imgeditor/ImgEditorWindow';
+import imgEditor from '../imgeditor/ImgEditor.jsx';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
@@ -88,6 +89,7 @@ function cropImage() {
       let fileName = fullPath.toString();
       fileName = fileName.split('/');
       createImgEditorWindow({ fileType: 'images', fileName: fileName[fileName.length - 1] });
+      imgEditor.setState({ image: fileName });
     }
   });
 }
