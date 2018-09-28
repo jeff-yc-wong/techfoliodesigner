@@ -6,12 +6,14 @@ import { Controlled as CodeMirror } from 'react-codemirror2';
 import cm from 'codemirror';
 import jsonlint from 'jsonlint';
 import { JSHINT } from 'jshint';
+import SplitPane from 'react-split-pane';
 
 const { dialog } = require('electron').remote;
 const Typo = require('typo-js');
 const fs = require('fs');
 const yamlFront = require('yaml-front-matter');
 const markdownlint = require('markdownlint');
+const md = require('markdown-it')();
 
 const mdLintOptions = {
   'strings': { // eslint-disable-line
@@ -257,16 +259,22 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
+    let result = md.render(this.state.value);
     return (
-      <div>
-        <CodeMirror
-          value={this.state.value}
-          onBeforeChange={this.onBeforeChange}
-          options={this.options}
-          editorDidMount={(editor) => { this.instance = editor; }}
-          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-        />
-      </div>
+      <SplitPane split="vertical"
+                 defaultSize={575}>
+        <div>
+          <CodeMirror
+            value={this.state.value}
+            onBeforeChange={this.onBeforeChange}
+            options={this.options}
+            editorDidMount={(editor) => { this.instance = editor; }}
+            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+          />
+        </div>
+        <div dangerouslySetInnerHTML={{__html: result}}>
+        </div>
+      </SplitPane>
     );
   }
 }
