@@ -259,7 +259,9 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    let result = md.render(this.state.value);
+    let markdown = this.state.value;
+    markdown = markdown.replace(/((.|\n)*)---/gi,'');
+    let result = md.render(markdown);
     return (
       <SplitPane split="vertical"
                  defaultSize={575}>
