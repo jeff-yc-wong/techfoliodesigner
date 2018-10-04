@@ -8,13 +8,20 @@ import ErrorsField from 'uniforms-semantic/ErrorsField';
 import LongTextField from 'uniforms-semantic/LongTextField';
 import { Grid } from 'semantic-ui-react';
 import { writeBioFile } from './BioFileIO';
+import {_} from 'underscore';
 
 export default class SimpleBioEditorTabBasics extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
 
+
     this.state = { model: {} };
+
+    //Build a empty bio if one doesn't exist to input defaults for the bio
+    this.state.tempbio = {};
+    this.insertDefaults();
+
     this.state.model.name = '';
     this.state.model.label = '';
     this.state.model.picture = '';
@@ -28,19 +35,35 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     this.state.model.region = '';
     this.state.model.countryCode = '';
 
-    if(this.props.bio.basics !== undefined) {
-      if (this.props.bio.basics.name !== undefined) this.state.model.name = this.props.bio.basics.name ;
-      if (this.props.bio.basics.label !== undefined) this.state.model.label = this.props.bio.basics.label ;
-      if (this.props.bio.basics.picture !== undefined) this.state.model.picture = this.props.bio.basics.picture ;
-      if (this.props.bio.basics.email !== undefined) this.state.model.email = this.props.bio.basics.email ;
-      if (this.props.bio.basics.phone !== undefined) this.state.model.phone = this.props.bio.basics.phone ;
-      if (this.props.bio.basics.website !== undefined) this.state.model.website = this.props.bio.basics.website ;
-      if (this.props.bio.basics.summary !== undefined) this.state.model.summary = this.props.bio.basics.summary ;
-      if (this.props.bio.basics.address !== undefined) this.state.model.address = this.props.bio.basics.address;
-      if (this.props.bio.basics.postalCode !== undefined) this.state.model.postalCode = this.props.bio.basics.postalCode ;
-      if (this.props.bio.basics.city !== undefined) this.state.model.city = this.props.bio.basics.city ;
-      if (this.props.bio.basics.region !== undefined) this.state.model.region = this.props.bio.basics.region ;
-      if (this.props.bio.basics.countryCode !== undefined) this.state.model.countryCode = this.props.bio.basics.countryCode ;
+    if (this.props.bio.basics !== undefined) {
+      if (this.props.bio.basics.name !== undefined) this.state.model.name = this.props.bio.basics.name;
+      if (this.props.bio.basics.label !== undefined) this.state.model.label = this.props.bio.basics.label;
+      if (this.props.bio.basics.picture !== undefined) this.state.model.picture = this.props.bio.basics.picture;
+      if (this.props.bio.basics.email !== undefined) this.state.model.email = this.props.bio.basics.email;
+      if (this.props.bio.basics.phone !== undefined) this.state.model.phone = this.props.bio.basics.phone;
+      if (this.props.bio.basics.website !== undefined) this.state.model.website = this.props.bio.basics.website;
+      if (this.props.bio.basics.summary !== undefined) this.state.model.summary = this.props.bio.basics.summary;
+      if (this.props.bio.basics.location.address !== undefined) this.state.model.address = this.props.bio.basics.location.address;
+      if (this.props.bio.basics.location.postalCode !== undefined) this.state.model.postalCode = this.props.bio.basics.location.postalCode;
+      if (this.props.bio.basics.location.city !== undefined) this.state.model.city = this.props.bio.basics.location.city;
+      if (this.props.bio.basics.location.region !== undefined) this.state.model.region = this.props.bio.basics.location.region;
+      if (this.props.bio.basics.location.countryCode !== undefined) this.state.model.countryCode = this.props.bio.basics.location.countryCode;
+    }
+
+  }
+
+  insertDefaults(){
+    if(this.props.bio !== undefined) this.state.tempbio = this.props.bio;
+    if(this.props.bio === undefined || Object.keys(this.props.bio).length === 0) {
+      if(this.props.bio.basics === undefined || Object.keys(this.props.bio).length !== 12) {
+        const defaultBasics = {
+          name: '', label: '', picture: '', email: '', phone: '', website: '', summary: '',location :{address: '',
+            postalCode: '', city: '', region: '', countryCode: ''}
+        };
+        this.state.tempbio.basics = _.defaults(this.state.tempbio.basics, defaultBasics);
+        writeBioFile(this.props.directory,  this.state.tempbio, 'Automatically inserted Basics field to your JSON');
+        this.props.handleBioChange(this.state.tempbio);
+      }
     }
   }
 
@@ -48,19 +71,6 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     const
       { name, label, picture, email, phone, website, summary, address, postalCode, city, countryCode, region } = data;
     const bio = this.props.bio;
-    // this.props.bio.basics = [];
-    // if (this.props.bio.basics.name !== undefined) bio.basics.name = this.props.bio.basics.name ;
-    // if (this.props.bio.basics.label !== undefined) bio.basics.label = this.props.bio.basics.label ;
-    // if (this.props.bio.basics.picture !== undefined) bio.basics.picture = this.props.bio.basics.picture ;
-    // if (this.props.bio.basics.email !== undefined) bio.basics.email = this.props.bio.basics.email ;
-    // if (this.props.bio.basics.phone !== undefined) bio.basics.phone = this.props.bio.basics.phone ;
-    // if (this.props.bio.basics.website !== undefined) bio.basics.website = this.props.bio.basics.website ;
-    // if (this.props.bio.basics.summary !== undefined) bio.basics.summary = this.props.bio.basics.summary ;
-    // if (this.props.bio.basics.address !== undefined) bio.basics.address = this.props.bio.basics.address;
-    // if (this.props.bio.basics.postalCode !== undefined) bio.basics.postalCode = this.props.bio.basics.postalCode ;
-    // if (this.props.bio.basics.city !== undefined) bio.basics.city = this.props.bio.basics.city ;
-    // if (this.props.bio.basics.region !== undefined) bio.basics.region = this.props.bio.basics.region ;
-    // if (this.props.bio.basics.countryCode !== undefined) bio.basics.countryCode = this.props.bio.basics.countryCode ;
     bio.basics = {};
     bio.basics.name = name || '';
     bio.basics.label = label || '';
