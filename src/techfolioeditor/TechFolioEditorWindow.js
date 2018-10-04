@@ -159,7 +159,16 @@ export function deleteFile(fileType, fileName) {
       fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
         if (err) throw err;
         console.log(`Successfully deleted ${fileType} ${fileName}`);
+        buildMainMenu();
       });
     }
   });
 }
+//
+// export function deleteFile(fileType, fileName) {
+//   fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
+//     if (err) throw err;
+//     console.log(`Successfully deleted ${fileType} ${fileName}`);
+//     buildMainMenu();
+//   });
+// }

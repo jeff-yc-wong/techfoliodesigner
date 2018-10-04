@@ -1,12 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table, Icon, Button } from 'semantic-ui-react';
+import { Table, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { createTechFolioWindow, deleteFile } from '../techfolioeditor/TechFolioEditorWindow';
+import { createTechFolioWindow, deleteFile, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 
 function handleClick(action, fileType, fileName) {
-  if (action === 'edit') createTechFolioWindow({ fileType, fileName });
-  //if (action === 'delete') deleteFile(fileType, fileName);
+  if (action === 'edit') return createTechFolioWindow({ fileType, fileName });
+  if (action === 'delete') {
+    deleteFile(fileType, fileName);
+    return 0;
+  }
+  return -1;
+}
+
+function newClick(fileType) {
+  return newTechFolioWindow(fileType);
 }
 
 class FileExplorer extends React.Component {
@@ -25,28 +33,30 @@ class FileExplorer extends React.Component {
     const fileData = projectObjects.concat(essayObjects);
     fileData.sort(compare);
     return (
-      <Table celled unstackable sortable>
+      <Table celled unstackable striped>
         <Table.Header>
           <Table.Row>
-            <Table.Cell>File Explorer</Table.Cell>
+            <Table.HeaderCell colSpan={'2'} textAlign={'center'}>File Explorer</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {fileData.map(file => (
             <Table.Row key={file.key}>
               <Table.Cell>{file.fileName}</Table.Cell>
-              <Table.Cell>
-                <Icon link name="edit" onClick={handleClick('edit', file.fileType, file.fileName)} />
-                <Icon link name="delete" onClick={handleClick('delete', file.fileType, file.fileName)} />
+              <Table.Cell textAlign={'right'}>
+                <Icon link name="edit" onClick={() => handleClick('edit', file.fileType, file.fileName)} />
+                <Icon link name="delete" onClick={() => handleClick('delete', file.fileType, file.fileName)} />
               </Table.Cell>
             </Table.Row>))}
-        </Table.Body>
-        <Table.Footer>
           <Table.Row>
-            <Table.Cell>Create a new project</Table.Cell>
-            <Table.Cell>Create a new essay</Table.Cell>
+            <Table.Cell selectable onClick={() => newClick({ fileType: 'projects' })}>
+              <a href={'#'}><b>Create a new project</b></a>
+            </Table.Cell>
+            <Table.Cell selectable onClick={() => newClick({ fileType: 'essays' })}>
+              <a href={'#'}><b>Create a new essay</b></a>
+            </Table.Cell>
           </Table.Row>
-        </Table.Footer>
+        </Table.Body>
       </Table>
     );
   }
