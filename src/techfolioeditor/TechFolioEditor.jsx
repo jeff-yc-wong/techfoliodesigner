@@ -335,22 +335,37 @@ export default class TechFolioEditor extends React.Component {
     let markdown = this.state.value;
     markdown = markdown.replace(/((.|\n)*)---/gi,'');
     let result = md.render(markdown);
-    return (
-      <SplitPane split="vertical"
-                 defaultSize={575}>
-        <div className="pane">
-          <CodeMirror
-            value={this.state.value}
-            onBeforeChange={this.onBeforeChange}
-            options={this.options}
-            editorDidMount={(editor) => { this.instance = editor; }}
-            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-          />
-        </div>
-        <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
-        </div>
-      </SplitPane>
-    );
+
+    if (this.mode === 'spellCheck') {
+      return (
+            <SplitPane split="vertical"
+                       defaultSize={575}>
+              <div className="pane">
+                <CodeMirror
+                  value={this.state.value}
+                  onBeforeChange={this.onBeforeChange}
+                  options={this.options}
+                  editorDidMount={(editor) => { this.instance = editor; }}
+                  defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+                />
+              </div>
+              <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
+              </div>
+            </SplitPane>
+        );
+      } else {
+        return (
+          <div>
+            <CodeMirror
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => { this.instance = editor; }}
+              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+            />
+          </div>
+        );
+    }
   }
 }
 
