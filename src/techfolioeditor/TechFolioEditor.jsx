@@ -226,6 +226,24 @@ export default class TechFolioEditor extends React.Component {
       }
     }
 
+    // Check if there is at least one subsection header
+    results.set('noSubsection', true);
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].startsWith('#')) {
+        results.set('noSubsection', false);
+      }
+    }
+
+    // Check if title contains the word "reflect"
+    // const yaml = actualText[1];
+    results.set('titleContainsReflect', false);
+    const yaml = actualText[1].split(/\n+/);
+    if (yaml[2].includes('essay')) {
+      if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
+        results.set('titleContainsReflect', true);
+      }
+    }
+
     console.log(results);
     return results;
   }
@@ -243,6 +261,12 @@ export default class TechFolioEditor extends React.Component {
     }
     if (results.get('badImg') === true) {
       error = error.concat('Contains an img tag without the responsive ui image class.\n');
+    }
+    if (results.get('noSubsection') === true) {
+      error = error.concat('Does not contain a subsection header.\n');
+    }
+    if (results.get('titleContainsReflect') === true) {
+      error = error.concat('Title contains the string "reflect". Consider something more original!\n');
     }
     if (error !== '') {
       console.log(error);
@@ -333,11 +357,13 @@ export default class TechFolioEditor extends React.Component {
 
   render() {
     let markdown = this.state.value;
-    markdown = markdown.replace(/((.|\n)*)---/gi,'');
-    let result = md.render(markdown);
+    markdown = markdown.replace(/((.|\n)*)---/gi, '');
+    const result = md.render(markdown);
     return (
-      <SplitPane split="vertical"
-                 defaultSize={575}>
+      <SplitPane
+        split="vertical"
+        defaultSize={575}
+      >
         <div className="pane">
           <CodeMirror
             value={this.state.value}
@@ -347,8 +373,7 @@ export default class TechFolioEditor extends React.Component {
             defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
           />
         </div>
-        <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
-        </div>
+        <div className="pane" dangerouslySetInnerHTML={{ __html: result }} />
       </SplitPane>
     );
   }
