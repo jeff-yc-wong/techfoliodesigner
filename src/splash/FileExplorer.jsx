@@ -20,10 +20,10 @@ function newClick(fileType) {
 class FileExplorer extends React.Component {
   render() {
     const projectObjects = this.props.projects.map((project) => {
-      return ({ key: project, fileName: project, fileType: 'projects' });
+      return ({ key: `project-${project}`, fileName: project, fileType: 'projects' });
     });
     const essayObjects = this.props.essays.map((essay) => {
-      return ({ key: essay, fileName: essay, fileType: 'essays' });
+      return ({ key: `essay-${essay}`, fileName: essay, fileType: 'essays' });
     });
     function compare(a, b) {
       if (a.fileName < b.fileName) return -1;
