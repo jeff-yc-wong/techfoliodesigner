@@ -1,5 +1,4 @@
 import React from 'react';
-// import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
 require('../lib/autorefresh.ext');
 
@@ -23,7 +22,6 @@ export default class ImgEditorOptions extends React.Component {
       height: event.target.value,
     });
   }
-
 
   handleChangeWidth(event) {
     this.setState({
