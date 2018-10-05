@@ -59,7 +59,21 @@ export default class TechFolioEditor extends React.Component {
       value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '',
     };
-    this.mode = this.props.fileName.endsWith('.md') ? 'spell-check' : 'application/json';
+    var fileExtension = this.props.fileName.match(/\.(.*)/gi);
+    switch (fileExtension[0]) {
+      case '.md':
+        this.mode = 'spell-check';
+        break;
+      case '.json':
+        this.mode = 'application/json'
+        break;
+      case '.yaml':
+      case '.yml':
+        this.mode = 'text/x-yaml'
+        break;
+      default:
+        this.mode = 'text/plain'
+    }
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
     // const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
@@ -335,22 +349,37 @@ export default class TechFolioEditor extends React.Component {
     let markdown = this.state.value;
     markdown = markdown.replace(/((.|\n)*)---/gi,'');
     let result = md.render(markdown);
-    return (
-      <SplitPane split="vertical"
-                 defaultSize={575}>
-        <div className="pane">
-          <CodeMirror
-            value={this.state.value}
-            onBeforeChange={this.onBeforeChange}
-            options={this.options}
-            editorDidMount={(editor) => { this.instance = editor; }}
-            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-          />
-        </div>
-        <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
-        </div>
-      </SplitPane>
-    );
+
+    if (this.mode === 'spell-check') {
+      return (
+            <SplitPane split="vertical"
+                       defaultSize={575}>
+              <div className="pane">
+                <CodeMirror
+                  value={this.state.value}
+                  onBeforeChange={this.onBeforeChange}
+                  options={this.options}
+                  editorDidMount={(editor) => { this.instance = editor; }}
+                  defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+                />
+              </div>
+              <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
+              </div>
+            </SplitPane>
+        );
+      } else {
+        return (
+          <div>
+            <CodeMirror
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => { this.instance = editor; }}
+              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+            />
+          </div>
+        );
+    }
   }
 }
 
