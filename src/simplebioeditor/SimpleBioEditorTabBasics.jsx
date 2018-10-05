@@ -43,11 +43,13 @@ export default class SimpleBioEditorTabBasics extends React.Component {
       if (this.props.bio.basics.phone !== undefined) this.state.model.phone = this.props.bio.basics.phone;
       if (this.props.bio.basics.website !== undefined) this.state.model.website = this.props.bio.basics.website;
       if (this.props.bio.basics.summary !== undefined) this.state.model.summary = this.props.bio.basics.summary;
-      if (this.props.bio.basics.location.address !== undefined) this.state.model.address = this.props.bio.basics.location.address;
-      if (this.props.bio.basics.location.postalCode !== undefined) this.state.model.postalCode = this.props.bio.basics.location.postalCode;
-      if (this.props.bio.basics.location.city !== undefined) this.state.model.city = this.props.bio.basics.location.city;
-      if (this.props.bio.basics.location.region !== undefined) this.state.model.region = this.props.bio.basics.location.region;
-      if (this.props.bio.basics.location.countryCode !== undefined) this.state.model.countryCode = this.props.bio.basics.location.countryCode;
+      if (this.props.bio.basics.location !== undefined) {
+        if (this.props.bio.basics.location.address !== undefined) this.state.model.address = this.props.bio.basics.location.address;
+        if (this.props.bio.basics.location.postalCode !== undefined) this.state.model.postalCode = this.props.bio.basics.location.postalCode;
+        if (this.props.bio.basics.location.city !== undefined) this.state.model.city = this.props.bio.basics.location.city;
+        if (this.props.bio.basics.location.region !== undefined) this.state.model.region = this.props.bio.basics.location.region;
+        if (this.props.bio.basics.location.countryCode !== undefined) this.state.model.countryCode = this.props.bio.basics.location.countryCode;
+      }
     }
 
   }
