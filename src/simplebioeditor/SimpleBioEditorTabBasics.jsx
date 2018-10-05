@@ -56,16 +56,26 @@ export default class SimpleBioEditorTabBasics extends React.Component {
 
   insertDefaults(){
     if(this.props.bio !== undefined) this.state.tempbio = this.props.bio;
-    if(this.props.bio === undefined || Object.keys(this.props.bio).length === 0) {
-      if(this.props.bio.basics === undefined || Object.keys(this.props.bio).length !== 12) {
-        const defaultBasics = {
-          name: '', label: '', picture: '', email: '', phone: '', website: '', summary: '',location :{address: '',
-            postalCode: '', city: '', region: '', countryCode: '', profiles: []}
-        };
-        this.state.tempbio.basics = _.defaults(this.state.tempbio.basics, defaultBasics);
-        writeBioFile(this.props.directory,  this.state.tempbio, 'Automatically inserted Basics field to your JSON');
-        this.props.handleBioChange(this.state.tempbio);
-      }
+
+    let needToWriteChange = false;
+    if(this.state.tempbio.basics === undefined || Object.keys(this.state.tempbio.basics).length !== 9 ||
+      Object.keys(this.state.tempbio.basics.location).length !== 5) {
+      needToWriteChange = true;
+    }
+    const defaultBasics = {
+      name: '', label: '', picture: '', email: '', phone: '', website: '', summary: '',location :{ address: '',
+        postalCode: '', city: '', region: '', countryCode: ''}, profiles: []
+    };
+
+    this.state.tempbio.basics = _.defaults(this.state.tempbio.basics, defaultBasics);
+
+    const defaultLocation = { address: '', postalCode: '', city: '', region: '', countryCode: '' };
+
+    this.state.tempbio.basics.location = _.defaults(this.state.tempbio.basics.location, defaultLocation);
+
+    if(needToWriteChange) {
+      writeBioFile(this.props.directory,  this.state.tempbio, 'Automatically inserted Basics field items to your JSON');
+      this.props.handleBioChange(this.state.tempbio);
     }
   }
 
