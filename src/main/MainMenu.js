@@ -3,7 +3,7 @@ import { _ } from 'underscore';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import { createImgEditorWindow } from '../imgeditor/ImgEditorWindow';
-// import imgEditor from '../imgeditor/ImgEditor.jsx';
+// import { imgEditor } from '../imgeditor/ImgEditor.jsx';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
@@ -12,6 +12,8 @@ import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
 const fs = require('fs');
 const Jimp = require('jimp');
+
+let imgPath;
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -119,7 +121,6 @@ function cropImage() {
       let fileName = fullPath.toString();
       fileName = fileName.split('/');
       createImgEditorWindow({ fileType: 'images', filename: fileName });
-      // imgEditor.setState({ image: fileName });
     }
   });
 }
@@ -239,3 +240,4 @@ function buildMainMenu() {
 }
 
 export default buildMainMenu;
+export const imgFile = imgPath;

@@ -18,6 +18,8 @@
   }
   .picture {
     background-color: rgba(0,255,255, 10);
+    min-height: 70vh;
+    min-width: 50vh;
   }
   .properties {
     background-color: rgba(0,0, 255, 10);
@@ -27,21 +29,33 @@
   }
   .cropimage {
     width: 100%;
-    height: 2px;
+    height: 100%;
   }
+
+  #edit {
+    margin: 10px;
+  }
+
+  #edit > input {
+    float: right;
+  }
+
 </style>
 <body style="background-color: rgba(0,0,0,0); margin: 0" >
 <div class="editorWrapper">
   <div class="pictureWrapper">
     <div class="picture" id="picture">
-      <h1>PICTURE GOES HERE</h1>
     </div>
     <div class="properties">
       <h1>PROPERTIES GO HERE</h1>
     </div>
   </div>
   <div class="edit">
-    <h1>EDIT PICTURES GO HERE</h1>
+    <h1>Edit Image:</h1>
+    <div id="edit">
+
+    </div>
+
   </div>
 </div>
 </body>
@@ -50,8 +64,10 @@
   import ReactDOM from 'react-dom';
   import { AppContainer } from 'react-hot-loader';
   import queryString from 'query-string';
+  import { imgFile } from '../main/MainMenu.js'
 
   import ImgEditor from './ImgEditor.jsx';
+  import ImgEditorOptions from './ImgEditorOptions.jsx'
   const app = require('electron').remote.app;
 
   const queryObject = queryString.parse(window.location.search);
@@ -60,8 +76,8 @@
   const directory = queryObject.directory || 'unknown';
 
   const render = () => {
-    // const imgEditor = require('./ImgEditor').default;
-    ReactDOM.render( <ImgEditor directory={directory} fileType={fileType} fileName={fileName} />, document.getElementById('picture'));
+    ReactDOM.render( <ImgEditor directory={directory} fileType={fileType} fileName={fileName} className="cropimage"/>, document.getElementById('picture'));
+    ReactDOM.render( <ImgEditorOptions/>, document.getElementById('edit'));
   }
 
   render();
