@@ -110,7 +110,7 @@ export default class ImgEditor extends React.Component {
               </Grid.Column>
             </Grid.Row>
           </Grid.Column>
-          <Grid.Column width={4} style={{ overflow: 'scroll', height: '750px' }}>
+          <Grid.Column width={4} style={{ overflow: 'scroll', height: '97vh' }}>
             <Grid.Row>
               <Grid.Column>
                 <Header as="h1">Edit Image:</Header>
