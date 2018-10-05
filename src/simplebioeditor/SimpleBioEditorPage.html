@@ -7,6 +7,7 @@
 </head>
 <body>
 <div id="SimpleBioEditorPage"></div>
+<button onClick="render()">refresh</button>
 </body>
 
 <script type="text/jsx">
@@ -21,13 +22,15 @@
 
   const render = () => {
     const SimpleBioEditor = require('./SimpleBioEditor').default;
-    ReactDOM.render(
-      <Grid style={{padding: "20px"}}>
-        <Grid.Column>
-          <SimpleBioEditor directory={directory}/>
-        </Grid.Column>
-      </Grid>,
-      document.getElementById('SimpleBioEditorPage'));
+    const element = (
+        <Grid style={{padding: "20px"}}>
+          <Grid.Column>
+            {new Date().toLocaleTimeString()}
+            <SimpleBioEditor directory={directory}/>
+          </Grid.Column>
+        </Grid>
+    );
+    ReactDOM.render(element, document.getElementById('SimpleBioEditorPage'));
   }
   render();
 </script>

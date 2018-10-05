@@ -64,6 +64,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
     }
     writeBioFile(this.props.directory, bio, 'Updated skills section of bio.');
     this.props.handleBioChange(bio);
+    this.constructor(this.props);
   }
 
   render() {
@@ -122,6 +123,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
             </Grid.Row>
           </Grid>
         </AutoForm>
+        {new Date().toLocaleTimeString()}
       </div>
     );
   }
