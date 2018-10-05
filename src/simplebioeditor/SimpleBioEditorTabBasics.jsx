@@ -58,7 +58,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
       if(this.props.bio.basics === undefined || Object.keys(this.props.bio).length !== 12) {
         const defaultBasics = {
           name: '', label: '', picture: '', email: '', phone: '', website: '', summary: '',location :{address: '',
-            postalCode: '', city: '', region: '', countryCode: ''}
+            postalCode: '', city: '', region: '', countryCode: '', profiles: []}
         };
         this.state.tempbio.basics = _.defaults(this.state.tempbio.basics, defaultBasics);
         writeBioFile(this.props.directory,  this.state.tempbio, 'Automatically inserted Basics field to your JSON');
@@ -71,6 +71,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     const
       { name, label, picture, email, phone, website, summary, address, postalCode, city, countryCode, region } = data;
     const bio = this.props.bio;
+    const tempProfiles  = bio.basics.profiles; // This should remain the same so it is temporarily saved
     bio.basics = {};
     bio.basics.name = name || '';
     bio.basics.label = label || '';
@@ -85,6 +86,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
     bio.basics.location.city = city;
     bio.basics.location.region = region;
     bio.basics.location.countryCode = countryCode;
+    bio.basics.profiles = tempProfiles;
     writeBioFile(this.props.directory, bio, 'Updated basics section of bio.');
     this.props.handleBioChange(bio);
   }
