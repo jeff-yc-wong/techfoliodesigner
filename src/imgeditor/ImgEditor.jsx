@@ -88,7 +88,7 @@ export default class ImgEditor extends React.Component {
                       src={this.state.image.path}
                       alt={''}
                       style={{
-                        maxHeight: '500px',
+                        maxHeight: '65vh',
                         maxWidth: '100%',
                         textAlign: 'center',
                         border: this.state.image.border,
