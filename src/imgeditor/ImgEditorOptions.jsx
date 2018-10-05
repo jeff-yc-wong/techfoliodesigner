@@ -1,5 +1,5 @@
 import React from 'react';
-import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
+// import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
 require('../lib/autorefresh.ext');
 
@@ -14,32 +14,41 @@ export default class ImgEditorOptions extends React.Component {
       width: '',  // could set this to be initial image width
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChangeHeight = this.handleChangeHeight.bind(this);
+    this.handleChangeWidth = this.handleChangeWidth.bind(this);
   }
 
-  handleChange() {
+  handleChangeHeight(event) {
     this.setState({
-      height: this.state.height,
-      width: this.state.width,
+      height: event.target.value,
     });
   }
+
+
+  handleChangeWidth(event) {
+    this.setState({
+      width: event.target.value,
+    });
+  }
+
 
   handleSubmit(event) {
     dialog.showErrorBox('Error', `A value was submitted: ${this.state.width} x ${this.state.height}`);
     event.preventDefault();
   }
 
-
+// htmlFor is because there'd be an ESLint error without it.
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <label>
+        <label htmlFor={this.state.width}>
           Crop:
-          <input type="text" name="width" onChange={this.handleChange} value={this.state.width} />
+          <input type="text" name="width" onChange={this.handleChangeWidth} value={this.state.width} />
         </label>
         <br />
-        <label>
+        <label htmlFor={this.state.width}>
           Height
-          <input type="text" name="height" onChange={this.handleChange} value={this.state.height} />
+          <input type="text" name="height" onChange={this.handleChangeHeight} value={this.state.height} />
         </label>
         <br />
         <input type="submit" value="Crop" />
