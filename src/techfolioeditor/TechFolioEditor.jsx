@@ -11,13 +11,12 @@ const fs = require('fs');
 // const { ks } = require('node-key-sender');
 const notifier = require('node-notifier');
 
-//require('simplemde/dist/simplemde.min.css');
-
 require('../lib/autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this);
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);

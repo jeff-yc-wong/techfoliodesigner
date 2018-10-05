@@ -109,20 +109,21 @@ function removeImage() {
 }
 
 function cropImage() {
-  dialog.showOpenDialog({
-    title: 'Select an Image',
-    properties: ['openFile'],
-    defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
-    buttonLabel: 'Crop',
-  }, (fullPath) => {
-    if (fullPath === undefined) {
-      dialog.showErrorBox('Error', 'No image selected.');
-    } else {
-      let fileName = fullPath.toString();
-      fileName = fileName.split('/');
-      createImgEditorWindow({ fileType: 'images', filename: fileName });
-    }
-  });
+  createImgEditorWindow({ fileType: 'images' });
+  // dialog.showOpenDialog({
+  //   title: 'Select an Image',
+  //   properties: ['openFile'],
+  //   defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
+  //   buttonLabel: 'Crop',
+  // }, (fullPath) => {
+  //   if (fullPath === undefined) {
+  //     dialog.showErrorBox('Error', 'No image selected.');
+  //   } else {
+  //     // let fileName = fullPath.toString();
+  //     // fileName = fileName.split('/');
+  //     // createImgEditorWindow({ fileType: 'images', filename: fileName });
+  //   }
+  // });
 }
 
 function buildProjectsMenu(template, techFolioFiles) {

@@ -1,13 +1,8 @@
 import { BrowserWindow, dialog } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import path from 'path';
-// import prompt from 'electron-prompt';
-// import moment from 'moment';
-// import buildMainMenu from '../main/MainMenu';
-// import { runAddFile } from '../main/Git';
 import mainStore from '../redux/mainstore';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
-// import TechFolioFiles from '../shared/TechFolioFiles';
 
 const fs = require('fs');
 
@@ -32,7 +27,7 @@ export async function createImgEditorWindow({ isDevMode = true, fileType = '', f
         `file://${__dirname}/ImgEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`);
     if (isDevMode) {
       await installExtension(REACT_DEVELOPER_TOOLS);
-        // mainWindow.webContents.openDevTools();
+      // currWindow.webContents.openDevTools();
     }
 
     window.on('close', (e) => {
@@ -54,7 +49,6 @@ export async function createImgEditorWindow({ isDevMode = true, fileType = '', f
         // Dereference the window object.
       techFolioWindowManager.removeWindow(fileType, fileName);
     });
-
     techFolioWindowManager.addWindow(fileType, fileName, window);
   }
 }
