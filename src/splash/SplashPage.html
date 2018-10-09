@@ -6,7 +6,10 @@
 </head>
 <body>
 <div id="SplashPage" style="position: absolute; width: 50%; left: 0px"></div>
-<div id="FileExplorer" style="position: absolute; width: 50%; right: 0px; height: 650px; overflow-y: scroll"></div>
+<div id="ProjectExplorer" style="position: absolute; width: 50%; right: 0px; height: 45%; overflow-y: scroll"></div>
+<div id="EssayExplorer" style="position: absolute; width: 50%; right: 0px; top: 340px; height: 45%; overflow-y: scroll"></div>
+
+
 </body>
 
 <script type="text/jsx">
@@ -20,7 +23,8 @@
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
-  import FileExplorer from './FileExplorer';
+  import ProjectExplorer from './ProjectExplorer';
+  import EssayExplorer from './EssayExplorer';
   const app = require('electron').remote.app
 
   // Set up renderer-side redux
@@ -46,12 +50,21 @@
       <Provider store={store}>
         <Grid style={{padding: "20px"}}>
           <Grid.Column textAlign="center">
-            <Header as="h1">Start Editing Files Here</Header>
-            <FileExplorer/>
+            <ProjectExplorer/>
           </Grid.Column>
         </Grid>
       </Provider>,
-      document.getElementById('FileExplorer'));
+      document.getElementById('ProjectExplorer'));
+
+    ReactDOM.render(
+      <Provider store={store}>
+        <Grid style={{padding: "20px"}}>
+          <Grid.Column textAlign="center">
+            <EssayExplorer/>
+          </Grid.Column>
+        </Grid>
+      </Provider>,
+      document.getElementById('EssayExplorer'));
   };
   render();
 </script>
