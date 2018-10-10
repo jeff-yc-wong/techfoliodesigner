@@ -15,9 +15,13 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
+  const otherWindow = techFolioWindowManager.getWindow(fileType, fileName, 'SimpleBioEditor');
   if (currWindow) {
+    if(otherWindow) {
+      dialog.showErrorBox('Opening Multiple Bio Editors is Not Allowed', 'You can not open multiple bio editors at the same time');
+    }
     currWindow.show();
-  } else
+  } else {
     if (fs.existsSync(filePath)) {
       // Create the browser window.
       const window = new BrowserWindow({
@@ -30,7 +34,9 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
       });
 
       // Tell the window manager that this window has been created.
+      techFolioWindowManager.addWindow(fileType, fileName, window, 'TechfolioWindow');
       techFolioWindowManager.addWindow(fileType, fileName, window);
+
 
       // Load the index.html of the app.
       window.loadURL(
@@ -66,6 +72,8 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
         techFolioWindowManager.removeWindow(fileType, fileName);
       });
     }
+
+  }
 }
 
 function validFileName(fileName, fileType) {
