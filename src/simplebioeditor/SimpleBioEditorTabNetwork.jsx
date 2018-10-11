@@ -15,7 +15,14 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const profiles = this.props.bio.basics.profiles;
+    const bio = this.props.bio;
+    if(bio.basics === undefined) {
+      bio.basics = {};
+    }
+    if(bio.basics.profiles === undefined) {
+      bio.basics.profiles = [];
+    }
+    let profiles = bio.basics.profiles;
     this.state.model.network1 = profiles[0] && profiles[0].network;
     this.state.model.network2 = profiles[1] && profiles[1].network;
     this.state.model.network3 = profiles[2] && profiles[2].network;
@@ -31,6 +38,12 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     const
       { network1, network2, network3, username1, username2, username3, url1, url2, url3 } = data;
     const bio = this.props.bio;
+    if(bio.basics === undefined) {
+      bio.basics = {};
+    }
+    if(bio.basics.profiles === undefined) {
+      bio.basics.profiles = [];
+    }
     const entries = [];
     const entry1 = network1 && { network: network1, username: username1, url: url1 };
     entries.push(entry1);
