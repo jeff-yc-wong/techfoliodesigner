@@ -8,8 +8,8 @@ export const emptyState = {
   status: null,
   token: null,
   logs: [],
-  projects: [],
-  essays: [],
+  fileData: [],
+  changed: false,
 };
 
 export function initialState() {

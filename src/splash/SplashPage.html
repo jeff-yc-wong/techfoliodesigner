@@ -6,10 +6,7 @@
 </head>
 <body>
 <div id="SplashPage" style="position: absolute; width: 49%; left: 0px"></div>
-<div id="ProjectExplorer" style="position: absolute; width: 50%; right: 0px; height: 45%; overflow-y: scroll; overflow-x: hidden"></div>
-<div id="EssayExplorer" style="position: absolute; width: 50%; right: 0px; top: 340px; height: 45%; overflow-y: scroll; overflow-x: hidden"></div>
-
-
+<div id="FileExplorer" style="position: absolute; width: 50%; height: 90%; right: 0px; overflow-y: scroll; overflow-x: hidden"></div>
 </body>
 
 <script type="text/jsx">
@@ -23,7 +20,7 @@
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
-  import ProjectExplorer from './ProjectExplorer';
+  import FileExplorer from './FileExplorer';
   import EssayExplorer from './EssayExplorer';
   const app = require('electron').remote.app
 
@@ -50,21 +47,12 @@
       <Provider store={store}>
         <Grid style={{padding: "20px"}}>
           <Grid.Column textAlign="center">
-            <ProjectExplorer/>
+            <FileExplorer />
           </Grid.Column>
         </Grid>
       </Provider>,
-      document.getElementById('ProjectExplorer'));
+      document.getElementById('FileExplorer'));
 
-    ReactDOM.render(
-      <Provider store={store}>
-        <Grid style={{padding: "20px"}}>
-          <Grid.Column textAlign="center">
-            <EssayExplorer/>
-          </Grid.Column>
-        </Grid>
-      </Provider>,
-      document.getElementById('EssayExplorer'));
   };
   render();
 </script>

@@ -38,14 +38,13 @@ export function clearAll() {
   return { type: 'CLEAR_ALL', payload: null };
 }
 
-export function setProjects(projects) {
-  return { type: 'SET_PROJECTS', payload: projects };
+export function setFileData(files) {
+  return { type: 'SET_FILE_DATA', payload: files };
 }
 
-export function setEssays(essays) {
-  return { type: 'SET_ESSAYS', payload: essays };
+export function setChanged(changed) {
+  return { type: 'SET_FILE_DATA', payload: changed };
 }
-
 
 // Overload console.log so that it prints to the Command Log window instead
 console.log = function (text) { mainStore.dispatch(addLog(text)); };

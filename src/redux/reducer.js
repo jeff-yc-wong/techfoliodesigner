@@ -29,11 +29,11 @@ export default function reducer(state = initialState(), action) {
     case 'CLEAR_ALL': {
       return Object.assign({}, emptyState);
     }
-    case 'SET_PROJECTS': {
-      return Object.assign({}, state, { projects: action.payload });
+    case 'SET_FILE_DATA': {
+      return Object.assign({}, state, { fileData: action.payload });
     }
-    case 'SET_ESSAYS': {
-      return Object.assign({}, state, { essays: action.payload });
+    case 'SET_CHANGED': {
+      return Object.assign({}, state, { changed: action.payload });
     }
     default:
       return state;

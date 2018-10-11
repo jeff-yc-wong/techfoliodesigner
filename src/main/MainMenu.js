@@ -29,7 +29,6 @@ function buildProjectsMenu(template, techFolioFiles) {
   projectsSubMenu.push({ type: 'separator' });
   projectsSubMenu.push({ label: 'New Project', click: () => newTechFolioWindow({ fileType: 'projects' }) });
   template[indexOfMenuItem(template, 'Projects')].submenu = projectsSubMenu;
-  mainStore.dispatch(action.setProjects(projectFiles));
 }
 
 function buildEssaysMenu(template, techFolioFiles) {
@@ -39,7 +38,6 @@ function buildEssaysMenu(template, techFolioFiles) {
   essaysSubMenu.push({ type: 'separator' });
   essaysSubMenu.push({ label: 'New Essay', click: () => newTechFolioWindow({ fileType: 'essays' }) });
   template[indexOfMenuItem(template, 'Essays')].submenu = essaysSubMenu;
-  mainStore.dispatch(action.setEssays(essayFiles));
 }
 
 function buildBioMenu(template) {
@@ -53,6 +51,19 @@ function buildBioMenu(template) {
 
 function buildConfigMenu(template) {
   template[indexOfMenuItem(template, 'Config')].submenu = buildConfigSubMenu();
+}
+
+function buildFileData(techFolioFiles) {
+  const projectFiles = techFolioFiles.projectFileNames();
+  const essayFiles = techFolioFiles.essayFileNames();
+  const projectObjects = projectFiles.map((project) => {
+    return ({ key: `project-${project}`, fileName: project, fileType: 'projects' });
+  });
+  const essayObjects = essayFiles.map((essay) => {
+    return ({ key: `essay-${essay}`, fileName: essay, fileType: 'essays' });
+  });
+  const fileData = projectObjects.concat(essayObjects);
+  mainStore.dispatch(action.setFileData(fileData));
 }
 
 function buildEditmenu(template) {
@@ -113,6 +124,7 @@ function buildMainMenu() {
       buildProjectsMenu(template, techFolioFiles);
       buildEssaysMenu(template, techFolioFiles);
       buildBioMenu(template);
+      buildFileData(techFolioFiles);
     }
   }
   const menu = Menu.buildFromTemplate(template);
