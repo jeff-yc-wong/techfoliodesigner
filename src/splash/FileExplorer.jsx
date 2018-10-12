@@ -11,24 +11,27 @@ function compareName(a, b) {
 }
 
 function compareType(a, b) {
-  if (a.fileName < b.fileName) return -1;
-  if (a.fileName > b.fileName) return 1;
+  if (a.fileType < b.fileType) return -1;
+  if (a.fileType > b.fileType) return 1;
   return 0;
 }
 
 function compareCommit(a, b) {
+  //TODO make real comparison
   if (a.fileName < b.fileName) return -1;
   if (a.fileName > b.fileName) return 1;
   return 0;
 }
 
 function compareChange(a, b) {
+  //TODO make real comparison
   if (a.fileName < b.fileName) return -1;
   if (a.fileName > b.fileName) return 1;
   return 0;
 }
 
 function handleSort(column) {
+  //TODO make these toggles
   if (column === 'name') this.props.fileData.sort(compareName);
   if (column === 'type') this.props.fileData.sort(compareType);
   if (column === 'commit') this.props.fileData.sort(compareCommit);
@@ -46,6 +49,7 @@ function newClick(fileType) {
 }
 
 class FileExplorer extends React.Component {
+  //TODO add state and arrows on column headers, make footer (create new) fixed (separate file?)
   render() {
     const fileData = this.props.fileData;
     return (
