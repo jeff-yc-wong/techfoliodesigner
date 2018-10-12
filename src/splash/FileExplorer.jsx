@@ -62,7 +62,7 @@ class FileExplorer extends React.Component {
                   File Name
                 </Table.HeaderCell>
                 <Table.HeaderCell textAlign={'center'} onClick={() => handleSort('type')}>
-                  File Type
+                  Type
                 </Table.HeaderCell>
                 <Table.HeaderCell textAlign={'center'} onClick={() => handleSort('commit')}>
                   Last Committed

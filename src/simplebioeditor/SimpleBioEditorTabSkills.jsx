@@ -17,7 +17,10 @@ export default class SimpleBioEditorTabSkills extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const skills = this.props.bio.skills;
+    let skills = this.props.bio.skills;
+    if(skills === undefined) {
+      skills = [];
+    }
     this.state.model.name1 = skills[0] && skills[0].name;
     this.state.model.name2 = skills[1] && skills[1].name;
     this.state.model.keywords1a = skills[0] && skills[0].keywords && skills[0].keywords[0];
@@ -31,7 +34,10 @@ export default class SimpleBioEditorTabSkills extends React.Component {
   submit(data) {
     const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
-    const skills = this.props.bio.skills;
+    if(bio.skills === undefined) {
+      bio.skills = [];
+    }
+    const skills = bio.skills;
     const entries = [];
     let newKeywords1 = [keywords1a, keywords1b, keywords1c];
     if (bio.skills[0]) {
