@@ -1,4 +1,5 @@
 import { BrowserWindow, dialog } from 'electron';
+import buildMainMenu from '../main/MainMenu';
 import path from 'path';
 import mainStore from '../redux/mainstore';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
@@ -77,12 +78,18 @@ async function createSimpleBioEditorWindow() {
       techFolioWindowManager.addWindow(fileType, fileName, window, 'SimpleBioEditor');
       techFolioWindowManager.addWindow(fileType, fileName, window);
 
+      // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
+      buildMainMenu();
+
       // Load html page.
       window.loadURL(`file://${__dirname}/SimpleBioEditorPage.html?directory=${directory}`);
 
       window.on('closed', () => {
         // Dereference the window object.
         techFolioWindowManager.removeWindow(fileType, fileName);
+
+        // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
+        buildMainMenu();
       });
     }
   }

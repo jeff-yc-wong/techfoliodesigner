@@ -37,6 +37,8 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
       techFolioWindowManager.addWindow(fileType, fileName, window, 'TechfolioWindow');
       techFolioWindowManager.addWindow(fileType, fileName, window);
 
+      // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
+      buildMainMenu();
 
       // Load the index.html of the app.
       window.loadURL(
@@ -70,6 +72,9 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
       window.on('closed', () => {
         // Dereference the window object.
         techFolioWindowManager.removeWindow(fileType, fileName);
+
+        // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
+        buildMainMenu();
       });
     }
 
