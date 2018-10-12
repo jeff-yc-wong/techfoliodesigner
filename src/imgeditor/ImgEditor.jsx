@@ -77,7 +77,7 @@ export default class ImgEditor extends React.Component {
                   style={{ backgroundColor: this.state.image.backgroundColor, textAlign: 'center' }}
                 >
                   <div>
-                    <div style={{ paddingTop: '5%', display: this.state.image.display }}>
+                    <div style={{ paddingTop: '5vh', display: this.state.image.display }}>
                       <Header as="h2" icon>
                         <Icon name="crop" />
                         Edit an Image
