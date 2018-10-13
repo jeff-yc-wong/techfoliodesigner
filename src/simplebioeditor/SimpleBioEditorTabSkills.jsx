@@ -5,7 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider } from 'semantic-ui-react';
+import { Grid, Divider, Button, Icon } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -29,7 +29,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
   }
 
   submit(data) {
-    const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
+    const { name1, delete1, name2, delete2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
     const skills = this.props.bio.skills;
     const entries = [];
@@ -42,7 +42,9 @@ export default class SimpleBioEditorTabSkills extends React.Component {
       name: name1,
       keywords: _.compact(newKeywords1),
     };
-    entries.push(entry1);
+    if (!delete1) {
+      entries.push(entry1);
+    } else entries.push([]);
 
     let newKeywords2 = [keywords2a, keywords2b, keywords2c];
     if (bio.skills[1]) {
@@ -53,7 +55,10 @@ export default class SimpleBioEditorTabSkills extends React.Component {
       name: name2,
       keywords: _.compact(newKeywords2),
     };
-    entries.push(entry2);
+    if (!delete2) {
+      entries.push(entry2);
+    } else entries.push([]);
+
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.skills = updateArray(bio.skills, entries[i], j);
       // if entry is defined and not null nor empty string
@@ -70,7 +75,9 @@ export default class SimpleBioEditorTabSkills extends React.Component {
   render() {
     const formSchema = new SimpleSchema({
       name1: { type: String, optional: true, label: 'Skill' },
+      delete1: { type: Boolean, optional: true, label: 'Delete', defaultValue: false },
       name2: { type: String, optional: true, label: 'Skill' },
+      delete2: { type: Boolean, optional: true, label: 'Delete', defaultValue: false },
       keywords1a: { type: String, optional: true, label: 'Keyword' },
       keywords1b: { type: String, optional: true, label: 'Keyword' },
       keywords1c: { type: String, optional: true, label: 'Keyword' },
@@ -95,6 +102,9 @@ export default class SimpleBioEditorTabSkills extends React.Component {
               <Grid.Column>
                 <AutoField name="keywords1c" />
               </Grid.Column>
+              <Grid.Column>
+                <AutoField name="delete1" />
+              </Grid.Column>
             </Grid.Row>
             <Divider />
             <Grid.Row columns={4}>
@@ -109,6 +119,9 @@ export default class SimpleBioEditorTabSkills extends React.Component {
               </Grid.Column>
               <Grid.Column>
                 <AutoField name="keywords2c" />
+              </Grid.Column>
+              <Grid.Column>
+                <AutoField name="delete2" />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
