@@ -5,7 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -16,7 +16,7 @@ export default class SimpleBioEditorTabActivities extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     let volunteer = this.props.bio.volunteer;
-    if(volunteer === undefined) {
+    if (volunteer === undefined) {
       volunteer = [];
     }
     this.state.model.organization1 = volunteer[0] && volunteer[0].organization;
@@ -25,50 +25,39 @@ export default class SimpleBioEditorTabActivities extends React.Component {
     this.state.model.position2 = volunteer[1] && volunteer[1].position;
     this.state.model.summary1 = volunteer[0] && volunteer[0].summary;
     this.state.model.summary2 = volunteer[1] && volunteer[1].summary;
-    this.state.model.highlights1a = volunteer[0] && volunteer[0].highlights && volunteer[0].highlights[0];
-    this.state.model.highlights1b = volunteer[0] && volunteer[0].highlights && volunteer[0].highlights[1];
-    this.state.model.highlights1c = volunteer[0] && volunteer[0].highlights && volunteer[0].highlights[2];
-    this.state.model.highlights2a = volunteer[1] && volunteer[1].highlights && volunteer[1].highlights[0];
-    this.state.model.highlights2b = volunteer[1] && volunteer[1].highlights && volunteer[1].highlights[1];
-    this.state.model.highlights2c = volunteer[1] && volunteer[1].highlights && volunteer[1].highlights[2];
+    this.state.model.highlights1 = volunteer[0] && volunteer[0].highlights;
+    this.state.model.highlights2 = volunteer[1] && volunteer[1].highlights;
   }
 
   submit(data) {
     const {
-      organization1, organization2, position1, position2, summary1, summary2, highlights1a, highlights1b,
-      highlights1c, highlights2a, highlights2b, highlights2c,
+      organization1, organization2, position1, position2, summary1, summary2, highlights1, highlights2,delete1, delete2
     } = data;
     const bio = this.props.bio;
-    if(bio.volunteer === undefined) {
+    if (bio.volunteer === undefined) {
       bio.volunteer = [];
     }
-    const volunteer = bio.volunteer;
     const entries = [];
-    let newHighlights1 = [highlights1a, highlights1b, highlights1c];
-    if (bio.volunteer[0]) {
-      volunteer[0].highlights.splice(0, newHighlights1.length, ...newHighlights1);
-      newHighlights1 = volunteer[0].highlights;
-    }
-    const entry1 = organization1 && {
-      organization: organization1,
-      position: position1,
-      summary: summary1,
-      highlights: _.compact(newHighlights1),
-    };
-    entries.push(entry1);
+    if (!delete1) {
+      const entry1 = organization1 && {
+        organization: organization1,
+        position: position1,
+        summary: summary1,
+        highlights: _.compact(highlights1),
+      };
+      entries.push(entry1);
+    } else entries.push([]);
 
-    let newHighlights2 = [highlights2a, highlights2b, highlights2c];
-    if (bio.volunteer[1]) {
-      volunteer[1].highlights.splice(0, newHighlights2.length, ...newHighlights2);
-      newHighlights2 = volunteer[1].highlights;
-    }
+    if (!delete2) {
     const entry2 = organization2 && {
       organization: organization2,
       position: position2,
       summary: summary2,
-      highlights: _.compact(newHighlights2),
+      highlights: _.compact(highlights2),
     };
     entries.push(entry2);
+    } else entries.push([]);
+
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.volunteer = updateArray(bio.volunteer, entries[i], j);
       // if entry is defined and not null nor empty string
@@ -83,79 +72,75 @@ export default class SimpleBioEditorTabActivities extends React.Component {
 
   render() {
     const formSchema = new SimpleSchema({
-      organization1: { type: String, optional: true, label: 'Organization' },
-      organization2: { type: String, optional: true, label: 'Organization' },
-      position1: { type: String, optional: true, label: 'Position' },
-      position2: { type: String, optional: true, label: 'Position' },
-      summary1: { type: String, optional: true, label: 'Summary' },
-      summary2: { type: String, optional: true, label: 'Summary' },
-      highlights1a: { type: String, optional: true, label: 'Highlight' },
-      highlights1b: { type: String, optional: true, label: 'Highlight' },
-      highlights1c: { type: String, optional: true, label: 'Highlight' },
-      highlights2a: { type: String, optional: true, label: 'Highlight' },
-      highlights2b: { type: String, optional: true, label: 'Highlight' },
-      highlights2c: { type: String, optional: true, label: 'Highlight' },
+      organization1: { type: String, optional: true, label: '' },
+      organization2: { type: String, optional: true, label: '' },
+      position1: { type: String, optional: true, label: '' },
+      position2: { type: String, optional: true, label: '' },
+      summary1: { type: String, optional: true, label: '' },
+      summary2: { type: String, optional: true, label: '' },
+      highlights1: { type: Array, optional: true, label: '' },
+      'highlights1.$': { type: String, optional: true, label: '' },
+      highlights2: { type: Array, optional: true, label: '' },
+      'highlights2.$': { type: String, optional: true, label: '' },
+      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
+      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
     });
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="organization1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="summary1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights1a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights1b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights1c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="organization2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="summary2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights2a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights2b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights2c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Organization</Table.HeaderCell>
+                <Table.HeaderCell>Position</Table.HeaderCell>
+                <Table.HeaderCell>Summary</Table.HeaderCell>
+                <Table.HeaderCell>Highlights</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="organization1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="position1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="summary1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="highlights1" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete1" />
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="organization2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="position2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="summary2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="highlights2" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete2" />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+          <Button>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
       </div>
     );

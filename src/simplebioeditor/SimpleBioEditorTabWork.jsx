@@ -5,7 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -18,7 +18,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     const bio = this.props.bio;
-    if(bio.work === undefined) {
+    if (bio.work === undefined) {
       bio.work = [];
     }
     const work = bio.work;
@@ -40,23 +40,16 @@ export default class SimpleBioEditorTabWork extends React.Component {
     this.state.model.summary1 = work[0] && work[0].summary;
     this.state.model.summary2 = work[1] && work[1].summary;
     this.state.model.summary3 = work[2] && work[2].summary;
-    this.state.model.highlights1a = work[0] && work[0].highlights && work[0].highlights[0];
-    this.state.model.highlights1b = work[0] && work[0].highlights && work[0].highlights[1];
-    this.state.model.highlights1c = work[0] && work[0].highlights && work[0].highlights[2];
-    this.state.model.highlights2a = work[1] && work[1].highlights && work[1].highlights[0];
-    this.state.model.highlights2b = work[1] && work[1].highlights && work[1].highlights[1];
-    this.state.model.highlights2c = work[1] && work[1].highlights && work[1].highlights[2];
-    this.state.model.highlights3a = work[2] && work[2].highlights && work[2].highlights[0];
-    this.state.model.highlights3b = work[2] && work[2].highlights && work[2].highlights[1];
-    this.state.model.highlights3c = work[2] && work[2].highlights && work[2].highlights[2];
+    this.state.model.highlights1 = work[0] && work[0].highlights;
+    this.state.model.highlights2 = work[1] && work[1].highlights;
+    this.state.model.highlights3 = work[2] && work[2].highlights;
   }
 
   submit(data) {
     const {
       company1, company2, company3, position1, position2, position3, website1, website2, website3,
       startDate1, startDate2, startDate3, endDate1, endDate2, endDate3, summary1, summary2, summary3,
-      highlights1a, highlights1b, highlights1c, highlights2a, highlights2b, highlights2c,
-      highlights3a, highlights3b, highlights3c,
+      highlights1, highlights2, highlights3, delete1, delete2, delete3
     } = data;
     const bio = this.props.bio;
     if(bio.work === undefined) {
@@ -64,43 +57,33 @@ export default class SimpleBioEditorTabWork extends React.Component {
     }
     const work = bio.work;
     const entries = [];
-    let newHighlights1 = [highlights1a, highlights1b, highlights1c];
-    if (bio.work[0]) {
-      work[0].highlights.splice(0, newHighlights1.length, ...newHighlights1);
-      newHighlights1 = work[0].highlights;
-    }
-    const entry1 = company1 && {
-      company: company1,
-      position: position1,
-      website: website1,
-      startDate: startDate1,
-      endDate: endDate1,
-      summary: summary1,
-      highlights: _.compact(newHighlights1),
-    };
-    entries.push(entry1);
+    if (!delete1) {
+      const entry1 = company1 && {
+        company: company1,
+        position: position1,
+        website: website1,
+        startDate: startDate1,
+        endDate: endDate1,
+        summary: summary1,
+        highlights: _.compact(highlights1),
+      };
+      entries.push(entry1);
+    } else entries.push([]);
 
-    let newHighlights2 = [highlights2a, highlights2b, highlights2c];
-    if (bio.work[1]) {
-      work[1].highlights.splice(0, newHighlights2.length, ...newHighlights2);
-      newHighlights2 = work[1].highlights;
-    }
-    const entry2 = company2 && {
-      company: company2,
-      position: position2,
-      website: website2,
-      startDate: startDate2,
-      endDate: endDate2,
-      summary: summary2,
-      highlights: _.compact(newHighlights2),
-    };
-    entries.push(entry2);
+    if (!delete2) {
+      const entry2 = company2 && {
+        company: company2,
+        position: position2,
+        website: website2,
+        startDate: startDate2,
+        endDate: endDate2,
+        summary: summary2,
+        highlights: _.compact(highlights2),
+      };
+      entries.push(entry2);
+    } else entries.push([]);
 
-    let newHighlights3 = [highlights3a, highlights3b, highlights3c];
-    if (bio.work[2]) {
-      work[2].highlights.splice(0, newHighlights3.length, ...newHighlights3);
-      newHighlights3 = work[2].highlights;
-    }
+    if (!delete3) {
     const entry3 = company3 && {
       company: company3,
       position: position3,
@@ -108,9 +91,11 @@ export default class SimpleBioEditorTabWork extends React.Component {
       startDate: startDate3,
       endDate: endDate3,
       summary: summary3,
-      highlights: _.compact(newHighlights3),
+      highlights: _.compact(highlights3),
     };
     entries.push(entry3);
+    } else entries.push([]);
+
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.work = updateArray(bio.work, entries[i], j);
       // if entry is defined and not null nor empty string
@@ -125,150 +110,131 @@ export default class SimpleBioEditorTabWork extends React.Component {
 
   render() {
     const formSchema = new SimpleSchema({
-      company1: { type: String, optional: true, label: 'First Company' },
-      company2: { type: String, optional: true, label: 'Second Company' },
-      company3: { type: String, optional: true, label: 'Third Company' },
-      position1: { type: String, optional: true, label: 'Position' },
-      position2: { type: String, optional: true, label: 'Position' },
-      position3: { type: String, optional: true, label: 'Position' },
-      website1: { type: String, optional: true, label: 'Website' },
-      website2: { type: String, optional: true, label: 'Website' },
-      website3: { type: String, optional: true, label: 'Website' },
-      startDate1: { type: String, optional: true, label: 'Start Date' },
-      startDate2: { type: String, optional: true, label: 'Start Date' },
-      startDate3: { type: String, optional: true, label: 'Start Date' },
-      endDate1: { type: String, optional: true, label: 'End Date' },
-      endDate2: { type: String, optional: true, label: 'End Date' },
-      endDate3: { type: String, optional: true, label: 'End Date' },
-      summary1: { type: String, optional: true, label: 'Summary' },
-      summary2: { type: String, optional: true, label: 'Summary' },
-      summary3: { type: String, optional: true, label: 'Summary' },
-      highlights1a: { type: String, optional: true, label: 'Highlight' },
-      highlights1b: { type: String, optional: true, label: 'Highlight' },
-      highlights1c: { type: String, optional: true, label: 'Highlight' },
-      highlights2a: { type: String, optional: true, label: 'Highlight' },
-      highlights2b: { type: String, optional: true, label: 'Highlight' },
-      highlights2c: { type: String, optional: true, label: 'Highlight' },
-      highlights3a: { type: String, optional: true, label: 'Highlight' },
-      highlights3b: { type: String, optional: true, label: 'Highlight' },
-      highlights3c: { type: String, optional: true, label: 'Highlight' },
+      company1: { type: String, optional: true, label: '' },
+      company2: { type: String, optional: true, label: '' },
+      company3: { type: String, optional: true, label: '' },
+      position1: { type: String, optional: true, label: '' },
+      position2: { type: String, optional: true, label: '' },
+      position3: { type: String, optional: true, label: '' },
+      website1: { type: String, optional: true, label: '' },
+      website2: { type: String, optional: true, label: '' },
+      website3: { type: String, optional: true, label: '' },
+      startDate1: { type: String, optional: true, label: '' },
+      startDate2: { type: String, optional: true, label: '' },
+      startDate3: { type: String, optional: true, label: '' },
+      endDate1: { type: String, optional: true, label: '' },
+      endDate2: { type: String, optional: true, label: '' },
+      endDate3: { type: String, optional: true, label: '' },
+      summary1: { type: String, optional: true, label: '' },
+      summary2: { type: String, optional: true, label: '' },
+      summary3: { type: String, optional: true, label: '' },
+      highlights1: { type: Array, optional: true, label: '' },
+      'highlights1.$': { type: String, optional: true, label: '' },
+      highlights2: { type: Array, optional: true, label: '' },
+      'highlights2.$': { type: String, optional: true, label: '' },
+      highlights3: { type: Array, optional: true, label: '' },
+      'highlights3.$': { type: String, optional: true, label: '' },
+      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
+      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
+      delete3: { type: Boolean, optional: true, label: '', defaultValue: false },
     });
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="company1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="website1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column width={10}>
-                <AutoField name="summary1" />
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <AutoField name="startDate1" />
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <AutoField name="endDate1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights1a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights1b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights1c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="company2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="website2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column width={10}>
-                <AutoField name="summary2" />
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <AutoField name="startDate2" />
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <AutoField name="endDate2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights2a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights2b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights2c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="company3" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position3" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="website3" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column width={10}>
-                <AutoField name="summary3" />
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <AutoField name="startDate3" />
-              </Grid.Column>
-              <Grid.Column width={3}>
-                <AutoField name="endDate3" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights3a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights3b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights3c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Company</Table.HeaderCell>
+                <Table.HeaderCell>Position</Table.HeaderCell>
+                <Table.HeaderCell>Website</Table.HeaderCell>
+                <Table.HeaderCell>Summary</Table.HeaderCell>
+                <Table.HeaderCell>Start/End Dates</Table.HeaderCell>
+                <Table.HeaderCell>Highlights</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="company1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="position1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="website1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="summary1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="startDate1" /> to
+                  <AutoField name="endDate1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="highlights1" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete1" />
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="company2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="position2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="website2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="summary2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="startDate2" /> to
+                  <AutoField name="endDate2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="highlights2" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete2" />
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="company3" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="position3" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="website3" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="summary3" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="startDate3" /> to
+                  <AutoField name="endDate3" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="highlights3" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete3" />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+          <Button>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
       </div>
     );

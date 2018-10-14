@@ -5,7 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -16,7 +16,7 @@ export default class SimpleBioEditorTabEducation extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     const bio = this.props.bio;
-    if(bio.education === undefined) {
+    if (bio.education === undefined) {
       bio.education = [];
     }
     const education = bio.education;
@@ -28,52 +28,40 @@ export default class SimpleBioEditorTabEducation extends React.Component {
     this.state.model.studyType2 = education[1] && education[1].studyType;
     this.state.model.endDate1 = education[0] && education[0].endDate;
     this.state.model.endDate2 = education[1] && education[1].endDate;
-    this.state.model.courses1a = education[0] && education[0].courses && education[0].courses[0];
-    this.state.model.courses1b = education[0] && education[0].courses && education[0].courses[1];
-    this.state.model.courses1c = education[0] && education[0].courses && education[0].courses[2];
-    this.state.model.courses2a = education[1] && education[1].courses && education[1].courses[0];
-    this.state.model.courses2b = education[1] && education[1].courses && education[1].courses[1];
-    this.state.model.courses2c = education[1] && education[1].courses && education[1].courses[2];
+    this.state.model.courses1 = education[0] && education[0].courses;
+    this.state.model.courses2 = education[1] && education[1].courses;
   }
 
   submit(data) {
-    const {
-      institution1, institution2, area1, area2, studyType1, studyType2, endDate1, endDate2, courses1a, courses1b,
-      courses1c, courses2a, courses2b, courses2c,
-    } = data;
+    const { institution1, institution2, area1, area2, studyType1, studyType2, endDate1, endDate2, courses1,
+      courses2, delete1, delete2 } = data;
     const bio = this.props.bio;
-    if(bio.education === undefined) {
+    if (bio.education === undefined) {
       bio.education = [];
     }
-    const education = bio.education;
     const entries = [];
-    let newCourses1 = [courses1a, courses1b, courses1c];
-    if (bio.education[0]) {
-      education[0].courses.splice(0, newCourses1.length, ...newCourses1);
-      newCourses1 = education[0].courses;
-    }
-    const entry1 = institution1 && {
-      institution: institution1,
-      area: area1,
-      studyType: studyType1,
-      endDate: endDate1,
-      courses: _.compact(newCourses1),
-    };
-    entries.push(entry1);
+    if (!delete1) {
+      const entry1 = institution1 && {
+        institution: institution1,
+        area: area1,
+        studyType: studyType1,
+        endDate: endDate1,
+        courses: _.compact(courses1),
+      };
+      entries.push(entry1);
+    } else entries.push([]);
 
-    let newCourses2 = [courses2a, courses2b, courses2c];
-    if (bio.education[1]) {
-      education[1].courses.splice(0, newCourses2.length, ...newCourses2);
-      newCourses2 = education[1].courses;
-    }
-    const entry2 = institution2 && {
-      institution: institution2,
-      area: area2,
-      studyType: studyType2,
-      endDate: endDate2,
-      courses: _.compact(newCourses2),
-    };
-    entries.push(entry2);
+    if (!delete2) {
+      const entry2 = institution2 && {
+        institution: institution2,
+        area: area2,
+        studyType: studyType2,
+        endDate: endDate2,
+        courses: _.compact(courses2),
+      };
+      entries.push(entry2);
+    } else entries.push([]);
+
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.education = updateArray(bio.education, entries[i], j);
       // if entry is defined and not null nor empty string
@@ -88,87 +76,84 @@ export default class SimpleBioEditorTabEducation extends React.Component {
 
   render() {
     const formSchema = new SimpleSchema({
-      institution1: { type: String, optional: true, label: 'Institution' },
-      institution2: { type: String, optional: true, label: 'Institution' },
-      area1: { type: String, optional: true, label: 'Program' },
-      area2: { type: String, optional: true, label: 'Program' },
-      studyType1: { type: String, optional: true, label: 'Degree' },
-      studyType2: { type: String, optional: true, label: 'Degree' },
-      endDate1: { type: String, optional: true, label: 'End Date' },
-      endDate2: { type: String, optional: true, label: 'End Date' },
-      courses1a: { type: String, optional: true, label: 'Course' },
-      courses1b: { type: String, optional: true, label: 'Course' },
-      courses1c: { type: String, optional: true, label: 'Course' },
-      courses2a: { type: String, optional: true, label: 'Course' },
-      courses2b: { type: String, optional: true, label: 'Course' },
-      courses2c: { type: String, optional: true, label: 'Course' },
+      institution1: { type: String, optional: true, label: '' },
+      institution2: { type: String, optional: true, label: '' },
+      area1: { type: String, optional: true, label: '' },
+      area2: { type: String, optional: true, label: '' },
+      studyType1: { type: String, optional: true, label: '' },
+      studyType2: { type: String, optional: true, label: '' },
+      endDate1: { type: String, optional: true, label: '' },
+      endDate2: { type: String, optional: true, label: '' },
+      courses1: { type: Array, optional: true, label: '' },
+      'courses1.$': { type: String, optional: true, label: '' },
+      courses2: { type: Array, optional: true, label: '' },
+      'courses2.$': { type: String, optional: true, label: '' },
+      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
+      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
     });
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={4}>
-              <Grid.Column>
-                <AutoField name="institution1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="area1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="studyType1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="endDate1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="courses1a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="courses1b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="courses1c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={4}>
-              <Grid.Column>
-                <AutoField name="institution2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="area2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="studyType2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="endDate2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="courses2a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="courses2b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="courses2c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Institution</Table.HeaderCell>
+                <Table.HeaderCell>Program</Table.HeaderCell>
+                <Table.HeaderCell>Degree</Table.HeaderCell>
+                <Table.HeaderCell>End Date</Table.HeaderCell>
+                <Table.HeaderCell>Courses</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="institution1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="area1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="studyType1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="endDate1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="courses1" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete1" />
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="institution2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="area2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="studyType2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="endDate2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="courses2" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete2" />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+          <Button>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
       </div>
     );
