@@ -55,8 +55,9 @@ async function createSimpleBioEditorWindow() {
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
   const otherWindow = techFolioWindowManager.getWindow(fileType, fileName, 'TechfolioWindow');
   if (currWindow) {
-    if(otherWindow) {
-      dialog.showErrorBox('Opening Multiple Bio Editors is Not Allowed', 'You can not open multiple bio editors at the same time');
+    if (otherWindow) {
+      dialog.showErrorBox('Opening Multiple Bio Editors is Not Allowed', 'You can not open multiple bio ' +
+          'editors at the same time');
     }
     currWindow.show();
   } else {

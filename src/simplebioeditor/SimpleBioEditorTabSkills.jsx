@@ -5,7 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider, Button, Icon } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -18,50 +18,35 @@ export default class SimpleBioEditorTabSkills extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     let skills = this.props.bio.skills;
-    if(skills === undefined) {
+    if (skills === undefined) {
       skills = [];
     }
     this.state.model.name1 = skills[0] && skills[0].name;
     this.state.model.name2 = skills[1] && skills[1].name;
-    this.state.model.keywords1a = skills[0] && skills[0].keywords && skills[0].keywords[0];
-    this.state.model.keywords1b = skills[0] && skills[0].keywords && skills[0].keywords[1];
-    this.state.model.keywords1c = skills[0] && skills[0].keywords && skills[0].keywords[2];
-    this.state.model.keywords2a = skills[1] && skills[1].keywords && skills[1].keywords[0];
-    this.state.model.keywords2b = skills[1] && skills[1].keywords && skills[1].keywords[1];
-    this.state.model.keywords2c = skills[1] && skills[1].keywords && skills[1].keywords[2];
+    this.state.model.keywords1 = skills[0] && skills[0].keywords;
+    this.state.model.keywords2 = skills[1] && skills[1].keywords;
   }
 
   submit(data) {
-    const { name1, delete1, name2, delete2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
+    const { name1, delete1, name2, delete2, keywords1, keywords2 } = data;
     const bio = this.props.bio;
-    if(bio.skills === undefined) {
+    if (bio.skills === undefined) {
       bio.skills = [];
     }
-    const skills = bio.skills;
     const entries = [];
-    let newKeywords1 = [keywords1a, keywords1b, keywords1c];
-    if (bio.skills[0]) {
-      skills[0].keywords.splice(0, newKeywords1.length, ...newKeywords1);
-      newKeywords1 = skills[0].keywords;
-    }
-    const entry1 = name1 && {
-      name: name1,
-      keywords: _.compact(newKeywords1),
-    };
     if (!delete1) {
+      const entry1 = name1 && {
+        name: name1,
+        keywords: _.compact(keywords1),
+      };
       entries.push(entry1);
     } else entries.push([]);
 
-    let newKeywords2 = [keywords2a, keywords2b, keywords2c];
-    if (bio.skills[1]) {
-      skills[1].keywords.splice(0, newKeywords2.length, ...newKeywords2);
-      newKeywords2 = skills[1].keywords;
-    }
-    const entry2 = name2 && {
-      name: name2,
-      keywords: _.compact(newKeywords2),
-    };
     if (!delete2) {
+      const entry2 = name2 && {
+        name: name2,
+        keywords: _.compact(keywords2),
+      };
       entries.push(entry2);
     } else entries.push([]);
 
@@ -75,74 +60,62 @@ export default class SimpleBioEditorTabSkills extends React.Component {
     }
     writeBioFile(this.props.directory, bio, 'Updated skills section of bio.');
     this.props.handleBioChange(bio);
-    this.constructor(this.props);
   }
 
   render() {
     const formSchema = new SimpleSchema({
-      name1: { type: String, optional: true, label: 'Skill' },
-      delete1: { type: Boolean, optional: true, label: 'Delete', defaultValue: false },
-      name2: { type: String, optional: true, label: 'Skill' },
-      delete2: { type: Boolean, optional: true, label: 'Delete', defaultValue: false },
-      keywords1a: { type: String, optional: true, label: 'Keyword' },
-      keywords1b: { type: String, optional: true, label: 'Keyword' },
-      keywords1c: { type: String, optional: true, label: 'Keyword' },
-      keywords2a: { type: String, optional: true, label: 'Keyword' },
-      keywords2b: { type: String, optional: true, label: 'Keyword' },
-      keywords2c: { type: String, optional: true, label: 'Keyword' },
+      name1: { type: String, optional: true, label: '' },
+      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
+      name2: { type: String, optional: true, label: '' },
+      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
+      keywords1: { type: Array, optional: true, label: '' },
+      'keywords1.$': { type: String, optional: true, label: '' },
+      keywords2: { type: Array, optional: true, label: '' },
+      'keywords2.$': { type: String, optional: true, label: '' },
     });
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={4}>
-              <Grid.Column>
-                <AutoField name="name1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords1a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords1b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords1c" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="delete1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={4}>
-              <Grid.Column>
-                <AutoField name="name2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords2a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords2b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords2c" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="delete2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Skill</Table.HeaderCell>
+                <Table.HeaderCell>Keywords</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="name1" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="keywords1" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete1" />
+                </Table.Cell>
+              </Table.Row>
+              <Table.Row>
+                <Table.Cell>
+                  <AutoField name="name2" />
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="keywords2" />
+                  <Button floated="right" size="mini">+</Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <AutoField name="delete2" />
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
+          </Table>
+          <Button>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
-        {new Date().toLocaleTimeString()}
       </div>
     );
   }
