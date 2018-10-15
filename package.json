@@ -75,7 +75,7 @@
     "moment": "^2.22.2",
     "node-notifier": "^5.2.1",
     "notifyjs": "^3.0.0",
-    "query-string": "^6.1.0",
+    "query-string": "^6.2.0",
     "react": "^15.6.2",
     "react-codemirror2": "^5.1.0",
     "react-dom": "^15.6.2",
@@ -84,21 +84,14 @@
     "react-split-pane": "^0.1.84",
     "redux": "^4.0.0",
     "redux-logger": "^3.0.6",
-<<<<<<< HEAD
     "semantic-ui-css": "^2.4.0",
     "semantic-ui-react": "^0.82.5",
     "simpl-schema": "^1.5.3",
-    "simple-git": "^1.102.0",
+    "simple-git": "^1.105.0",
     "simplemde": "^1.11.2",
-=======
-    "semantic-ui-css": "^2.3.2",
-    "semantic-ui-react": "^0.82.0",
-    "simpl-schema": "^1.5.0",
-    "simple-git": "^1.96.0",
->>>>>>> master
     "underscore": "^1.9.1",
-    "uniforms": "^1.25.0",
-    "uniforms-semantic": "^1.25.0",
+    "uniforms": "^1.26.0",
+    "uniforms-semantic": "^1.26.0",
     "vfile-reporter": "^5.0.0",
     "yaml-front-matter": "^4.0.0"
   },
