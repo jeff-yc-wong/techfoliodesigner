@@ -39,4 +39,4 @@ export function clearAll() {
 }
 
 // Overload console.log so that it prints to the Command Log window instead
-console.log = function (text) { mainStore.dispatch(addLog(text)); };
+// console.log = function (text) { mainStore.dispatch(addLog(text)); };

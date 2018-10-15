@@ -52,7 +52,6 @@ export default class TechFolioEditor extends React.Component {
       this.options.gutters = ['CodeMirror-lint-markers'];
       this.options.lint = true;
     }
-
   }
 
   onBeforeChange(editor, data, value) {
