@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"></link>
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="react-image-crop/dist/ReactCrop.css">
 </head>
 <body style="background-color: rgba(0,0,0,0); margin: 0" >
   <div id="editorWrapper"></div>
@@ -16,7 +17,6 @@
   import { imgFile } from '../main/MainMenu.js'
 
   import ImgEditor from './ImgEditor.jsx';
-  import ImgEditorOptions from './ImgEditorOptions.jsx'
   const app = require('electron').remote.app;
 
   const queryObject = queryString.parse(window.location.search);
