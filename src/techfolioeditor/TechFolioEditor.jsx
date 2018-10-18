@@ -260,8 +260,33 @@ export default class TechFolioEditor extends React.Component {
 
   render() {
     let markdown = this.state.value;
-    markdown = markdown.replace(/((.|\n)*)---/gi,'');
-    let result = md.render(markdown);
+
+    // iso date converted to long
+
+    let finalResult = '';
+
+    let snippets = markdown.match(/(.|\n)*?<img[^>]*>/gi);
+    markdown = markdown.replace(/(.|\n)*<img[^>]*>/gi,'');
+
+    for(var i = 0; i < snippets.length; i++) {
+      let img = snippets[i].match(/<img[^>]*>/gi);
+
+      //img tag removed from snippet
+      snippets[i] = snippets[i].replace(img, '');
+
+      let absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
+      img = img[0].replace('..', absPath);
+
+      //snippet rendered into md
+      snippets[i] = md.render(snippets[i]);
+      finalResult = finalResult.concat(snippets[i], img);
+
+    }
+
+    //last snippet
+    markdown = md.render(markdown);
+    finalResult = finalResult.concat(markdown);
+
     return (
       <SplitPane split="vertical"
                  defaultSize={575}>
@@ -274,7 +299,7 @@ export default class TechFolioEditor extends React.Component {
             defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
           />
         </div>
-        <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
+        <div className="pane" dangerouslySetInnerHTML={{__html: finalResult}}>
         </div>
       </SplitPane>
     );
