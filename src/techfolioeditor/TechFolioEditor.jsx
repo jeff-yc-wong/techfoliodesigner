@@ -260,10 +260,16 @@ export default class TechFolioEditor extends React.Component {
 
   render() {
     let markdown = this.state.value;
+    let yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
+    markdown = markdown.replace(/---((.|\n)*?)---\n/gi,'');
 
-    // iso date converted to long
+    //date and title header
+    let title = yaml.match(/title:[^\n]*/g)[0];
+    title = title.replace('title: ', '');
+    let date = yaml.match(/date:[^\n]*/g)[0];
+    date = date.replace('date: ', '');
 
-    let finalResult = '';
+    let finalResult = '<h1>'+title+'</h1>'+'<span>'+date+'</span>'+'<hr>';
 
     let snippets = markdown.match(/(.|\n)*?<img[^>]*>/gi);
     markdown = markdown.replace(/(.|\n)*<img[^>]*>/gi,'');
