@@ -10,6 +10,7 @@ const fs = require('fs');
 const sizeOf = require('image-size');
 
 export default class ImgEditor extends React.Component {
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["onImageLoaded", "onCropComplete"] }] */
 
   constructor(props) {
     super(props);
@@ -35,11 +36,23 @@ export default class ImgEditor extends React.Component {
         height: 80,
       },
     };
-    this.selectImage = this.selectImage.bind(this);
 
+    this.selectImage = this.selectImage.bind(this);
     this.onImageLoaded = this.onImageLoaded.bind(this);
     this.onCropComplete = this.onCropComplete.bind(this);
     this.onCropChange = this.onCropChange.bind(this);
+  }
+
+  onImageLoaded(image) {
+    console.log('Loaded Image', image);
+  }
+
+  onCropComplete(image, crop) {
+    console.log('Done Cropping', crop);
+  }
+
+  onCropChange(crop) {
+    this.setState({ crop });
   }
 
   selectImage() {
@@ -69,22 +82,8 @@ export default class ImgEditor extends React.Component {
             imageSize: fs.statSync(fullPath.toString()).size / 1000,
           },
         });
-        console.log(this);
-        // Do Cropping
       }
     });
-  }
-
-  onImageLoaded(image) {
-    console.log('Loaded Image', image);
-  }
-
-  onCropComplete(crop) {
-    console.log('Done Cropping', crop);
-  }
-
-  onCropChange(crop) {
-    this.setState({ crop });
   }
 
   render() {
@@ -152,75 +151,3 @@ export default class ImgEditor extends React.Component {
     );
   }
 }
-
-/*
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactCrop, { makeAspectCrop } from 'react-image-crop'
-import 'react-image-crop/dist/ReactCrop.css'
-
-import './styles.css'
-
-class App extends React.Component {
-  state = {
-    src: null,
-    crop: {
-      x: 10,
-      y: 10,
-      width: 80,
-      height: 80,
-    },
-  }
-
-  onSelectFile = e => {
-    if (e.target.files && e.target.files.length > 0) {
-      const reader = new FileReader()
-      reader.addEventListener(
-        'load',
-        () =>
-          this.setState({
-            src: reader.result,
-          }),
-        false
-      )
-      reader.readAsDataURL(e.target.files[0])
-    }
-  }
-
-  onImageLoaded = image => {
-    console.log('onCropComplete', image)
-  }
-
-  onCropComplete = crop => {
-    console.log('onCropComplete', crop)
-  }
-
-  onCropChange = crop => {
-    this.setState({ crop })
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <div>
-          <input type="file" onChange={this.onSelectFile} />
-        </div>
-        {this.state.src && (
-          <ReactCrop
-            src={this.state.src}
-            crop={this.state.crop}
-            onImageLoaded={this.onImageLoaded}
-            onComplete={this.onCropComplete}
-            onChange={this.onCropChange}
-          />
-        )}
-      </div>
-    )
-  }
-}
-
-const rootElement = document.getElementById('root')
-ReactDOM.render(<App />, rootElement)
-
-
- */
