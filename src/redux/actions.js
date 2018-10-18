@@ -43,7 +43,7 @@ export function setFileData(files) {
 }
 
 export function setChanged(changed) {
-  return { type: 'SET_FILE_DATA', payload: changed };
+  return { type: 'SET_FILE_CHANGED', payload: changed };
 }
 
 // Overload console.log so that it prints to the Command Log window instead
