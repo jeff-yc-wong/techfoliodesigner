@@ -58,6 +58,7 @@ export default class TechFolioEditor extends React.Component {
     this.state = {
       value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '',
+      previewMode: false,
     };
     const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     switch (fileExtension[0]) {
@@ -92,6 +93,8 @@ export default class TechFolioEditor extends React.Component {
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   onBeforeChange(editor, data, value) {
@@ -108,6 +111,21 @@ export default class TechFolioEditor extends React.Component {
 
   handleChange(value) {
     this.setState({ value });
+  }
+
+  handleClick() {
+    //let { editorHeight, editorWidth } = this.refs.editor;
+    //console.log(this.refs.editor);
+
+    this.setState(state => ({
+      previewMode: !this.state.previewMode
+    }));
+
+    if(this.state.previewMode) {
+      this.window.setSize(700,900);
+    } else {
+      this.window.setSize(1200,900);
+    }
   }
 
   saveFile() {
@@ -391,36 +409,49 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    let markdown = this.state.value;
-    // markdown = markdown.replace(/((.|\n)*)---/gi, '');
-    // const result = md.render(markdown);
-    // return (
-    //   <SplitPane
-    //     split="vertical"
-    //     defaultSize={575}
-    //   >
-    //     <div className="pane">
-    //       <CodeMirror
-    //         value={this.state.value}
-    //         onBeforeChange={this.onBeforeChange}
-    //         options={this.options}
-    //         editorDidMount={(editor) => { this.instance = editor; }}
-    //         defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-    //       />
-    //     </div>
-    //     <div className="pane" dangerouslySetInnerHTML={{ __html: result }} />
-    //   </SplitPane>
-    // );
-    markdown = markdown.replace(/((.|\n)*)---/gi, '');
-    const result = md.render(markdown);
+    //preview conditionally rendered
 
-    if (this.mode === 'spell-check') {
+    if(this.state.previewMode){
+
+      let markdown = this.state.value;
+      let yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
+      markdown = markdown.replace(/---((.|\n)*?)---\n/gi,'');
+
+      //date and title header
+      let title = yaml.match(/title:[^\n]*/g)[0];
+      title = title.replace('title: ', '');
+      let date = yaml.match(/date:[^\n]*/g)[0];
+      date = date.replace('date: ', '');
+
+      let finalResult = '<h1>'+title+'</h1>'+'<span>'+date+'</span>'+'<hr>';
+
+      let snippets = markdown.match(/(.|\n)*?<img[^>]*>/gi);
+      markdown = markdown.replace(/(.|\n)*<img[^>]*>/gi,'');
+
+      for(var i = 0; i < snippets.length; i++) {
+        let img = snippets[i].match(/<img[^>]*>/gi);
+
+        //img tag removed from snippet
+        snippets[i] = snippets[i].replace(img, '');
+
+        let absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
+        img = img[0].replace('..', absPath);
+
+        //snippet rendered into md
+        snippets[i] = md.render(snippets[i]);
+        finalResult = finalResult.concat(snippets[i], img);
+      }
+      //last snippet
+      markdown = md.render(markdown);
+      finalResult = finalResult.concat(markdown);
+
       return (
-        <SplitPane
-          split="vertical"
-          defaultSize={575}
-        >
-          <div className="pane">
+        <SplitPane split="vertical"
+                   defaultSize={575}>
+          <div className="editor">
+            <button onClick={this.handleClick}>
+              Preview
+            </button>
             <CodeMirror
               value={this.state.value}
               onBeforeChange={this.onBeforeChange}
@@ -429,21 +460,28 @@ export default class TechFolioEditor extends React.Component {
               defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
             />
           </div>
-          <div className="pane" dangerouslySetInnerHTML={{ __html: result }} />
+          <div className="scroll">
+            <div className="preview" dangerouslySetInnerHTML={{__html: finalResult}}>
+            </div>
+          </div>
         </SplitPane>
       );
+    } else {
+      return (
+          <div className="editor">
+            <button onClick={this.handleClick}>
+              Preview
+            </button>
+            <CodeMirror
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => { this.instance = editor; }}
+              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+            />
+          </div>
+      );
     }
-    return (
-      <div>
-        <CodeMirror
-          value={this.state.value}
-          onBeforeChange={this.onBeforeChange}
-          options={this.options}
-          editorDidMount={(editor) => { this.instance = editor; }}
-          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-        />
-      </div>
-    );
   }
 }
 
