@@ -25,7 +25,7 @@ class FileExplorerHeader extends React.Component {
     mainStore.dispatch(action.setFileData(this.props.fileData.reverse()));
   }
 
-  // TODO add state and arrows on column headers, make footer (create new) fixed (separate file?)
+  // TODO add state and arrows on column headers
   render() {
     return (
       <Table celled unstackable striped sortable>

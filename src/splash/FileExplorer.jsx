@@ -10,8 +10,7 @@ class FileExplorer extends React.Component {
     if (action === 'delete') return deleteFile(fileType, fileName);
     return -1;
   }
-
-  // TODO add state and arrows on column headers, make footer (create new) fixed (separate file?)
+  // TODO make 'commit' column functional
   render() {
     const fileData = this.props.fileData;
     return (
@@ -22,14 +21,14 @@ class FileExplorer extends React.Component {
               <Table.Cell width={6}>
                 {file.fileName}
               </Table.Cell>
-              <Table.Cell width={2}>
+              <Table.Cell width={2} textAlign={'center'}>
                 {file.fileType === 'projects' ? 'P' : 'E' /* assumes only projects or essays */}
               </Table.Cell>
-              <Table.Cell width={2}>
-                <Icon link name="edit" onClick={() => this.handleClick('edit', file.fileType, file.fileName)}/>
+              <Table.Cell width={2} textAlign={'center'}>
+                <Icon link name="edit" onClick={() => this.handleClick('edit', file.fileType, file.fileName)} />
               </Table.Cell>
-              <Table.Cell width={2}>
-                <Icon link name="delete" onClick={() => this.handleClick('delete', file.fileType, file.fileName)}/>
+              <Table.Cell width={2} textAlign={'center'}>
+                <Icon link name="delete" onClick={() => this.handleClick('delete', file.fileType, file.fileName)} />
               </Table.Cell>
               <Table.Cell width={4}>
                 {file.changed ? 'commitdate' : ''}
