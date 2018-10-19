@@ -102,9 +102,18 @@ export default class TechFolioEditor extends React.Component {
   }
 
   handleClick() {
+    //let { editorHeight, editorWidth } = this.refs.editor;
+    //console.log(this.refs.editor);
+
     this.setState(state => ({
       previewMode: !this.state.previewMode
     }));
+
+    if(this.state.previewMode) {
+      this.window.setSize(700,900);
+    } else {
+      this.window.setSize(1200,900);
+    }
   }
 
   saveFile() {
