@@ -62,12 +62,6 @@ export default function makeMenuTemplate() {
     {
       label: 'Help',
       submenu: [],
-        // {
-        //   label: 'Learn More',
-        //     click() {
-        //         require('electron').shell.openExternal('http://electron.atom.io'); //eslint-disable-line
-        //     },
-        // },
     },
   ];
 

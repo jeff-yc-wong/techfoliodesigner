@@ -7,6 +7,7 @@ import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
+import buildHelpMenu from './HelpMenu';
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
