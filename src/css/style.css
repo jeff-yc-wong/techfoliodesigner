@@ -59,7 +59,23 @@
   border-color: transparent;
 }
 
-.pane {
+.editor {
   height: 100vh;
   overflow: scroll;
+}
+
+.scroll {
+  height: 100vh;
+  overflow: auto;
+}
+
+.preview {
+  max-width: 700px;
+  min-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: sans-serif;
+  font-size: 1.14285714rem;
+  line-height: 1.4285em;
+  padding: 10px;
 }
