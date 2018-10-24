@@ -3,6 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import ListAddField from 'uniforms-semantic/ListAddField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Table, Button } from 'semantic-ui-react';
@@ -98,52 +99,42 @@ export default class SimpleBioEditorTabEducation extends React.Component {
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Institution</Table.HeaderCell>
-                <Table.HeaderCell>Program</Table.HeaderCell>
-                <Table.HeaderCell>Degree</Table.HeaderCell>
-                <Table.HeaderCell>End Date</Table.HeaderCell>
+                <Table.HeaderCell>Information</Table.HeaderCell>
                 <Table.HeaderCell>Courses</Table.HeaderCell>
                 <Table.HeaderCell>Delete</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
 
             <Table.Body>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="institution1" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="area1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="studyType1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="endDate1" />
+                  <AutoField placeholder="Program" name="area1" />
+                  <AutoField placeholder="Degree" name="studyType1" />
+                  <AutoField placeholder="End Date" name="endDate1" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="courses1" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="courses1.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete1" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="institution2" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="area2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="studyType2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="endDate2" />
+                  <AutoField placeholder="Program" name="area2" />
+                  <AutoField placeholder="Degree" name="studyType2" />
+                  <AutoField placeholder="End Date" name="endDate2" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="courses2" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="courses2.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete2" />

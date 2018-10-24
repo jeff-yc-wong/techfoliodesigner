@@ -3,6 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import ListAddField from 'uniforms-semantic/ListAddField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Table, Button } from 'semantic-ui-react';
@@ -49,13 +50,11 @@ export default class SimpleBioEditorTabWork extends React.Component {
     const {
       company1, company2, company3, position1, position2, position3, website1, website2, website3,
       startDate1, startDate2, startDate3, endDate1, endDate2, endDate3, summary1, summary2, summary3,
-      highlights1, highlights2, highlights3, delete1, delete2, delete3
-    } = data;
+      highlights1, highlights2, highlights3, delete1, delete2, delete3 } = data;
     const bio = this.props.bio;
-    if(bio.work === undefined) {
+    if (bio.work === undefined) {
       bio.work = [];
     }
-    const work = bio.work;
     const entries = [];
     if (!delete1) {
       const entry1 = company1 && {
@@ -84,16 +83,16 @@ export default class SimpleBioEditorTabWork extends React.Component {
     } else entries.push([]);
 
     if (!delete3) {
-    const entry3 = company3 && {
-      company: company3,
-      position: position3,
-      website: website3,
-      startDate: startDate3,
-      endDate: endDate3,
-      summary: summary3,
-      highlights: _.compact(highlights3),
-    };
-    entries.push(entry3);
+      const entry3 = company3 && {
+        company: company3,
+        position: position3,
+        website: website3,
+        startDate: startDate3,
+        endDate: endDate3,
+        summary: summary3,
+        highlights: _.compact(highlights3),
+      };
+      entries.push(entry3);
     } else entries.push([]);
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
@@ -144,10 +143,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
           <Table celled striped>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Company</Table.HeaderCell>
-                <Table.HeaderCell>Position</Table.HeaderCell>
-                <Table.HeaderCell>Website</Table.HeaderCell>
-                <Table.HeaderCell>Summary</Table.HeaderCell>
+                <Table.HeaderCell>Job Information</Table.HeaderCell>
                 <Table.HeaderCell>Start/End Dates</Table.HeaderCell>
                 <Table.HeaderCell>Highlights</Table.HeaderCell>
                 <Table.HeaderCell>Delete</Table.HeaderCell>
@@ -155,76 +151,58 @@ export default class SimpleBioEditorTabWork extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="company1" />
+                  <AutoField placeholder="Company" name="company1" />
+                  <AutoField placeholder="Position" name="position1" />
+                  <AutoField placeholder="Website" name="website1" />
+                  <AutoField placeholder="Summary" name="summary1" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="position1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="website1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="startDate1" /> to
-                  <AutoField name="endDate1" />
+                  <AutoField placeholder="Start Date" name="startDate1" />
+                  <AutoField placeholder="End Date" name="endDate1" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="highlights1" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="highlights1.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete1" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="company2" />
+                  <AutoField placeholder="Company" name="company2" />
+                  <AutoField placeholder="Position" name="position2" />
+                  <AutoField placeholder="Website" name="website2" />
+                  <AutoField placeholder="Summary" name="summary2" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="position2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="website2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="startDate2" /> to
-                  <AutoField name="endDate2" />
+                  <AutoField placeholder="Start Date" name="startDate2" />
+                  <AutoField placeholder="End Date" name="endDate2" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="highlights2" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="highlights2.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete2" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="company3" />
+                  <AutoField placeholder="Company" name="company3" />
+                  <AutoField placeholder="Position" name="position3" />
+                  <AutoField placeholder="Website" name="website3" />
+                  <AutoField placeholder="Summary" name="summary3" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="position3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="website3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="startDate3" /> to
-                  <AutoField name="endDate3" />
+                  <AutoField placeholder="Start Date" name="startDate3" />
+                  <AutoField placeholder="End Date" name="endDate3" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="highlights3" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="highlights3.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete3" />

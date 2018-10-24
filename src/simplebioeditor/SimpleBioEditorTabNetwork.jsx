@@ -101,7 +101,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="network1" />
                 </Table.Cell>
@@ -115,7 +115,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
                   <AutoField name="delete1" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="network2" />
                 </Table.Cell>
@@ -129,7 +129,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
                   <AutoField name="delete2" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="network3" />
                 </Table.Cell>

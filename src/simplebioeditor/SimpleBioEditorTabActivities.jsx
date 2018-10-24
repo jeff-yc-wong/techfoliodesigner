@@ -3,6 +3,8 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import LongTextField from 'uniforms-semantic/LongTextField';
+import ListAddField from 'uniforms-semantic/ListAddField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Table, Button } from 'semantic-ui-react';
@@ -31,8 +33,8 @@ export default class SimpleBioEditorTabActivities extends React.Component {
 
   submit(data) {
     const {
-      organization1, organization2, position1, position2, summary1, summary2, highlights1, highlights2,delete1, delete2
-    } = data;
+      organization1, organization2, position1, position2, summary1, summary2, highlights1, highlights2, delete1,
+      delete2 } = data;
     const bio = this.props.bio;
     if (bio.volunteer === undefined) {
       bio.volunteer = [];
@@ -49,13 +51,13 @@ export default class SimpleBioEditorTabActivities extends React.Component {
     } else entries.push([]);
 
     if (!delete2) {
-    const entry2 = organization2 && {
-      organization: organization2,
-      position: position2,
-      summary: summary2,
-      highlights: _.compact(highlights2),
-    };
-    entries.push(entry2);
+      const entry2 = organization2 && {
+        organization: organization2,
+        position: position2,
+        summary: summary2,
+        highlights: _.compact(highlights2),
+      };
+      entries.push(entry2);
     } else entries.push([]);
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
@@ -91,8 +93,7 @@ export default class SimpleBioEditorTabActivities extends React.Component {
           <Table celled striped>
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell>Organization</Table.HeaderCell>
-                <Table.HeaderCell>Position</Table.HeaderCell>
+                <Table.HeaderCell>Organization/Position</Table.HeaderCell>
                 <Table.HeaderCell>Summary</Table.HeaderCell>
                 <Table.HeaderCell>Highlights</Table.HeaderCell>
                 <Table.HeaderCell>Delete</Table.HeaderCell>
@@ -100,37 +101,33 @@ export default class SimpleBioEditorTabActivities extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="organization1" />
+                  <AutoField placeholder="Organization" name="organization1" />
+                  <AutoField placeholder="Position" name="position1" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="position1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary1" />
+                  <LongTextField name="summary1" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="highlights1" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="highlights1.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete1" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="organization2" />
+                  <AutoField placeholder="Organization" name="organization2" />
+                  <AutoField placeholder="Position" name="position2" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="position2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary2" />
+                  <LongTextField name="summary2" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="highlights2" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="highlights2.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete2" />

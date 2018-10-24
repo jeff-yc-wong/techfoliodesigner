@@ -3,6 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import ListAddField from 'uniforms-semantic/ListAddField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { Table, Button } from 'semantic-ui-react';
@@ -86,25 +87,25 @@ export default class SimpleBioEditorTabSkills extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="name1" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="keywords1" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="keywords1.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete1" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
                   <AutoField name="name2" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="keywords2" />
-                  <Button floated="right" size="mini">+</Button>
+                  <ListAddField name="keywords2.$" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete2" />

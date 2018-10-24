@@ -3,6 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import LongTextField from 'uniforms-semantic/LongTextField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
 import { _ } from 'underscore';
@@ -82,50 +83,40 @@ export default class SimpleBioEditorTabAwards extends React.Component {
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Title</Table.HeaderCell>
-                <Table.HeaderCell>Type</Table.HeaderCell>
-                <Table.HeaderCell>Date</Table.HeaderCell>
-                <Table.HeaderCell>Awarder</Table.HeaderCell>
+                <Table.HeaderCell>Award Information</Table.HeaderCell>
                 <Table.HeaderCell>Summary</Table.HeaderCell>
                 <Table.HeaderCell>Delete</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
 
             <Table.Body>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="title1" />
+                  <AutoField placeholder="Title" name="title1" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="type1" />
+                  <AutoField placeholder="Type" name="type1" />
+                  <AutoField placeholder="Date" name="date1" />
+                  <AutoField placeholder="Awarder" name="awarder1" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="date1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="awarder1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary1" />
+                  <LongTextField name="summary1" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete1" />
                 </Table.Cell>
               </Table.Row>
-              <Table.Row>
+              <Table.Row verticalAlign="top">
                 <Table.Cell>
-                  <AutoField name="title2" />
+                  <AutoField placeholder="Title" name="title2" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="type2" />
+                  <AutoField placeholder="Type" name="type2" />
+                  <AutoField placeholder="Date" name="date2" />
+                  <AutoField placeholder="Awarder" name="awarder2" />
                 </Table.Cell>
                 <Table.Cell>
-                  <AutoField name="date2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="awarder2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="summary2" />
+                  <LongTextField name="summary2" />
                 </Table.Cell>
                 <Table.Cell>
                   <AutoField name="delete2" />
