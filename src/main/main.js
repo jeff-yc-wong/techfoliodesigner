@@ -13,9 +13,11 @@ replayActionMain(mainStore);
 const isDevMode = process.execPath.match(/[\\/]electron/);
 if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 
+let path = require('path');
+
 function initializeWindows() {
   buildMainMenu();
-  createSplashWindow();
+  createSplashWindow(path);
 }
 
 // Build the Main Menu and display the Splash Window.
