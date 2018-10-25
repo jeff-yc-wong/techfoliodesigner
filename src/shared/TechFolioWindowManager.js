@@ -14,6 +14,7 @@ class TechFolioWindowManager {
     this.yOffset = 0;
     this.beforeQuit = false;
     this.splashWindow = null;
+    this.help = [];
     this.projects = [];
     this.essays = [];
     this._data = []; //eslint-disable-line
@@ -43,7 +44,7 @@ class TechFolioWindowManager {
   addWindow(fileType, fileName, window, windowName) {
     // Create a global reference to the window.
     const fileWindowPairs = this[fileType];
-    const pair = { fileName, window, windowName};
+    const pair = { fileName, window, windowName };
     fileWindowPairs.push(pair);
   }
 
@@ -77,6 +78,11 @@ class TechFolioWindowManager {
 
   clearSplashWindow() {
     this.splashWindow = null;
+  }
+
+  addHelpWindow(label, window) {
+    const labelWindowPair = { label, window };
+    this.help.push(labelWindowPair);
   }
 }
 
