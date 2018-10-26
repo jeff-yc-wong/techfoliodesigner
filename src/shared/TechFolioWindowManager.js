@@ -40,10 +40,10 @@ class TechFolioWindowManager {
     fileWindowPairs.push(pair);
   }
 
-  addWindow(fileType, fileName, window, windowName) {
+  addWindowWithName(fileType, fileName, window, windowName) {
     // Create a global reference to the window.
     const fileWindowPairs = this[fileType];
-    const pair = { fileName, window, windowName};
+    const pair = { fileName, window, windowName };
     fileWindowPairs.push(pair);
   }
 
@@ -61,7 +61,7 @@ class TechFolioWindowManager {
     return pair && pair.window;
   }
 
-  getWindow(fileType, fileName, windowName) {
+  getWindowWithName(fileType, fileName, windowName) {
     const fileNameWindowPairs = this[fileType];
     const pair = _.find(fileNameWindowPairs, obj => obj.fileName === fileName && obj.windowName === windowName);
     return pair && pair.window;

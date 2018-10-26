@@ -42,12 +42,20 @@ function buildEssaysMenu(template, techFolioFiles) {
 
 function buildBioMenu(template) {
   const fileName = 'bio.json';
-  const techFolioWindowEnabled = !(techFolioWindowManager.getWindow('_data',fileName, 'SimpleBioEditor'));
-  const simpleBioEditorWindowEnabled = !(techFolioWindowManager.getWindow('_data',fileName, 'TechfolioWindow'));
-
+  const techFolioWindowEnabled = !(techFolioWindowManager.getWindowWithName('_data', fileName, 'SimpleBioEditor'));
+  const simpleBioEditorWindowEnabled = !(techFolioWindowManager.getWindowWithName(
+    '_data', fileName, 'TechfolioWindow',
+  ));
   const bioSubMenu = [
-    { label: fileName, click: () =>  createTechFolioWindow({ fileType: '_data', fileName }), enabled: techFolioWindowEnabled},
-    { label: 'Simple Bio Editor', click: () => createSimpleBioEditorWindow(), enabled: simpleBioEditorWindowEnabled },
+    {
+      label: fileName,
+      click: () => createTechFolioWindow({ fileType: '_data', fileName }),
+      enabled: techFolioWindowEnabled,
+    },
+    { label: 'Simple Bio Editor',
+      click: () => createSimpleBioEditorWindow(),
+      enabled: simpleBioEditorWindowEnabled,
+    },
   ];
   template[indexOfMenuItem(template, 'Bio')].submenu = bioSubMenu;
 }
