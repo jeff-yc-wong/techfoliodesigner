@@ -103,16 +103,16 @@ export default class TechFolioEditor extends React.Component {
 
   handleClick() {
     //let { editorHeight, editorWidth } = this.refs.editor;
-    //console.log(this.refs.editor);
+    var titleBarHeight = 22;
 
     this.setState(state => ({
       previewMode: !this.state.previewMode
     }));
 
     if(this.state.previewMode) {
-      this.window.setSize(700,900);
+      this.window.setSize(this.codeMirrorDiv.offsetWidth,this.codeMirrorDiv.offsetHeight+titleBarHeight);
     } else {
-      this.window.setSize(1200,900);
+      this.window.setSize(this.codeMirrorDiv.offsetWidth+600,this.codeMirrorDiv.offsetHeight+titleBarHeight);
     }
   }
 
