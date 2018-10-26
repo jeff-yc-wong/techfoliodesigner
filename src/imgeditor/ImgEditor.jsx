@@ -1,13 +1,17 @@
+
 import React from 'react';
 import ReactCrop, { makeAspectCrop } from 'react-image-crop';
-import { Container, Label, Divider, Header, Icon, Button } from 'semantic-ui-react';
+import { Container, Label, Divider, Header, Icon, Button, Checkbox } from 'semantic-ui-react';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 
+
 require('../lib/autorefresh.ext');
+
 
 const dialog = require('electron').remote.dialog;
 const fs = require('fs');
 const sizeOf = require('image-size');
+const Jimp = require('jimp');
 
 export default class ImgEditor extends React.Component {
   /* eslint class-methods-use-this: ["error", { "exceptMethods": ["onImageLoaded", "onCropComplete"] }] */
@@ -15,6 +19,7 @@ export default class ImgEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      aspect: false,
       src: null,
       image: {
         path: [''],
@@ -34,6 +39,7 @@ export default class ImgEditor extends React.Component {
         y: 10,
         width: 80,
         height: 80,
+        aspect: 0,
       },
     };
 
@@ -41,6 +47,8 @@ export default class ImgEditor extends React.Component {
     this.onImageLoaded = this.onImageLoaded.bind(this);
     this.onCropComplete = this.onCropComplete.bind(this);
     this.onCropChange = this.onCropChange.bind(this);
+    this.saveCrop = this.saveCrop.bind(this);
+    this.toggleAspectRatio = this.toggleAspectRatio.bind(this);
   }
 
   onImageLoaded(image) {
@@ -48,11 +56,38 @@ export default class ImgEditor extends React.Component {
   }
 
   onCropComplete(image, crop) {
-    console.log('Done Cropping', crop);
+    console.log('Crop Completed', crop);
   }
 
   onCropChange(crop) {
     this.setState({ crop });
+  }
+
+  saveCrop() {
+    let imagePath = this.state.image.path[0].split('/');
+    imagePath.splice(-1, 1);
+    imagePath = imagePath.join('/');
+
+    Jimp.read(this.state.image.path[0], (err, image) => {
+      if (err) throw err;
+      image.crop(
+          ((this.state.crop.x / 100) * this.state.properties.imageWidth),
+          ((this.state.crop.y / 100) * this.state.properties.imageHeight),
+          ((this.state.crop.width / 100) * this.state.properties.imageWidth),
+          ((this.state.crop.height / 100) * this.state.properties.imageHeight),
+      )
+      .write(
+      `${imagePath}/${this.state.properties.imageName}_cropped.jpg`,
+      );
+    });
+
+    const options = {
+      type: 'info',
+      title: 'Image has been cropped',
+      message: 'The image has been successfully cropped.',
+      buttons: ['Okay'],
+    };
+    dialog.showMessageBox(options);
   }
 
   selectImage() {
@@ -86,6 +121,23 @@ export default class ImgEditor extends React.Component {
     });
   }
 
+  toggleAspectRatio() {
+    this.state.aspect = !this.state.aspect;
+    if (this.state.aspect) {
+      this.setState({
+        crop: {
+          aspect: 1,
+        },
+      });
+    } else {
+      this.setState({
+        crop: {
+          aspect: 0,
+        },
+      });
+    }
+  }
+
   render() {
     return (
       <Container fluid style={{ padding: '2%' }}>
@@ -104,9 +156,6 @@ export default class ImgEditor extends React.Component {
         </div>
         <ReactCrop
           src={this.state.image.path[0]}
-          style={{
-            textAlign: 'center',
-          }}
           crop={this.state.crop}
           onImageLoaded={this.onImageLoaded}
           onComplete={this.onCropComplete}
@@ -140,10 +189,11 @@ export default class ImgEditor extends React.Component {
           </div>
         </div>
         <Divider />
+        <Checkbox toggle label={<label htmlFor="Checkbox">Toggle Fixed Square Aspect Ratio</label>} onClick={this.toggleAspectRatio} />
         <div>
           <Button size="massive" color="grey" onClick={this.selectImage} fluid>Choose an image!</Button>
           <br />
-          <Button size="massive" color="blue" fluid>Save Changes</Button>
+          <Button size="massive" color="blue" onClick={this.saveCrop} fluid>Save Changes</Button>
           <br />
           <Button size="massive" color="red" fluid>Reset Changes</Button>
         </div>

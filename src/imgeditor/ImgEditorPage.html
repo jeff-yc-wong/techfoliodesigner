@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css"></link>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" />
   <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="react-image-crop/dist/ReactCrop.scss">
-  <link rel="stylesheet" href="react-image-crop/dist/ReactCrop.css">
+  <link rel="stylesheet" href="../../node_modules/react-image-crop/dist/ReactCrop.css">
+  <link rel="stylesheet" href="../../node_modules/react-image-crop/lib/ReactCrop.scss">
 </head>
 <body style="background-color: rgba(0,0,0,0); margin: 0" >
   <div id="editorWrapper"></div>
@@ -18,6 +18,7 @@
   import { imgFile } from '../main/MainMenu.js'
   import ImgEditor from './ImgEditor.jsx';
 
+
   const app = require('electron').remote.app;
   const queryObject = queryString.parse(window.location.search);
   const fileType = queryObject.fileType || 'unknown';
@@ -26,7 +27,6 @@
 
   const render = () => {
     ReactDOM.render( <ImgEditor directory={directory} fileType={fileType} fileName={fileName} className="cropimage"/>, document.getElementById('editorWrapper'));
-    // React.render( <ImgEditorOptions/>, document.getElementById('edit'));
   }
 
   render();
