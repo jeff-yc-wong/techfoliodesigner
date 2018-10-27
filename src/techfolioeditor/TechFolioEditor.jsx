@@ -13,7 +13,11 @@ const Typo = require('typo-js');
 const fs = require('fs');
 const yamlFront = require('yaml-front-matter');
 const markdownlint = require('markdownlint');
-const md = require('markdown-it')();
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+  typographer: true
+});
 
 const mdLintOptions = {
   'strings': { // eslint-disable-line
@@ -104,15 +108,13 @@ export default class TechFolioEditor extends React.Component {
   handleClick() {
     //let { editorHeight, editorWidth } = this.refs.editor;
     var titleBarHeight = 22;
-
     this.setState(state => ({
       previewMode: !this.state.previewMode
     }));
-
     if(this.state.previewMode) {
       this.window.setSize(this.codeMirrorDiv.offsetWidth,this.codeMirrorDiv.offsetHeight+titleBarHeight);
     } else {
-      this.window.setSize(this.codeMirrorDiv.offsetWidth+600,this.codeMirrorDiv.offsetHeight+titleBarHeight);
+      this.window.setSize(this.codeMirrorDiv.offsetWidth+575,this.codeMirrorDiv.offsetHeight+titleBarHeight);
     }
   }
 
@@ -293,30 +295,18 @@ export default class TechFolioEditor extends React.Component {
 
       let finalResult = '<h1>'+title+'</h1>'+'<span>'+date+'</span>'+'<hr>';
 
-      let snippets = markdown.match(/(.|\n)*?<img[^>]*>/gi);
-      markdown = markdown.replace(/(.|\n)*<img[^>]*>/gi,'');
-
-      for(var i = 0; i < snippets.length; i++) {
-        let img = snippets[i].match(/<img[^>]*>/gi);
-
-        //img tag removed from snippet
-        snippets[i] = snippets[i].replace(img, '');
-
-        let absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
-        img = img[0].replace('..', absPath);
-
-        //snippet rendered into md
-        snippets[i] = md.render(snippets[i]);
-        finalResult = finalResult.concat(snippets[i], img);
-      }
-      //last snippet
+      //let snippets = markdown.match(/(.|\n)*?<img[^>]*>/gi);
+      //markdown = markdown.replace(/(.|\n)*<img[^>]*>/gi,'');
+      let absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
+      markdown = markdown.replace(/src="\.\./gi, 'src="'+absPath);
       markdown = md.render(markdown);
       finalResult = finalResult.concat(markdown);
 
       return (
         <SplitPane split="vertical"
                    defaultSize={575}>
-          <div className="editor">
+          <div className="editor"
+               ref={ div => { this.codeMirrorDiv = div; }}>
             <button onClick={this.handleClick}>
               Preview
             </button>
@@ -336,7 +326,8 @@ export default class TechFolioEditor extends React.Component {
       );
     } else {
       return (
-          <div className="editor">
+          <div className="editor"
+               ref={ div => { this.codeMirrorDiv = div; }}>
             <button onClick={this.handleClick}>
               Preview
             </button>
