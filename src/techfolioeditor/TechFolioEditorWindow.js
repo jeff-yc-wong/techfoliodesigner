@@ -22,62 +22,60 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
         'You can not open multiple bio editors at the same time');
     }
     currWindow.show();
-  } else {
-    if (fs.existsSync(filePath)) {
-      // Create the browser window.
-      const window = new BrowserWindow({
-        x: techFolioWindowManager.getXOffset(),
-        y: techFolioWindowManager.getYOffset(),
-        width: 1080,
-        minWidth: 680,
-        height: 840,
-        title: 'TechFolio Designer',
-      });
+  } else if (fs.existsSync(filePath)) {
+    // Create the browser window.
+    const window = new BrowserWindow({
+      x: techFolioWindowManager.getXOffset(),
+      y: techFolioWindowManager.getYOffset(),
+      width: 1080,
+      minWidth: 680,
+      height: 840,
+      title: 'TechFolio Designer',
+    });
 
-      // Tell the window manager that this window has been created.
-      techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');
-      techFolioWindowManager.addWindow(fileType, fileName, window);
+    // Tell the window manager that this window has been created.
+    techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');
+    techFolioWindowManager.addWindow(fileType, fileName, window);
+
+    // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
+    buildMainMenu();
+
+    // Load the index.html of the app.
+    window.loadURL(
+      `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`); // eslint-disable-line
+
+    // Install DevTools
+    if (isDevMode) {
+      await installExtension(REACT_DEVELOPER_TOOLS);
+      // mainWindow.webContents.openDevTools();
+    }
+
+    window.on('close', (e) => {
+      e.preventDefault();
+      if (window.getTitle().startsWith('*')) {
+        const options = {
+          type: 'info',
+          title: 'Do you really want to close this window?',
+          message: 'This window has unsaved changes. Close anyway?',
+          buttons: ['No', 'Yes, lose my changes'],
+        };
+        dialog.showMessageBox(options, (index) => {
+          if (index === 1) {
+            window.destroy();
+          }
+        });
+      } else {
+        window.destroy();
+      }
+    });
+
+    window.on('closed', () => {
+      // Dereference the window object.
+      techFolioWindowManager.removeWindow(fileType, fileName);
 
       // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
       buildMainMenu();
-
-      // Load the index.html of the app.
-      window.loadURL(
-        `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`); // eslint-disable-line
-
-      // Install DevTools
-      if (isDevMode) {
-        await installExtension(REACT_DEVELOPER_TOOLS);
-        // mainWindow.webContents.openDevTools();
-      }
-
-      window.on('close', (e) => {
-        e.preventDefault();
-        if (window.getTitle().startsWith('*')) {
-          const options = {
-            type: 'info',
-            title: 'Do you really want to close this window?',
-            message: 'This window has unsaved changes. Close anyway?',
-            buttons: ['No', 'Yes, lose my changes'],
-          };
-          dialog.showMessageBox(options, (index) => {
-            if (index === 1) {
-              window.destroy();
-            }
-          });
-        } else {
-          window.destroy();
-        }
-      });
-
-      window.on('closed', () => {
-        // Dereference the window object.
-        techFolioWindowManager.removeWindow(fileType, fileName);
-
-        // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
-        buildMainMenu();
-      });
-    }
+    });
   }
 }
 
