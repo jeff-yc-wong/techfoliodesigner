@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog } from 'electron';
+import { BrowserWindow, dialog, shell } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import path from 'path';
 import prompt from 'electron-prompt';
@@ -64,6 +64,15 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
       window.on('closed', () => {
         // Dereference the window object.
         techFolioWindowManager.removeWindow(fileType, fileName);
+      });
+
+      window.webContents.on('will-navigate', (event, url) => {
+        if (url !== window.webContents.getURL()) {
+          // Stop Electron from opening links in BrowserWindow
+          event.preventDefault();
+          // Open URL in default system browser
+          shell.openExternal(url);
+        }
       });
     }
 }
@@ -146,4 +155,3 @@ export async function newTechFolioWindow({ fileType }) {
     });
   return null;
 }
-

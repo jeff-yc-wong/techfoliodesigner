@@ -112,9 +112,11 @@ export default class TechFolioEditor extends React.Component {
       previewMode: !this.state.previewMode
     }));
     if(this.state.previewMode) {
+      // preview mode is on, which emans it was just toggled off
       this.window.setSize(this.codeMirrorDiv.offsetWidth,this.codeMirrorDiv.offsetHeight+titleBarHeight);
     } else {
-      this.window.setSize(this.codeMirrorDiv.offsetWidth+575,this.codeMirrorDiv.offsetHeight+titleBarHeight);
+      // preview mode is off, which means it was just toggled on
+      this.window.setSize(this.codeMirrorDiv.offsetWidth+700,this.codeMirrorDiv.offsetHeight+titleBarHeight);
     }
   }
 
@@ -304,7 +306,7 @@ export default class TechFolioEditor extends React.Component {
 
       return (
         <SplitPane split="vertical"
-                   defaultSize={575}>
+                   defaultSize={this.codeMirrorDiv.offsetWidth}>
           <div className="editor"
                ref={ div => { this.codeMirrorDiv = div; }}>
             <button onClick={this.handleClick}>
