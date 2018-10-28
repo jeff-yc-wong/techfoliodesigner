@@ -16,7 +16,7 @@ const markdownlint = require('markdownlint');
 const md = require('markdown-it')({
   html: true,
   linkify: true,
-  typographer: true
+  typographer: true,
 });
 
 const mdLintOptions = {
@@ -57,6 +57,7 @@ export default class TechFolioEditor extends React.Component {
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
     window.JSHINT = JSHINT;  // eslint-disable-line
+    this.cm = cm;
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     this.state = {
@@ -106,17 +107,16 @@ export default class TechFolioEditor extends React.Component {
   }
 
   handleClick() {
-    //let { editorHeight, editorWidth } = this.refs.editor;
-    var titleBarHeight = 22;
-    this.setState(state => ({
-      previewMode: !this.state.previewMode
+    const titleBarHeight = 22;
+    this.setState(({
+      previewMode: !this.state.previewMode,
     }));
-    if(this.state.previewMode) {
+    if (this.state.previewMode) {
       // preview mode is on, which emans it was just toggled off
-      this.window.setSize(this.codeMirrorDiv.offsetWidth,this.codeMirrorDiv.offsetHeight+titleBarHeight);
+      this.window.setSize(this.codeMirrorDiv.offsetWidth, this.codeMirrorDiv.offsetHeight + titleBarHeight);
     } else {
       // preview mode is off, which means it was just toggled on
-      this.window.setSize(this.codeMirrorDiv.offsetWidth+700,this.codeMirrorDiv.offsetHeight+titleBarHeight);
+      this.window.setSize(this.codeMirrorDiv.offsetWidth + 700, this.codeMirrorDiv.offsetHeight + titleBarHeight);
     }
   }
 
@@ -208,13 +208,14 @@ export default class TechFolioEditor extends React.Component {
     let dicData = '';
     let typo;
 
-    cm.defineMode('spell-check', (config) => {
+    this.cm.defineMode('spell-check', (config) => {
       // Load AFF/DIC data
       if (!affLoading) {
         affLoading = true;
+        // eslint-disable-next-line no-undef
         const xhrAff = new XMLHttpRequest();
         xhrAff.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff', true);
-        xhrAff.onload = function () {
+        xhrAff.onload = () => {
           if (xhrAff.readyState === 4 && xhrAff.status === 200) {
             affData = xhrAff.responseText;
             numLoaded += 1;
@@ -229,9 +230,10 @@ export default class TechFolioEditor extends React.Component {
       }
       if (!dicLoading) {
         dicLoading = true;
+        // eslint-disable-next-line no-undef
         const xhrDic = new XMLHttpRequest();
         xhrDic.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic', true);
-        xhrDic.onload = function () {
+        xhrDic.onload = () => {
           if (xhrDic.readyState === 4 && xhrDic.status === 200) {
             dicData = xhrDic.responseText;
             numLoaded += 1;
@@ -259,6 +261,7 @@ export default class TechFolioEditor extends React.Component {
             return null;
           }
 
+          // eslint-disable-next-line no-cond-assign
           while ((ch = stream.peek()) != null && !rxWord.includes(ch)) {
             word += ch;
             stream.next();
@@ -281,34 +284,35 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    //preview conditionally rendered
+    // preview conditionally rendered
 
-    if(this.state.previewMode){
-
+    if (this.state.previewMode) {
       let markdown = this.state.value;
-      let yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
-      markdown = markdown.replace(/---((.|\n)*?)---\n/gi,'');
+      const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
+      markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
 
-      //date and title header
+      // date and title header
       let title = yaml.match(/title:[^\n]*/g)[0];
       title = title.replace('title: ', '');
       let date = yaml.match(/date:[^\n]*/g)[0];
       date = date.replace('date: ', '');
 
-      let finalResult = '<h1>'+title+'</h1>'+'<span>'+date+'</span>'+'<hr>';
+      let finalResult = `<h1>${title}</h1><span>${date}</span><hr>`;
 
-      //let snippets = markdown.match(/(.|\n)*?<img[^>]*>/gi);
-      //markdown = markdown.replace(/(.|\n)*<img[^>]*>/gi,'');
-      let absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
-      markdown = markdown.replace(/src="\.\./gi, 'src="'+absPath);
+      const absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
+      markdown = markdown.replace(/src="\.\./gi, `src=${absPath}`);
       markdown = md.render(markdown);
       finalResult = finalResult.concat(markdown);
 
       return (
-        <SplitPane split="vertical"
-                   defaultSize={this.codeMirrorDiv.offsetWidth}>
-          <div className="editor"
-               ref={ div => { this.codeMirrorDiv = div; }}>
+        <SplitPane
+          split="vertical"
+          defaultSize={this.codeMirrorDiv.offsetWidth}
+        >
+          <div
+            className="editor"
+            ref={(div) => { this.codeMirrorDiv = div; }}
+          >
             <button onClick={this.handleClick}>
               Preview
             </button>
@@ -321,28 +325,28 @@ export default class TechFolioEditor extends React.Component {
             />
           </div>
           <div className="scroll">
-            <div className="preview" dangerouslySetInnerHTML={{__html: finalResult}}>
-            </div>
+            <div className="preview" dangerouslySetInnerHTML={{ __html: finalResult }} />
           </div>
         </SplitPane>
       );
-    } else {
-      return (
-          <div className="editor"
-               ref={ div => { this.codeMirrorDiv = div; }}>
-            <button onClick={this.handleClick}>
-              Preview
-            </button>
-            <CodeMirror
-              value={this.state.value}
-              onBeforeChange={this.onBeforeChange}
-              options={this.options}
-              editorDidMount={(editor) => { this.instance = editor; }}
-              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-            />
-          </div>
-      );
     }
+    return (
+      <div
+        className="editor"
+        ref={(div) => { this.codeMirrorDiv = div; }}
+      >
+        <button onClick={this.handleClick}>
+              Preview
+        </button>
+        <CodeMirror
+          value={this.state.value}
+          onBeforeChange={this.onBeforeChange}
+          options={this.options}
+          editorDidMount={(editor) => { this.instance = editor; }}
+          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+        />
+      </div>
+    );
   }
 }
 
