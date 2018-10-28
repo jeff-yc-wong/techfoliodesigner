@@ -15,7 +15,11 @@ export default class SimpleBioEditorTabEducation extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const education = this.props.bio.education;
+    const bio = this.props.bio;
+    if (bio.education === undefined) {
+      bio.education = [];
+    }
+    const education = bio.education;
     this.state.model.institution1 = education[0] && education[0].institution;
     this.state.model.institution2 = education[1] && education[1].institution;
     this.state.model.area1 = education[0] && education[0].area;
@@ -38,7 +42,10 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       courses1c, courses2a, courses2b, courses2c,
     } = data;
     const bio = this.props.bio;
-    const education = this.props.bio.education;
+    if (bio.education === undefined) {
+      bio.education = [];
+    }
+    const education = bio.education;
     const entries = [];
     let newCourses1 = [courses1a, courses1b, courses1c];
     if (bio.education[0]) {

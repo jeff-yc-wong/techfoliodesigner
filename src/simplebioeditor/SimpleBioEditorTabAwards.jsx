@@ -15,7 +15,10 @@ export default class SimpleBioEditorTabAwards extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const awards = this.props.bio.awards;
+    let awards = this.props.bio.awards;
+    if (awards === undefined) {
+      awards = [];
+    }
     this.state.model.title1 = awards[0] && awards[0].title;
     this.state.model.title2 = awards[1] && awards[1].title;
     this.state.model.type1 = awards[0] && awards[0].type;
@@ -31,6 +34,9 @@ export default class SimpleBioEditorTabAwards extends React.Component {
   submit(data) {
     const { title1, title2, type1, date1, awarder1, summary1, type2, date2, awarder2, summary2 } = data;
     const bio = this.props.bio;
+    if (bio.awards === undefined) {
+      bio.awards = [];
+    }
     const entries = [];
     const entry1 = title1 && { title: title1, type: type1, date: date1, awarder: awarder1, summary: summary1 };
     entries.push(entry1);

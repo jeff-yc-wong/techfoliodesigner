@@ -6,6 +6,7 @@ import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindo
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
+import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -41,9 +42,20 @@ function buildEssaysMenu(template, techFolioFiles) {
 
 function buildBioMenu(template) {
   const fileName = 'bio.json';
+  const techFolioWindowEnabled = !(techFolioWindowManager.getWindowWithName('_data', fileName, 'SimpleBioEditor'));
+  const simpleBioEditorWindowEnabled = !(techFolioWindowManager.getWindowWithName(
+    '_data', fileName, 'TechfolioWindow',
+  ));
   const bioSubMenu = [
-    { label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) },
-    { label: 'Simple Bio Editor', click: () => createSimpleBioEditorWindow() },
+    {
+      label: fileName,
+      click: () => createTechFolioWindow({ fileType: '_data', fileName }),
+      enabled: techFolioWindowEnabled,
+    },
+    { label: 'Simple Bio Editor',
+      click: () => createSimpleBioEditorWindow(),
+      enabled: simpleBioEditorWindowEnabled,
+    },
   ];
   template[indexOfMenuItem(template, 'Bio')].submenu = bioSubMenu;
 }

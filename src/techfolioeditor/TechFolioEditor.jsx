@@ -65,14 +65,26 @@ export default class TechFolioEditor extends React.Component {
       fileChangedMarker: '',
       previewMode: false,
     };
-    this.mode = this.props.fileName.endsWith('.md') ? 'spell-check' : 'application/json';
+    const fileExtension = this.props.fileName.match(/\.(.*)/gi);
+    switch (fileExtension[0]) {
+      case '.md':
+        this.mode = 'spell-check';
+        break;
+      case '.json':
+        this.mode = 'application/json';
+        break;
+      case '.yaml':
+      case '.yml':
+        this.mode = 'text/x-yaml';
+        break;
+      default:
+        this.mode = 'text/plain';
+    }
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
-    // const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
-    // const pasteKeyBinding = (process.platform === 'darwin') ? 'Cmd-V' : 'Ctrl-V';
+    const lintKeyBinding = (process.platform === 'darwin') ? 'Cmd-L' : 'Ctrl-L';
     extraKeys[saveKeyBinding] = () => this.saveFile();
-    // extraKeys[copyKeyBinding] = () => this.copy();
-    // extraKeys[pasteKeyBinding] = () => this.paste();
+    extraKeys[lintKeyBinding] = () => this.callTfLint(false);
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -192,11 +204,131 @@ export default class TechFolioEditor extends React.Component {
             }
           }
         }
+        this.callTfLint(true);
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
       }
     });
+  }
+
+  callTfLint(calledBySave) {
+    if (this.mode !== 'application/json') {
+      const results = this.tfLint();
+      this.printResultsBox(results, calledBySave);
+    }
+  }
+
+  tfLint() {
+    const results = new Map();
+    const actualText = this.state.value.split('---');
+    const wordByWord = actualText[2].split(/\s+/);
+    const lineByLine = actualText[2].split(/\n+/);
+    const yaml = actualText[1].split(/\n+/);
+
+    // Check if word count is less than 50
+    const wordCount = wordByWord.length - 2;
+    if (wordCount < 50) {
+      results.set('lessThan50Words', true);
+    } else results.set('lessThan50Words', false);
+
+    // Check if paragraph count is >1
+    let paragraphCount = lineByLine.length - 1;
+
+    // Headers don't count as paragraphs
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].startsWith('#')) {
+        paragraphCount -= 1;
+      }
+    }
+    if (paragraphCount <= 1) {
+      results.set('singleParagraph', true);
+    } else results.set('singleParagraph', false);
+
+    // Check if img html uses ui image class
+    // Sets badImg value to line numbers of errors over true/false
+    let lineNumberImage = '';
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].includes('<img')) {
+        if (!lineByLine[i].includes('ui image')) {
+          lineNumberImage = lineNumberImage.concat(` ${(i + yaml.length).toString()}`);
+        }
+      }
+    }
+    results.set('badImg', lineNumberImage);
+
+    // Check if URL used proper MD format
+    // Sets badUrl value to line numbers of errors over true/false
+    let lineNumberUrl = '';
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].includes('http://') || lineByLine[i].includes('https://')) {
+        if (!lineByLine[i].match(/.*\[.+\]\(https?:\/\/.*\/?\).*/)) {
+          lineNumberUrl = lineNumberUrl.concat(` ${(i + yaml.length).toString()}`);
+        }
+      }
+    }
+    results.set('badUrl', lineNumberUrl);
+
+    // Check if there is at least one subsection header
+    results.set('noSubsection', true);
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].startsWith('#')) {
+        results.set('noSubsection', false);
+      }
+    }
+
+    // Check if title contains the word "reflect"
+    results.set('titleContainsReflect', false);
+    if (yaml[2].includes('essay')) {
+      if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
+        results.set('titleContainsReflect', true);
+      }
+    }
+
+    // console.log(results);
+    return results;
+  }
+
+  printResultsBox(results, calledBySave) {
+    let error = '';
+    let errorCount = 0;
+    let calledMessage = '\nIt is in your best interest to correct these errors.';
+    if (results.get('lessThan50Words') === true) {
+      error = error.concat(`${errorCount + 1}. Word Count is less than 50.\n`);
+      errorCount += 1;
+    }
+    if (results.get('singleParagraph') === true) {
+      error = error.concat(`${errorCount + 1}. Only a single paragraph.\n`);
+      errorCount += 1;
+    }
+    if (results.get('badUrl') !== '') {
+      error = error.concat((errorCount + 1) + '. Contains a URL not in Markdown format. ' + // eslint-disable-line
+          'Error occurs on line(s)' + results.get('badUrl') + '.\n');
+      errorCount += 1;
+    }
+    if (results.get('badImg') !== '') {
+      error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
+          'Error occurs on line(s)' + results.get('badImg') + '.\n');
+      errorCount += 1;
+    }
+    if (results.get('noSubsection') === true) {
+      error = error.concat(`${errorCount + 1}. Does not contain a subsection header.\n`);
+      errorCount += 1;
+    }
+    if (results.get('titleContainsReflect') === true) {
+      error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
+      errorCount += 1;
+    }
+    if (calledBySave) {
+      calledMessage = '\nYour file has been saved anyway, but it is in your best interest to correct these errors.';
+    }
+    if (error !== '') {
+      dialog.showErrorBox('TFLint Results',
+            errorCount + ' errors were found in your file.\nTFLint detects the following errors: \n\n' // eslint-disable-line
+          + error + calledMessage);
+    } else {
+      dialog.showMessageBox({ type: 'info', title: 'TFLint Results', message: 'No errors were found in your file.' });
+    }
   }
 
   spellCheck() {
