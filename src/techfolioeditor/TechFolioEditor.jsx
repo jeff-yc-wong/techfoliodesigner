@@ -289,7 +289,7 @@ export default class TechFolioEditor extends React.Component {
     return results;
   }
 
-  printResultsBox(results, calledBySave) {
+  printResultsBox(results, calledBySave) { // eslint-disable-line class-methods-use-this
     let error = '';
     let errorCount = 0;
     let calledMessage = '\nIt is in your best interest to correct these errors.';

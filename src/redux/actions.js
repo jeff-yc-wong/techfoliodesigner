@@ -1,5 +1,4 @@
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
-import mainStore from '../redux/mainstore';
 
 export function setUsername(username) {
   techFolioGitHubManager.set('username', username);
@@ -39,4 +38,5 @@ export function clearAll() {
 }
 
 // Overload console.log so that it prints to the Command Log window instead
-console.log = function (text) { mainStore.dispatch(addLog(text)); };
+// No, never overload console.log.
+// console.log = function (text) { mainStore.dispatch(addLog(text)); };
