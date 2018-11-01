@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactCrop, { makeAspectCrop } from 'react-image-crop';
 import { Container, Label, Divider, Header, Icon, Button, Checkbox } from 'semantic-ui-react';
@@ -22,7 +21,9 @@ export default class ImgEditor extends React.Component {
       aspect: false,
       src: null,
       image: {
-        path: [''],
+        number: 0,
+        path: '',
+        cPath: '',
         border: '',
         display: '',
         backgroundColor: 'lightgrey',
@@ -47,7 +48,9 @@ export default class ImgEditor extends React.Component {
     this.onImageLoaded = this.onImageLoaded.bind(this);
     this.onCropComplete = this.onCropComplete.bind(this);
     this.onCropChange = this.onCropChange.bind(this);
-    this.saveCrop = this.saveCrop.bind(this);
+    this.saveImage = this.saveImage.bind(this);
+    this.cropImage = this.cropImage.bind(this);
+    this.resetImage = this.resetImage.bind(this);
     this.toggleAspectRatio = this.toggleAspectRatio.bind(this);
   }
 
@@ -63,55 +66,83 @@ export default class ImgEditor extends React.Component {
     this.setState({ crop });
   }
 
-  saveCrop() {
-    let fullPath = '';
-    let imagePath = this.state.image.path.split('/');
-    imagePath.splice(-1, 1);
-    imagePath = imagePath.join('/');
-    Jimp.read(this.state.image.path, (err, image) => {
-      if (err) throw err;
-      if (!(this.state.properties.imageName.includes('_cropped'))) {
-        fullPath = `${imagePath}/${this.state.properties.imageName}_cropped.png`;
-      } else {
-        fullPath = `${imagePath}/${this.state.properties.imageName}.png`;
+  saveImage() {
+    const options = {
+      type: 'info',
+      title: 'Image has been saved!',
+      message: 'The image has been successfully cropped and saved!',
+      buttons: ['Okay'],
+    };
+    Jimp.read(this.state.image.cpath, (err, image) => {
+      if (!err) {
+        image.write(this.state.image.path);
+        let imgName = this.state.image.path.toString().split('/');
+        let imgPath = this.state.image.path.split('/');
+        imgName = imgName[imgName.length - 1];
+        imgName = imgName.split('.')[0];
+        imgPath.splice(-1, 1);
+        imgPath = imgPath.join('/');
+        for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum++) {
+          fs.unlink(`${imgPath}/${imgName}_cropped${fileNum}.png`, (err) => {
+            if (!err) {
+              console.log('Success!');
+            } else {
+              console.log(err);
+            }
+          });
+        }
+        dialog.showMessageBox(options);
       }
+    });
+
+  }
+
+  cropImage() {
+    const cropPath = this.state.image.cPath;
+    this.state.image.number += 1;
+
+    let imgName = this.state.image.path.toString().split('/');
+    let imgPath = this.state.image.path.split('/');
+    imgName = imgName[imgName.length - 1];
+
+    let imgType = imgName.split('.')[1];
+    imgName = imgName.split('.')[0];
+
+    imgPath.splice(-1, 1);
+    imgPath = imgPath.join('/');
+
+    Jimp.read(cropPath, (err, image) => {
+      if (err) throw err;
       image.crop(
           ((this.state.crop.x / 100) * this.state.properties.imageWidth),
           ((this.state.crop.y / 100) * this.state.properties.imageHeight),
           ((this.state.crop.width / 100) * this.state.properties.imageWidth),
           ((this.state.crop.height / 100) * this.state.properties.imageHeight),
-      ).write(fullPath);
-      this.updateCrop(image, fullPath);
+      ).write(`${imgPath}/${imgName}_cropped${this.state.image.number}.png`);
+      this.updateImage(`${imgPath}/${imgName}_cropped${this.state.image.number}.png`);
     });
-    const options = {
-      type: 'info',
-      title: 'Image has been cropped',
-      message: 'The image has been successfully cropped.',
-      buttons: ['Okay'],
-    };
-    dialog.showMessageBox(options);
   }
 
-  updateCrop(cropImage, cropPath) {
-    console.log(cropImage);
-    console.log(cropPath);
-    if (cropPath !== undefined) {
-      let imgName = cropPath.split('/');
-      imgName = imgName[imgName.length - 1];
+  updateImage(cropPath) {
+    Jimp.read(cropPath, (err) => {
+      if (err) throw err;
+      const dimensions = sizeOf(cropPath);
       this.setState({
         src: cropPath,
         image: {
-          path: cropPath,
+          number: this.state.image.number,
+          path: this.state.image.path,
+          cPath: cropPath,
           border: 'solid black 1px',
           display: 'none',
           backgroundColor: 'white',
         },
         properties: {
-          imageName: imgName.split('.')[0],
-          imageType: imgName.split('.')[1],
-          imageHeight: cropImage.bitmap.height,
-          imageWidth: cropImage.bitmap.width,
-          imageSize: fs.statSync(cropPath).size / 1000,
+          imageName: this.state.properties.imageName,
+          imageType: this.state.properties.imageType,
+          imageHeight: dimensions.height,
+          imageWidth: dimensions.width,
+          imageSize: fs.statSync(this.state.image.cPath.toString()).size / 1000,
         },
         crop: {
           x: 0,
@@ -120,10 +151,35 @@ export default class ImgEditor extends React.Component {
           height: 100,
         },
       });
-    }
+    });
+  }
+
+  resetImage() {
+    this.updateImage(this.state.image.path);
+    this.state.image.number = 0;
   }
 
   selectImage() {
+    console.log(this.state.image);
+    if (this.state.image.cPath !== '') {
+      let imgName = this.state.image.path.toString().split('/');
+      let imgPath = this.state.image.path.split('/');
+      imgName = imgName[imgName.length - 1];
+      imgName = imgName.split('.')[0];
+      imgPath.splice(-1, 1);
+      imgPath = imgPath.join('/');
+
+      for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum++) {
+        fs.unlink(`${imgPath}/${imgName}_cropped${fileNum}.png`, (err) => {
+          if (!err) {
+            console.log('Success!');
+          } else {
+            console.log(err);
+          }
+        });
+      }
+      this.state.image.cPath = '';
+    }
     dialog.showOpenDialog({
       title: 'Select an image',
       properties: ['openFile'],
@@ -131,21 +187,36 @@ export default class ImgEditor extends React.Component {
       buttonLabel: 'Crop',
     }, (fullPath) => {
       if (fullPath !== undefined) {
-        console.log(fullPath);
         const dimensions = sizeOf(fullPath.toString());
         let imgName = fullPath.toString().split('/');
+        let imgPath = fullPath[0].split('/');
         imgName = imgName[imgName.length - 1];
+
+        let imgType = imgName.split('.')[1];
+        imgName = imgName.split('.')[0];
+
+        imgPath.splice(-1, 1);
+        imgPath = imgPath.join('/');
+
+        this.state.image.number = 0;
+
+        Jimp.read(fullPath[0], (err, image) => {
+          if (err) throw err;
+          image.write(`${imgPath}/${imgName}_cropped${this.state.image.number}.png`);
+        });
         this.setState({
           src: fullPath[0],
           image: {
+            number: 0,
             path: fullPath[0],
+            cPath: `${imgPath}/${imgName}_cropped${this.state.image.number}.png`,
             border: 'solid black 1px',
             display: 'none',
             backgroundColor: 'white',
           },
           properties: {
-            imageName: imgName.split('.')[0],
-            imageType: imgName.split('.')[1],
+            imageName: imgName,
+            imageType: imgType,
             imageHeight: dimensions.height,
             imageWidth: dimensions.width,
             imageSize: fs.statSync(fullPath.toString()).size / 1000,
@@ -156,13 +227,6 @@ export default class ImgEditor extends React.Component {
             width: 100,
             height: 100,
           },
-        });
-        let imagePath = this.state.image.path.split('/');
-        imagePath.splice(-1, 1);
-        imagePath = imagePath.join('/');
-        Jimp.read(this.state.image.path, (err, image) => {
-          if (err) throw err;
-          image.write(`${imagePath}/${this.state.properties.imageName}_cropped.png`);
         });
       }
     });
@@ -195,7 +259,7 @@ export default class ImgEditor extends React.Component {
         </div>
         <div style={{ display: 'block', textAlign: 'center' }}>
           <ReactCrop
-            src={this.state.image.path}
+            src={this.state.src}
             crop={this.state.crop}
             onImageLoaded={this.onImageLoaded}
             onComplete={this.onCropComplete}
@@ -229,14 +293,15 @@ export default class ImgEditor extends React.Component {
             </Label>
           </div>
         </div>
+        <div style={{ textAlign: 'center', paddingTop: '1%'}}>
+          <Checkbox toggle label={<label htmlFor="Checkbox">Toggle Fixed Square Aspect Ratio</label>} onClick={this.toggleAspectRatio} />
+        </div>
         <Divider />
-        <Checkbox toggle label={<label htmlFor="Checkbox">Toggle Fixed Square Aspect Ratio</label>} onClick={this.toggleAspectRatio} />
-        <div>
-          <Button size="massive" color="grey" onClick={this.selectImage} fluid>Choose an image!</Button>
-          <br />
-          <Button size="massive" color="blue" onClick={this.saveCrop} fluid>Save Changes</Button>
-          <br />
-          <Button size="massive" color="red" onClick={this.resetImage} fluid>Reset Changes</Button>
+        <div style={{ textAlign: "center" }}>
+          <Button size="massive" color="grey" onClick={this.selectImage} >Choose Image</Button>
+          <Button size="massive" color="blue" onClick={this.cropImage} >Crop</Button>
+          <Button size="massive" color="blue" onClick={this.saveImage} >Save</Button>
+          <Button size="massive" color="red" onClick={this.resetImage} >Reset</Button>
         </div>
       </Container>
     );
