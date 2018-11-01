@@ -18,7 +18,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     const bio = this.props.bio;
-    if(bio.work === undefined) {
+    if (bio.work === undefined) {
       bio.work = [];
     }
     const work = bio.work;
@@ -59,7 +59,7 @@ export default class SimpleBioEditorTabWork extends React.Component {
       highlights3a, highlights3b, highlights3c,
     } = data;
     const bio = this.props.bio;
-    if(bio.work === undefined) {
+    if (bio.work === undefined) {
       bio.work = [];
     }
     const work = bio.work;

@@ -13,7 +13,11 @@ const Typo = require('typo-js');
 const fs = require('fs');
 const yamlFront = require('yaml-front-matter');
 const markdownlint = require('markdownlint');
-const md = require('markdown-it')();
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+  typographer: true,
+});
 
 const mdLintOptions = {
   'strings': { // eslint-disable-line
@@ -53,34 +57,34 @@ export default class TechFolioEditor extends React.Component {
     this.window = require('electron').remote.getCurrentWindow(); //eslint-disable-line
     this.window.setTitle(this.props.fileName);
     window.JSHINT = JSHINT;  // eslint-disable-line
+    this.cm = cm;
     this.codeMirrorRef = null;
     this.filePath = path.join(this.props.directory, this.props.fileType, this.props.fileName);
     this.state = {
       value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '',
+      previewMode: false,
     };
-    var fileExtension = this.props.fileName.match(/\.(.*)/gi);
+    const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     switch (fileExtension[0]) {
       case '.md':
         this.mode = 'spell-check';
         break;
       case '.json':
-        this.mode = 'application/json'
+        this.mode = 'application/json';
         break;
       case '.yaml':
       case '.yml':
-        this.mode = 'text/x-yaml'
+        this.mode = 'text/x-yaml';
         break;
       default:
-        this.mode = 'text/plain'
+        this.mode = 'text/plain';
     }
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
-    // const copyKeyBinding = (process.platform === 'darwin') ? 'Cmd-C' : 'Ctrl-C';
-    // const pasteKeyBinding = (process.platform === 'darwin') ? 'Cmd-V' : 'Ctrl-V';
+    const lintKeyBinding = (process.platform === 'darwin') ? 'Cmd-L' : 'Ctrl-L';
     extraKeys[saveKeyBinding] = () => this.saveFile();
-    // extraKeys[copyKeyBinding] = () => this.copy();
-    // extraKeys[pasteKeyBinding] = () => this.paste();
+    extraKeys[lintKeyBinding] = () => this.callTfLint(false);
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -94,6 +98,8 @@ export default class TechFolioEditor extends React.Component {
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   onBeforeChange(editor, data, value) {
@@ -110,6 +116,20 @@ export default class TechFolioEditor extends React.Component {
 
   handleChange(value) {
     this.setState({ value });
+  }
+
+  handleClick() {
+    const titleBarHeight = 22;
+    this.setState(({
+      previewMode: !this.state.previewMode,
+    }));
+    if (this.state.previewMode) {
+      // preview mode is on, which emans it was just toggled off
+      this.window.setSize(this.codeMirrorDiv.offsetWidth, this.codeMirrorDiv.offsetHeight + titleBarHeight);
+    } else {
+      // preview mode is off, which means it was just toggled on
+      this.window.setSize(this.codeMirrorDiv.offsetWidth + 700, this.codeMirrorDiv.offsetHeight + titleBarHeight);
+    }
   }
 
   saveFile() {
@@ -184,10 +204,7 @@ export default class TechFolioEditor extends React.Component {
             }
           }
         }
-        if (this.mode !== 'application/json') {
-          const results = this.tfLint();
-          this.printResultsBox(results);
-        }
+        this.callTfLint(true);
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
         this.setWindowTitle();
@@ -195,11 +212,19 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
+  callTfLint(calledBySave) {
+    if (this.mode !== 'application/json') {
+      const results = this.tfLint();
+      this.printResultsBox(results, calledBySave);
+    }
+  }
+
   tfLint() {
     const results = new Map();
     const actualText = this.state.value.split('---');
     const wordByWord = actualText[2].split(/\s+/);
     const lineByLine = actualText[2].split(/\n+/);
+    const yaml = actualText[1].split(/\n+/);
 
     // Check if word count is less than 50
     const wordCount = wordByWord.length - 2;
@@ -221,46 +246,88 @@ export default class TechFolioEditor extends React.Component {
     } else results.set('singleParagraph', false);
 
     // Check if img html uses ui image class
-    results.set('badImg', false);
+    // Sets badImg value to line numbers of errors over true/false
+    let lineNumberImage = '';
     for (let i = 0; i < lineByLine.length; i += 1) {
       if (lineByLine[i].includes('<img')) {
         if (!lineByLine[i].includes('ui image')) {
-          results.set('badImg', true);
+          lineNumberImage = lineNumberImage.concat(` ${(i + yaml.length).toString()}`);
         }
       }
     }
+    results.set('badImg', lineNumberImage);
 
     // Check if URL used proper MD format
-    results.set('badUrl', false);
-    for (let i = 0; i < wordByWord.length; i += 1) {
-      if (wordByWord[i].includes('http://') || wordByWord[i].includes('https://')) {
-        if (!wordByWord[i].match(/\[.+\]\(https?:\/\/.*\/?\).*/)) {
-          results.set('badUrl', true);
+    // Sets badUrl value to line numbers of errors over true/false
+    let lineNumberUrl = '';
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].includes('http://') || lineByLine[i].includes('https://')) {
+        if (!lineByLine[i].match(/.*\[.+\]\(https?:\/\/.*\/?\).*/)) {
+          lineNumberUrl = lineNumberUrl.concat(` ${(i + yaml.length).toString()}`);
         }
       }
     }
+    results.set('badUrl', lineNumberUrl);
 
-    console.log(results);
+    // Check if there is at least one subsection header
+    results.set('noSubsection', true);
+    for (let i = 0; i < lineByLine.length; i += 1) {
+      if (lineByLine[i].startsWith('#')) {
+        results.set('noSubsection', false);
+      }
+    }
+
+    // Check if title contains the word "reflect"
+    results.set('titleContainsReflect', false);
+    if (yaml[2].includes('essay')) {
+      if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
+        results.set('titleContainsReflect', true);
+      }
+    }
+
+    // console.log(results);
     return results;
   }
 
-  printResultsBox(results) {
+  printResultsBox(results, calledBySave) { // eslint-disable-line class-methods-use-this
     let error = '';
+    let errorCount = 0;
+    let calledMessage = '\nIt is in your best interest to correct these errors.';
     if (results.get('lessThan50Words') === true) {
-      error = error.concat('Word Count is less than 50.\n');
+      error = error.concat(`${errorCount + 1}. Word Count is less than 50.\n`);
+      errorCount += 1;
     }
     if (results.get('singleParagraph') === true) {
-      error = error.concat('Only a single paragraph.\n');
+      error = error.concat(`${errorCount + 1}. Only a single paragraph.\n`);
+      errorCount += 1;
     }
-    if (results.get('badUrl') === true) {
-      error = error.concat('Contains a URL not in Markdown format.\n');
+    if (results.get('badUrl') !== '') {
+      error = error.concat((errorCount + 1) + '. Contains a URL not in Markdown format. ' + // eslint-disable-line
+          'Error occurs on line(s)' + results.get('badUrl') + '.\n');
+      errorCount += 1;
     }
-    if (results.get('badImg') === true) {
-      error = error.concat('Contains an img tag without the responsive ui image class.\n');
+    if (results.get('badImg') !== '') {
+      error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
+          'Error occurs on line(s)' + results.get('badImg') + '.\n');
+      errorCount += 1;
+    }
+    if (results.get('noSubsection') === true) {
+      error = error.concat(`${errorCount + 1}. Does not contain a subsection header.\n`);
+      errorCount += 1;
+    }
+    if (results.get('titleContainsReflect') === true) {
+      error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
+      errorCount += 1;
+    }
+    if (calledBySave) {
+      calledMessage = '\nYour file has been saved anyway, but it is in your best interest to correct these errors.';
     }
     if (error !== '') {
-      console.log(error);
-        dialog.showErrorBox('One or more errors were found in your file.', 'TFLint detects the following errors: \n' + error); // eslint-disable-line
+      dialog.showErrorBox('TFLint Results',
+            errorCount + ' errors were found in your file.\nTFLint detects the following errors: \n\n' // eslint-disable-line
+          + error + calledMessage);
+    } else {
+      dialog.showMessageBox({ type: 'info', title: 'TFLint Results', message: 'No errors were found in your file.' });
     }
   }
 
@@ -273,13 +340,14 @@ export default class TechFolioEditor extends React.Component {
     let dicData = '';
     let typo;
 
-    cm.defineMode('spell-check', (config) => {
+    this.cm.defineMode('spell-check', (config) => {
       // Load AFF/DIC data
       if (!affLoading) {
         affLoading = true;
+        // eslint-disable-next-line no-undef
         const xhrAff = new XMLHttpRequest();
         xhrAff.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.aff', true);
-        xhrAff.onload = function () {
+        xhrAff.onload = () => {
           if (xhrAff.readyState === 4 && xhrAff.status === 200) {
             affData = xhrAff.responseText;
             numLoaded += 1;
@@ -294,9 +362,10 @@ export default class TechFolioEditor extends React.Component {
       }
       if (!dicLoading) {
         dicLoading = true;
+        // eslint-disable-next-line no-undef
         const xhrDic = new XMLHttpRequest();
         xhrDic.open('GET', 'https://cdn.jsdelivr.net/codemirror.spell-checker/latest/en_US.dic', true);
-        xhrDic.onload = function () {
+        xhrDic.onload = () => {
           if (xhrDic.readyState === 4 && xhrDic.status === 200) {
             dicData = xhrDic.responseText;
             numLoaded += 1;
@@ -324,6 +393,7 @@ export default class TechFolioEditor extends React.Component {
             return null;
           }
 
+          // eslint-disable-next-line no-cond-assign
           while ((ch = stream.peek()) != null && !rxWord.includes(ch)) {
             word += ch;
             stream.next();
@@ -346,30 +416,38 @@ export default class TechFolioEditor extends React.Component {
   }
 
   render() {
-    let markdown = this.state.value;
-    markdown = markdown.replace(/((.|\n)*)---/gi,'');
-    let result = md.render(markdown);
+    // preview conditionally rendered
 
-    if (this.mode === 'spell-check') {
+    if (this.state.previewMode) {
+      let markdown = this.state.value;
+      const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
+      markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
+
+      // date and title header
+      let title = yaml.match(/title:[^\n]*/g)[0];
+      title = title.replace('title: ', '');
+      let date = yaml.match(/date:[^\n]*/g)[0];
+      date = date.replace('date: ', '');
+
+      let finalResult = `<h1>${title}</h1><span>${date}</span><hr>`;
+
+      const absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
+      markdown = markdown.replace(/src="\.\./gi, `src=${absPath}`);
+      markdown = md.render(markdown);
+      finalResult = finalResult.concat(markdown);
+
       return (
-            <SplitPane split="vertical"
-                       defaultSize={575}>
-              <div className="pane">
-                <CodeMirror
-                  value={this.state.value}
-                  onBeforeChange={this.onBeforeChange}
-                  options={this.options}
-                  editorDidMount={(editor) => { this.instance = editor; }}
-                  defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-                />
-              </div>
-              <div className="pane" dangerouslySetInnerHTML={{__html: result}}>
-              </div>
-            </SplitPane>
-        );
-      } else {
-        return (
-          <div>
+        <SplitPane
+          split="vertical"
+          defaultSize={this.codeMirrorDiv.offsetWidth}
+        >
+          <div
+            className="editor"
+            ref={(div) => { this.codeMirrorDiv = div; }}
+          >
+            <button onClick={this.handleClick}>
+              Preview
+            </button>
             <CodeMirror
               value={this.state.value}
               onBeforeChange={this.onBeforeChange}
@@ -378,8 +456,29 @@ export default class TechFolioEditor extends React.Component {
               defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
             />
           </div>
-        );
+          <div className="scroll">
+            <div className="preview" dangerouslySetInnerHTML={{ __html: finalResult }} />
+          </div>
+        </SplitPane>
+      );
     }
+    return (
+      <div
+        className="editor"
+        ref={(div) => { this.codeMirrorDiv = div; }}
+      >
+        <button onClick={this.handleClick}>
+              Preview
+        </button>
+        <CodeMirror
+          value={this.state.value}
+          onBeforeChange={this.onBeforeChange}
+          options={this.options}
+          editorDidMount={(editor) => { this.instance = editor; }}
+          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+        />
+      </div>
+    );
   }
 }
 

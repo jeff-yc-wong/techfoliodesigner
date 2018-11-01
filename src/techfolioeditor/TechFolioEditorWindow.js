@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog } from 'electron';
+import { BrowserWindow, dialog, shell } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import path from 'path';
 import prompt from 'electron-prompt';
@@ -15,57 +15,74 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
+  const otherWindow = techFolioWindowManager.getWindowWithName(fileType, fileName, 'SimpleBioEditor');
   if (currWindow) {
-    currWindow.show();
-  } else
-    if (fs.existsSync(filePath)) {
-      // Create the browser window.
-      const window = new BrowserWindow({
-        x: techFolioWindowManager.getXOffset(),
-        y: techFolioWindowManager.getYOffset(),
-        width: 1080,
-        minWidth: 680,
-        height: 840,
-        title: 'TechFolio Designer',
-      });
-
-      // Tell the window manager that this window has been created.
-      techFolioWindowManager.addWindow(fileType, fileName, window);
-
-      // Load the index.html of the app.
-      window.loadURL(
-        `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`); // eslint-disable-line
-
-      // Install DevTools
-      if (isDevMode) {
-        await installExtension(REACT_DEVELOPER_TOOLS);
-        // mainWindow.webContents.openDevTools();
-      }
-
-      window.on('close', (e) => {
-        e.preventDefault();
-        if (window.getTitle().startsWith('*')) {
-          const options = {
-            type: 'info',
-            title: 'Do you really want to close this window?',
-            message: 'This window has unsaved changes. Close anyway?',
-            buttons: ['No', 'Yes, lose my changes'],
-          };
-          dialog.showMessageBox(options, (index) => {
-            if (index === 1) {
-              window.destroy();
-            }
-          });
-        } else {
-          window.destroy();
-        }
-      });
-
-      window.on('closed', () => {
-        // Dereference the window object.
-        techFolioWindowManager.removeWindow(fileType, fileName);
-      });
+    if (otherWindow) {
+      dialog.showErrorBox('Opening Multiple Bio Editors is Not Allowed',
+        'You can not open multiple bio editors at the same time');
     }
+    currWindow.show();
+  } else if (fs.existsSync(filePath)) {
+    // Create the browser window.
+    const window = new BrowserWindow({
+      x: techFolioWindowManager.getXOffset(),
+      y: techFolioWindowManager.getYOffset(),
+      width: 1080,
+      minWidth: 680,
+      height: 840,
+      title: 'TechFolio Designer',
+    });
+
+    // Tell the window manager that this window has been created.
+    techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');
+    techFolioWindowManager.addWindow(fileType, fileName, window);
+
+    // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
+    buildMainMenu();
+
+    // Load the index.html of the app.
+    window.loadURL(
+      `file://${__dirname}/TechFolioEditorPage.html?fileType=${fileType}&fileName=${fileName}&directory=${directory}`); // eslint-disable-line
+
+    // Install DevTools
+    if (isDevMode) {
+      await installExtension(REACT_DEVELOPER_TOOLS);
+      // mainWindow.webContents.openDevTools();
+    }
+
+    window.on('close', (e) => {
+      e.preventDefault();
+      if (window.getTitle().startsWith('*')) {
+        const options = {
+          type: 'info',
+          title: 'Do you really want to close this window?',
+          message: 'This window has unsaved changes. Close anyway?',
+          buttons: ['No', 'Yes, lose my changes'],
+        };
+        dialog.showMessageBox(options, (index) => {
+          if (index === 1) {
+            window.destroy();
+          }
+        });
+      } else {
+        window.destroy();
+      }
+    });
+
+    window.on('closed', () => {
+      // Dereference the window object.
+      techFolioWindowManager.removeWindow(fileType, fileName);
+    });
+
+    window.webContents.on('will-navigate', (event, url) => {
+      if (url !== window.webContents.getURL()) {
+        // Stop Electron from opening links in BrowserWindow
+        event.preventDefault();
+        // Open URL in default system browser
+        shell.openExternal(url);
+      }
+    });
+  }
 }
 
 function validFileName(fileName, fileType) {
@@ -146,6 +163,7 @@ export async function newTechFolioWindow({ fileType }) {
     });
   return null;
 }
+<<<<<<< HEAD
 
 export function deleteFile(fileType, fileName) {
   const options = {
@@ -172,3 +190,5 @@ export function deleteFile(fileType, fileName) {
 //     buildMainMenu();
 //   });
 // }
+=======
+>>>>>>> master
