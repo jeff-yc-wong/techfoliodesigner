@@ -1,5 +1,5 @@
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
-import mainStore from '../redux/mainstore';
+// import mainStore from '../redux/mainstore';
 
 export function setUsername(username) {
   techFolioGitHubManager.set('username', username);

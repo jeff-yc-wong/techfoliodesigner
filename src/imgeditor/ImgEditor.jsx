@@ -1,7 +1,8 @@
 import React from 'react';
-import ReactCrop, { makeAspectCrop } from 'react-image-crop';
+import ReactCrop from 'react-image-crop';
 import { Container, Label, Divider, Header, Icon, Button, Checkbox } from 'semantic-ui-react';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
+
 require('../lib/autorefresh.ext');
 
 const dialog = require('electron').remote.dialog;
@@ -78,16 +79,15 @@ export default class ImgEditor extends React.Component {
       imgName = imgName.split('.')[0];
       imgPath.splice(-1, 1);
       imgPath = imgPath.join('/');
-      for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum++) {
+      for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum += 1) {
         fs.unlink(`${imgPath}/${imgName}_cropped${fileNum}.png`, (err) => {
           if (!err) {
-            console.log('Success!');
+            // console.log('Success!');
           } else {
-            console.log(err);
+            // console.log(err);
           }
         });
       }
-      console.log(this.state);
       this.setState({
         aspect: false,
         src: null,
@@ -114,7 +114,7 @@ export default class ImgEditor extends React.Component {
           aspect: 0,
         },
       });
-      console.log(this.state);
+      // console.log(this.state);
       dialog.showMessageBox(options);
     });
   }
@@ -126,8 +126,6 @@ export default class ImgEditor extends React.Component {
     let imgName = this.state.image.path.toString().split('/');
     let imgPath = this.state.image.path.split('/');
     imgName = imgName[imgName.length - 1];
-
-    let imgType = imgName.split('.')[1];
     imgName = imgName.split('.')[0];
 
     imgPath.splice(-1, 1);
@@ -182,8 +180,6 @@ export default class ImgEditor extends React.Component {
   }
 
   selectImage() {
-    console.log(this.state.image);
-    console.log(this.state);
     if (this.state.image.cPath !== '') {
       let imgName = this.state.image.path.toString().split('/');
       let imgPath = this.state.image.path.split('/');
@@ -192,12 +188,12 @@ export default class ImgEditor extends React.Component {
       imgPath.splice(-1, 1);
       imgPath = imgPath.join('/');
 
-      for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum++) {
+      for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum += 1) {
         fs.unlink(`${imgPath}/${imgName}_cropped${fileNum}.png`, (err) => {
           if (!err) {
-            console.log('Success!');
+            // console.log('Success!');
           } else {
-            console.log(err);
+            // console.log(err);
           }
         });
       }
@@ -214,8 +210,6 @@ export default class ImgEditor extends React.Component {
         let imgName = fullPath.toString().split('/');
         let imgPath = fullPath[0].split('/');
         imgName = imgName[imgName.length - 1];
-
-        let imgType = imgName.split('.')[1];
         imgName = imgName.split('.')[0];
 
         imgPath.splice(-1, 1);
@@ -239,7 +233,7 @@ export default class ImgEditor extends React.Component {
           },
           properties: {
             imageName: imgName,
-            imageType: imgType,
+            imageType: this.state.properties.imageType,
             imageHeight: dimensions.height,
             imageWidth: dimensions.width,
             imageSize: fs.statSync(fullPath.toString()).size / 1000,
@@ -316,11 +310,16 @@ export default class ImgEditor extends React.Component {
             </Label>
           </div>
         </div>
-        <div style={{ textAlign: 'center', paddingTop: '1%'}}>
-          <Checkbox toggle label={<label htmlFor="Checkbox">Toggle Fixed Square Aspect Ratio</label>} onClick={this.toggleAspectRatio} />
+        <div style={{ textAlign: 'center', paddingTop: '1%' }}>
+          <Checkbox
+            toggle
+            label={<label htmlFor="Checkbox">
+            Toggle Fixed Square Aspect Ratio</label>}
+            onClick={this.toggleAspectRatio}
+          />
         </div>
         <Divider />
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: 'center' }}>
           <Button size="massive" color="grey" onClick={this.selectImage} >Choose Image</Button>
           <Button size="massive" color="blue" onClick={this.cropImage} >Crop</Button>
           <Button size="massive" color="blue" onClick={this.saveImage} >Save</Button>

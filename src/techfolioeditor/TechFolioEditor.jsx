@@ -16,7 +16,7 @@ require('../lib/autorefresh.ext');
 export default class TechFolioEditor extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this);
+    // console.log(this);
     this.onBeforeChange = this.onBeforeChange.bind(this);
     this.setWindowTitle = this.setWindowTitle.bind(this);
     this.saveFile = this.saveFile.bind(this);
@@ -78,7 +78,7 @@ export default class TechFolioEditor extends React.Component {
             title: 'JSON IS NOT IN VALID FORMAT!',
             message: 'There is at least one JSON Error!!!',
           });
-          console.log(e);
+          // console.log(e);
         }
         console.log(`File ${this.filePath} has been saved.`); // eslint-disable-line
         this.setState({ fileChangedMarker: '' });
@@ -113,7 +113,7 @@ export default class TechFolioEditor extends React.Component {
   render() {
     return (
       <div>
-        <SimpleMDE onChange={this.handleChange} value={this.state.value}/>
+        <SimpleMDE onChange={this.handleChange} value={this.state.value} />
       </div>
     );
   }

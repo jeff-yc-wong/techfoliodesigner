@@ -1,6 +1,7 @@
 import { _ } from 'underscore';
 import isDirectory from 'is-directory';
 import path from 'path';
+
 const fs = require('fs');
 
 class TechFolioFiles {
