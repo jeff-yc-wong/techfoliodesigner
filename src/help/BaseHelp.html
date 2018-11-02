@@ -2,5 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../../../node_modules/semantic-ui-css/semantic.min.css/">
 </head>
 <body>
+    <div class = "ui left aligned container">
+        <placeholder></placeholder>
+        <button class = "ui green right floated button" id = "close-btn"}>OK, Got it!</button>
+    </div>
+</body>
+<script>
+    const app = require('electron').remote;
+
+    document.getElementById("close-btn").addEventListener("click", function (e) {
+        const window = app.getCurrentWindow();
+        window.close();
+    });
+</script>
+</html>

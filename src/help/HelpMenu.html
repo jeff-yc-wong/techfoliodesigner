@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../../../node_modules/semantic-ui-css/semantic.min.css/">
 </head>
 <body>
-<h1 id="welcome-to-techfolio-designer-">Welcome to Techfolio Designer!</h1>
+    <div class = "ui left aligned container">
+        <h1 id="welcome-to-techfolio-designer-">Welcome to Techfolio Designer!</h1>
 <ol>
 <li><p>To get started, login to GitHub using the Config menu. From here, set the Github repo name of your Techfolio, which will look like this: &quot;(MyGitHubUsername).github.io&quot;.</p>
 </li>
@@ -13,8 +15,18 @@
 <li><p>Once you&#39;re done editing your techfolio, it&#39;s time to put it up online. Simply click &quot;Push Changes to GitHub&quot; in the Config menu.</p>
 </li>
 <li><p>Now you&#39;re ready to go! Check out our other Help Menu options for more information.&quot;</p>
-<p><a href="https://www.google.com">link</a>{:target = &quot;_blank&quot;}</p>
 </li>
 </ol>
+
+        <button class = "ui green right floated button" id = "close-btn"}>OK, Got it!</button>
+    </div>
 </body>
+<script>
+    const app = require('electron').remote;
+
+    document.getElementById("close-btn").addEventListener("click", function (e) {
+        const window = app.getCurrentWindow();
+        window.close();
+    });
+</script>
 </html>
