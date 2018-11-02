@@ -417,8 +417,15 @@ export default class TechFolioEditor extends React.Component {
 
   render() {
     // preview conditionally rendered
+    let editorJSX;
+    let buttonPosition = {};
 
     if (this.state.previewMode) {
+      const codeMirrorWidth = this.codeMirrorDiv.offsetWidth;
+      const codeMirrorRadius = codeMirrorWidth / 2;
+      buttonPosition = {
+        left: codeMirrorRadius,
+      };
       let markdown = this.state.value;
       const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
       markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
@@ -432,51 +439,57 @@ export default class TechFolioEditor extends React.Component {
       let finalResult = `<h1>${title}</h1><span>${date}</span><hr>`;
 
       const absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
-      markdown = markdown.replace(/src="\.\./gi, `src=${absPath}`);
+      markdown = markdown.replace(/src="\.\./gi, `src="${absPath}`);
       markdown = md.render(markdown);
       finalResult = finalResult.concat(markdown);
 
-      return (
-        <SplitPane
-          split="vertical"
-          defaultSize={this.codeMirrorDiv.offsetWidth}
+      editorJSX = (<SplitPane
+        split="vertical"
+        defaultSize={codeMirrorWidth}
+      >
+        <div
+          className="editor"
+          ref={(div) => { this.codeMirrorDiv = div; }}
         >
-          <div
-            className="editor"
-            ref={(div) => { this.codeMirrorDiv = div; }}
-          >
-            <button onClick={this.handleClick}>
-              Preview
-            </button>
-            <CodeMirror
-              value={this.state.value}
-              onBeforeChange={this.onBeforeChange}
-              options={this.options}
-              editorDidMount={(editor) => { this.instance = editor; }}
-              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-            />
-          </div>
-          <div className="scroll">
-            <div className="preview" dangerouslySetInnerHTML={{ __html: finalResult }} />
-          </div>
-        </SplitPane>
-      );
+          <CodeMirror
+            value={this.state.value}
+            onBeforeChange={this.onBeforeChange}
+            options={this.options}
+            editorDidMount={(editor) => { this.instance = editor; }}
+            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+          />
+        </div>
+        <div className="scroll">
+          <div className="preview" dangerouslySetInnerHTML={{ __html: finalResult }} />
+        </div>
+      </SplitPane>);
+    } else {
+      editorJSX = (
+        <div
+          className="editor"
+          ref={(div) => { this.codeMirrorDiv = div; }}
+        >
+          <CodeMirror
+            value={this.state.value}
+            onBeforeChange={this.onBeforeChange}
+            options={this.options}
+            editorDidMount={(editor) => { this.instance = editor; }}
+            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+          />
+        </div>);
     }
     return (
-      <div
-        className="editor"
-        ref={(div) => { this.codeMirrorDiv = div; }}
-      >
-        <button onClick={this.handleClick}>
-              Preview
-        </button>
-        <CodeMirror
-          value={this.state.value}
-          onBeforeChange={this.onBeforeChange}
-          options={this.options}
-          editorDidMount={(editor) => { this.instance = editor; }}
-          defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-        />
+      <div>
+        <label
+          htmlFor="previewMode"
+          className="switch fixed-button"
+          onChange={this.handleClick}
+          style={buttonPosition}
+        >
+          <input type="checkbox" id="previewMode" />
+          <span className="slider round" />
+        </label>
+        {editorJSX}
       </div>
     );
   }
