@@ -3,12 +3,12 @@ import { _ } from 'underscore';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import { createImgEditorWindow } from '../imgeditor/ImgEditorWindow';
-// import { imgEditor } from '../imgeditor/ImgEditor.jsx';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
+import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -146,9 +146,20 @@ function buildEssaysMenu(template, techFolioFiles) {
 
 function buildBioMenu(template) {
   const fileName = 'bio.json';
+  const techFolioWindowEnabled = !(techFolioWindowManager.getWindow('_data', fileName, 'SimpleBioEditor'));
+  const simpleBioEditorWindowEnabled = !(techFolioWindowManager.getWindow('_data', fileName, 'TechfolioWindow'));
+
   const bioSubMenu = [
-    { label: fileName, click: () => createTechFolioWindow({ fileType: '_data', fileName }) },
-    { label: 'Simple Bio Editor', click: () => createSimpleBioEditorWindow() },
+    {
+      label: fileName,
+      click: () => createTechFolioWindow({ fileType: '_data', fileName }),
+      enabled: techFolioWindowEnabled,
+    },
+    {
+      label: 'Simple Bio Editor',
+      click: () => createSimpleBioEditorWindow(),
+      enabled: simpleBioEditorWindowEnabled,
+    },
   ];
   template[indexOfMenuItem(template, 'Bio')].submenu = bioSubMenu;
 }

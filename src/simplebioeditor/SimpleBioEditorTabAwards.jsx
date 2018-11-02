@@ -5,6 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
+import { _ } from 'underscore';
 import { Grid, Divider } from 'semantic-ui-react';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -14,7 +15,10 @@ export default class SimpleBioEditorTabAwards extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const awards = this.props.bio.awards;
+    let awards = this.props.bio.awards;
+    if(awards === undefined) {
+      awards = [];
+    }
     this.state.model.title1 = awards[0] && awards[0].title;
     this.state.model.title2 = awards[1] && awards[1].title;
     this.state.model.type1 = awards[0] && awards[0].type;
@@ -30,11 +34,23 @@ export default class SimpleBioEditorTabAwards extends React.Component {
   submit(data) {
     const { title1, title2, type1, date1, awarder1, summary1, type2, date2, awarder2, summary2 } = data;
     const bio = this.props.bio;
+    if(bio.awards === undefined) {
+      bio.awards = [];
+    }
+    const entries = [];
     const entry1 = title1 && { title: title1, type: type1, date: date1, awarder: awarder1, summary: summary1 };
+    entries.push(entry1);
     const entry2 = title2 && { title: title2, type: type2, date: date2, awarder: awarder2, summary: summary2 };
+    entries.push(entry2);
 
-    bio.awards = updateArray(bio.awards, entry1, 0);
-    bio.awards = updateArray(bio.awards, entry2, 1);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.awards = updateArray(bio.awards, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
+    }
     writeBioFile(this.props.directory, bio, 'Updated awards section of bio.');
     this.props.handleBioChange(bio);
   }

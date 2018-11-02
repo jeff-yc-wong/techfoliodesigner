@@ -15,7 +15,11 @@ export default class SimpleBioEditorTabEducation extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const education = this.props.bio.education;
+    const bio = this.props.bio;
+    if(bio.education === undefined) {
+      bio.education = [];
+    }
+    const education = bio.education;
     this.state.model.institution1 = education[0] && education[0].institution;
     this.state.model.institution2 = education[1] && education[1].institution;
     this.state.model.area1 = education[0] && education[0].area;
@@ -38,7 +42,10 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       courses1c, courses2a, courses2b, courses2c,
     } = data;
     const bio = this.props.bio;
-    const education = this.props.bio.education;
+    if(bio.education === undefined) {
+      bio.education = [];
+    }
+    const education = bio.education;
     const entries = [];
     let newCourses1 = [courses1a, courses1b, courses1c];
     if (bio.education[0]) {
@@ -67,8 +74,13 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       courses: _.compact(newCourses2),
     };
     entries.push(entry2);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.education = updateArray(bio.education, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.education = updateArray(bio.education, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated education section of bio.');
     this.props.handleBioChange(bio);

@@ -15,7 +15,10 @@ export default class SimpleBioEditorTabActivities extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const volunteer = this.props.bio.volunteer;
+    let volunteer = this.props.bio.volunteer;
+    if(volunteer === undefined) {
+      volunteer = [];
+    }
     this.state.model.organization1 = volunteer[0] && volunteer[0].organization;
     this.state.model.organization2 = volunteer[1] && volunteer[1].organization;
     this.state.model.position1 = volunteer[0] && volunteer[0].position;
@@ -36,7 +39,10 @@ export default class SimpleBioEditorTabActivities extends React.Component {
       highlights1c, highlights2a, highlights2b, highlights2c,
     } = data;
     const bio = this.props.bio;
-    const volunteer = this.props.bio.volunteer;
+    if(bio.volunteer === undefined) {
+      bio.volunteer = [];
+    }
+    const volunteer = bio.volunteer;
     const entries = [];
     let newHighlights1 = [highlights1a, highlights1b, highlights1c];
     if (bio.volunteer[0]) {
@@ -63,8 +69,13 @@ export default class SimpleBioEditorTabActivities extends React.Component {
       highlights: _.compact(newHighlights2),
     };
     entries.push(entry2);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.volunteer = updateArray(bio.volunteer, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.volunteer = updateArray(bio.volunteer, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated activities section of bio.');
     this.props.handleBioChange(bio);

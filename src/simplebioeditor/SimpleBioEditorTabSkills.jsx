@@ -17,7 +17,10 @@ export default class SimpleBioEditorTabSkills extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const skills = this.props.bio.skills;
+    let skills = this.props.bio.skills;
+    if(skills === undefined) {
+      skills = [];
+    }
     this.state.model.name1 = skills[0] && skills[0].name;
     this.state.model.name2 = skills[1] && skills[1].name;
     this.state.model.keywords1a = skills[0] && skills[0].keywords && skills[0].keywords[0];
@@ -31,7 +34,10 @@ export default class SimpleBioEditorTabSkills extends React.Component {
   submit(data) {
     const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
-    const skills = this.props.bio.skills;
+    if(bio.skills === undefined) {
+      bio.skills = [];
+    }
+    const skills = bio.skills;
     const entries = [];
     let newKeywords1 = [keywords1a, keywords1b, keywords1c];
     if (bio.skills[0]) {
@@ -54,8 +60,13 @@ export default class SimpleBioEditorTabSkills extends React.Component {
       keywords: _.compact(newKeywords2),
     };
     entries.push(entry2);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.skills = updateArray(bio.skills, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.skills = updateArray(bio.skills, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated skills section of bio.');
     this.props.handleBioChange(bio);

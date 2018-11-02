@@ -17,7 +17,11 @@ export default class SimpleBioEditorTabWork extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
-    const work = this.props.bio.work;
+    const bio = this.props.bio;
+    if(bio.work === undefined) {
+      bio.work = [];
+    }
+    const work = bio.work;
     this.state.model.company1 = work[0] && work[0].company;
     this.state.model.company2 = work[1] && work[1].company;
     this.state.model.company3 = work[2] && work[2].company;
@@ -55,7 +59,10 @@ export default class SimpleBioEditorTabWork extends React.Component {
       highlights3a, highlights3b, highlights3c,
     } = data;
     const bio = this.props.bio;
-    const work = this.props.bio.work;
+    if(bio.work === undefined) {
+      bio.work = [];
+    }
+    const work = bio.work;
     const entries = [];
     let newHighlights1 = [highlights1a, highlights1b, highlights1c];
     if (bio.work[0]) {
@@ -104,8 +111,13 @@ export default class SimpleBioEditorTabWork extends React.Component {
       highlights: _.compact(newHighlights3),
     };
     entries.push(entry3);
-    for (let i = 0; i < entries.length; i += 1) {
-      bio.work = updateArray(bio.work, entries[i], i);
+    for (let i = 0, j = 0; i < entries.length; i += 1) {
+      bio.work = updateArray(bio.work, entries[i], j);
+      // if entry is defined and not null nor empty string
+      // otherwise, updatedArray deletes the element at position j so j should not increment
+      if (entries[i] && !_.isEmpty(entries[i])) {
+        j += 1;
+      }
     }
     writeBioFile(this.props.directory, bio, 'Updated work section of bio.');
     this.props.handleBioChange(bio);
