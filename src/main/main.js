@@ -13,7 +13,7 @@ replayActionMain(mainStore);
 const isDevMode = process.execPath.match(/[\\/]electron/);
 if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 
-let path = require('path');
+const path = require('path');
 
 function initializeWindows() {
   buildMainMenu();
