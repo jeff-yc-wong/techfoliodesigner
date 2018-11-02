@@ -93,7 +93,6 @@ export default class TechFolioEditor extends React.Component {
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
-    this.toggleAspectRatio = this.toggleAspectRatio.bind(this);
   }
 
   onBeforeChange(editor, data, value) {
