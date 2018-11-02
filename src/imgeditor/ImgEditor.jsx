@@ -2,10 +2,7 @@ import React from 'react';
 import ReactCrop, { makeAspectCrop } from 'react-image-crop';
 import { Container, Label, Divider, Header, Icon, Button, Checkbox } from 'semantic-ui-react';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
-
-
 require('../lib/autorefresh.ext');
-
 
 const dialog = require('electron').remote.dialog;
 const fs = require('fs');
@@ -14,7 +11,6 @@ const Jimp = require('jimp');
 
 export default class ImgEditor extends React.Component {
   /* eslint class-methods-use-this: ["error", { "exceptMethods": ["onImageLoaded", "onCropComplete"] }] */
-
   constructor(props) {
     super(props);
     this.state = {
@@ -73,28 +69,54 @@ export default class ImgEditor extends React.Component {
       message: 'The image has been successfully cropped and saved!',
       buttons: ['Okay'],
     };
-    Jimp.read(this.state.image.cpath, (err, image) => {
-      if (!err) {
-        image.write(this.state.image.path);
-        let imgName = this.state.image.path.toString().split('/');
-        let imgPath = this.state.image.path.split('/');
-        imgName = imgName[imgName.length - 1];
-        imgName = imgName.split('.')[0];
-        imgPath.splice(-1, 1);
-        imgPath = imgPath.join('/');
-        for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum++) {
-          fs.unlink(`${imgPath}/${imgName}_cropped${fileNum}.png`, (err) => {
-            if (!err) {
-              console.log('Success!');
-            } else {
-              console.log(err);
-            }
-          });
-        }
-        dialog.showMessageBox(options);
+    Jimp.read(this.state.image.cPath, (error, image) => {
+      if (error) throw error;
+      image.write(this.state.image.path);
+      let imgName = this.state.image.path.toString().split('/');
+      let imgPath = this.state.image.path.split('/');
+      imgName = imgName[imgName.length - 1];
+      imgName = imgName.split('.')[0];
+      imgPath.splice(-1, 1);
+      imgPath = imgPath.join('/');
+      for (let fileNum = 0; fileNum < this.state.image.number + 1; fileNum++) {
+        fs.unlink(`${imgPath}/${imgName}_cropped${fileNum}.png`, (err) => {
+          if (!err) {
+            console.log('Success!');
+          } else {
+            console.log(err);
+          }
+        });
       }
+      console.log(this.state);
+      this.setState({
+        aspect: false,
+        src: null,
+        image: {
+          number: 0,
+          path: '',
+          cPath: '',
+          border: '',
+          display: '',
+          backgroundColor: 'lightgrey',
+        },
+        properties: {
+          imageName: '',
+          imageType: '',
+          imageHeight: '',
+          imageWidth: '',
+          imageSize: '',
+        },
+        crop: {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+          aspect: 0,
+        },
+      });
+      console.log(this.state);
+      dialog.showMessageBox(options);
     });
-
   }
 
   cropImage() {
@@ -161,6 +183,7 @@ export default class ImgEditor extends React.Component {
 
   selectImage() {
     console.log(this.state.image);
+    console.log(this.state);
     if (this.state.image.cPath !== '') {
       let imgName = this.state.image.path.toString().split('/');
       let imgPath = this.state.image.path.split('/');
