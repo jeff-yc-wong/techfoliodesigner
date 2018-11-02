@@ -89,7 +89,7 @@ export default class ImgEditor extends React.Component {
         });
       }
       this.setState({
-        aspect: false,
+        aspect: this.state.aspect,
         src: null,
         image: {
           number: 0,
