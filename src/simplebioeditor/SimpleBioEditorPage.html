@@ -15,10 +15,8 @@
   import ReactDOM from 'react-dom';
   import { Grid } from 'semantic-ui-react';
   import queryString from 'query-string';
-  console.log('in simplebioeditorpage.html about to parse window.');
   const queryObject = queryString.parse(window.location.search);
   const directory = queryObject.directory || 'unknown';
-  console.log('in simplebioeditorpage.html about to render.', directory);
 
   const render = () => {
     const SimpleBioEditor = require('./SimpleBioEditor').default;

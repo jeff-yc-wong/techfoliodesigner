@@ -1,6 +1,6 @@
 import { BrowserWindow, dialog } from 'electron';
-import buildMainMenu from '../main/MainMenu';
 import path from 'path';
+import buildMainMenu from '../main/MainMenu';
 import mainStore from '../redux/mainstore';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
@@ -53,11 +53,11 @@ async function createSimpleBioEditorWindow() {
   const fileName = 'bio.json';
   const directory = mainStore.getState().dir;
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
-  const otherWindow = techFolioWindowManager.getWindow(fileType, fileName, 'TechfolioWindow');
+  const otherWindow = techFolioWindowManager.getWindowWithName(fileType, fileName, 'TechfolioWindow');
   if (currWindow) {
     if (otherWindow) {
-      dialog.showErrorBox('Opening Multiple Bio Editors is Not Allowed', 'You can not open multiple bio ' +
-          'editors at the same time');
+      dialog.showErrorBox('Opening Multiple Bio Editors is Not Allowed',
+        'You can not open multiple bio editors at the same time');
     }
     currWindow.show();
   } else {
@@ -76,7 +76,7 @@ async function createSimpleBioEditorWindow() {
       });
 
       // Tell the window manager that this window has been created.
-      techFolioWindowManager.addWindow(fileType, fileName, window, 'SimpleBioEditor');
+      techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'SimpleBioEditor');
       techFolioWindowManager.addWindow(fileType, fileName, window);
 
       // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
