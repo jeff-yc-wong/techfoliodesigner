@@ -34,14 +34,37 @@
       },
       "electronPackagerConfig": {
         "packageManager": "npm",
+        "icon": "src/assets/icons/mac/icon.icns",
         "osxSign": true
       },
       "electronWinstallerConfig": {
         "name": "<%= productName %>",
+        "setupIcon": "./assets/icons/win/icon.png.ico",
+        "iconUrl": "https://raw.githubusercontent.com/techfolios/techfoliodesigner/master/src/assets/icons/win/icon.png.ico",
         "certificateFile": "./Certificates.p12"
       },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
+      "electronInstallerDebian": {
+        "icon": {
+          "16x16": "src/assets/icons/png/16x16.png",
+          "24x24": "src/assets/icons/png/24x24.png",
+          "32x32": "src/assets/icons/png/32x32.png",
+          "48x48": "src/assets/icons/png/48x48.png",
+          "64x64": "src/assets/icons/png/64x64.png",
+          "128x128": "src/assets/icons/png/128x128.png",
+          "256x256": "src/assets/icons/png/256x256.png"
+        }
+      },
+      "electronInstallerRedhat": {
+        "icon": {
+          "16x16": "src/assets/icons/png/16x16.png",
+          "24x24": "src/assets/icons/png/24x24.png",
+          "32x32": "src/assets/icons/png/32x32.png",
+          "48x48": "src/assets/icons/png/48x48.png",
+          "64x64": "src/assets/icons/png/64x64.png",
+          "128x128": "src/assets/icons/png/128x128.png",
+          "256x256": "src/assets/icons/png/256x256.png"
+        }
+      },
       "github_repository": {
         "owner": "techfolios",
         "name": "techfoliodesigner",

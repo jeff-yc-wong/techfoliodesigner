@@ -134,7 +134,7 @@ export default class TechFolioEditor extends React.Component {
 
   saveFile() {
     // console.log('saveFile called'); //eslint-disable-line
-    console.log(this.filePath);
+    // console.log(this.filePath);
     fs.writeFile(this.filePath, this.state.value, 'utf8', (err) => {
       if (err) {
         throw err;
