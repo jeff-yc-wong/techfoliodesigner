@@ -1,7 +1,7 @@
 {
   "name": "TechFolioDesigner",
   "productName": "TechFolioDesigner",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Desktop application to support development of techfolios.",
   "repository": {
     "type": "git",
@@ -39,7 +39,6 @@
       },
       "electronWinstallerConfig": {
         "name": "<%= productName %>",
-        "setupIcon": "./assets/icons/win/icon.png.ico",
         "iconUrl": "https://raw.githubusercontent.com/techfolios/techfoliodesigner/master/src/assets/icons/win/icon.png.ico",
         "certificateFile": "./Certificates.p12"
       },
