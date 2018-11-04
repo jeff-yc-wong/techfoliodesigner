@@ -74,6 +74,7 @@ export default class SimpleBioEditorTabSkills extends React.Component {
       keywords2: { type: Array, optional: true, label: '' },
       'keywords2.$': { type: String, optional: true, label: '' },
     });
+    this.constructor(this.props);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>

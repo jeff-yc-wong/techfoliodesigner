@@ -76,6 +76,7 @@ export default class SimpleBioEditorTabAwards extends React.Component {
       delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
       delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
     });
+    this.constructor(this.props);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
