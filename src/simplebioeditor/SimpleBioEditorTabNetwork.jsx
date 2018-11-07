@@ -14,7 +14,6 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -23,17 +22,16 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       bio.basics.profiles = [];
     }
     const profiles = bio.basics.profiles;
-    for (let i = 0; i < 3; i += 1) {
+    this.state = { model: {}, entries: profiles.length };
+    for (let i = 0; i < profiles.length; i += 1) {
       this.state.model[`network${i + 1}`] = profiles[i] && profiles[i].network;
       this.state.model[`username${i + 1}`] = profiles[i] && profiles[i].username;
       this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
+      this.state.model[`delete${i + 1}`] = false;
     }
   }
 
   submit(data) {
-    const
-      { network1, network2, network3, username1, username2, username3, url1, url2, url3, delete1, delete2,
-        delete3 } = data;
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -42,18 +40,17 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       bio.basics.profiles = [];
     }
     const entries = [];
-    if (!delete1) {
-      const entry1 = network1 && { network: network1, username: username1, url: url1 };
-      entries.push(entry1);
-    } else entries.push([]);
-    if (!delete2) {
-      const entry2 = network2 && { network: network2, username: username2, url: url2 };
-      entries.push(entry2);
-    } else entries.push([]);
-    if (!delete3) {
-      const entry3 = network3 && { network: network3, username: username3, url: url3 };
-      entries.push(entry3);
-    } else entries.push([]);
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][3]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          network: data[dataKeysByEntry[(i + 1).toString()][0]],
+          username: data[dataKeysByEntry[(i + 1).toString()][1]],
+          url: data[dataKeysByEntry[(i + 1).toString()][2]],
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.basics.profiles = updateArray(bio.basics.profiles, entries[i], j);
@@ -69,7 +66,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
 
   render() {
     const model = {};
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < this.state.entries; i += 1) {
       model[`network${i + 1}`] = { type: String, optional: true, label: '' };
       model[`username${i + 1}`] = { type: String, optional: true, label: '' };
       model[`url${i + 1}`] = { type: String, optional: true, label: '' };
