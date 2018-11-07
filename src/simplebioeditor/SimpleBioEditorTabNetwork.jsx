@@ -23,15 +23,11 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       bio.basics.profiles = [];
     }
     const profiles = bio.basics.profiles;
-    this.state.model.network1 = profiles[0] && profiles[0].network;
-    this.state.model.network2 = profiles[1] && profiles[1].network;
-    this.state.model.network3 = profiles[2] && profiles[2].network;
-    this.state.model.username1 = profiles[0] && profiles[0].username;
-    this.state.model.username2 = profiles[1] && profiles[1].username;
-    this.state.model.username3 = profiles[2] && profiles[2].username;
-    this.state.model.url1 = profiles[0] && profiles[0].url;
-    this.state.model.url2 = profiles[1] && profiles[1].url;
-    this.state.model.url3 = profiles[2] && profiles[2].url;
+    for (let i = 0; i < 3; i += 1) {
+      this.state.model[`network${i + 1}`] = profiles[i] && profiles[i].network;
+      this.state.model[`username${i + 1}`] = profiles[i] && profiles[i].username;
+      this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
+    }
   }
 
   submit(data) {
@@ -72,20 +68,15 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      network1: { type: String, optional: true, label: '' },
-      network2: { type: String, optional: true, label: '' },
-      network3: { type: String, optional: true, label: '' },
-      username1: { type: String, optional: true, label: '' },
-      username2: { type: String, optional: true, label: '' },
-      username3: { type: String, optional: true, label: '' },
-      url1: { type: String, optional: true, label: '' },
-      url2: { type: String, optional: true, label: '' },
-      url3: { type: String, optional: true, label: '' },
-      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
-      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
-      delete3: { type: Boolean, optional: true, label: '', defaultValue: false },
-    });
+    const model = {};
+    for (let i = 0; i < 3; i += 1) {
+      model[`network${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`username${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`url${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field[field.length - 1]);
+    const formSchema = new SimpleSchema(model);
     this.constructor(this.props);
     return (
       <div>
@@ -99,50 +90,15 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
                 <Table.HeaderCell>Delete</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
-
             <Table.Body>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField name="network1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="username1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="url1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete1" />
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField name="network2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="username2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="url2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete2" />
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField name="network3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="username3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="url3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete3" />
-                </Table.Cell>
-              </Table.Row>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell><AutoField name={entry[0]} /></Table.Cell>
+                  <Table.Cell><AutoField name={entry[1]} /></Table.Cell>
+                  <Table.Cell><AutoField name={entry[2]} /></Table.Cell>
+                  <Table.Cell><AutoField name={entry[3]} /></Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
           <Button>+</Button>
