@@ -66,6 +66,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
 
   render() {
     const model = {};
+    this.constructor(this.props);
     for (let i = 0; i < this.state.entries; i += 1) {
       model[`network${i + 1}`] = { type: String, optional: true, label: '' };
       model[`username${i + 1}`] = { type: String, optional: true, label: '' };
@@ -74,7 +75,6 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     }
     const fields = _.groupBy(Object.keys(model), field => field[field.length - 1]);
     const formSchema = new SimpleSchema(model);
-    this.constructor(this.props);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
