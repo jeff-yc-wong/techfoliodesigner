@@ -14,6 +14,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
+    this.addRow = this.addRow.bind(this);
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -23,12 +24,15 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     }
     const profiles = bio.basics.profiles;
     this.state = { model: {}, entries: profiles.length };
-    for (let i = 0; i < profiles.length; i += 1) {
+    for (let i = 0; i < this.state.entries; i += 1) {
       this.state.model[`network${i + 1}`] = profiles[i] && profiles[i].network;
       this.state.model[`username${i + 1}`] = profiles[i] && profiles[i].username;
       this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
       this.state.model[`delete${i + 1}`] = false;
     }
+    console.log('constructor');
+    console.log(this.state.entries);
+    console.log(this.state.model);
   }
 
   submit(data) {
@@ -62,11 +66,26 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     }
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.props.handleBioChange(bio);
+    // this.constructor(this.props);
+  }
+
+  addRow() {
+    console.log('add button clicked');
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`network${entries}`] = '';
+    model[`username${entries}`] = '';
+    model[`url${entries}`] = '';
+    model[`delete${entries}`] = false;
+    this.state.entries = entries;
+    this.state.model = model;
+    console.log(this.state.entries);
+    console.log(this.state.model);
   }
 
   render() {
     const model = {};
-    this.constructor(this.props);
+    // this.constructor(this.props);
     for (let i = 0; i < this.state.entries; i += 1) {
       model[`network${i + 1}`] = { type: String, optional: true, label: '' };
       model[`username${i + 1}`] = { type: String, optional: true, label: '' };
@@ -98,7 +117,8 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
               ))}
             </Table.Body>
           </Table>
-          <Button>+</Button>
+          <Button onClick={this.addRow}>+</Button>
+          {/*<Button onClick={this.submit}>Save</Button>*/}
           <SubmitField value="Save" />
           <ErrorsField />
         </AutoForm>
