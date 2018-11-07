@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, shell } from 'electron';
+import { dialog, shell, remote, BrowserWindow } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import path from 'path';
 import prompt from 'electron-prompt';
@@ -10,8 +10,13 @@ import techFolioWindowManager from '../shared/TechFolioWindowManager';
 import TechFolioFiles from '../shared/TechFolioFiles';
 
 const fs = require('fs');
+const electron = require('electron');
+
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
+  const isRenderer = (process && process.type === 'renderer');
+  console.log(isRenderer);
+
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const currWindow = techFolioWindowManager.getWindow(fileType, fileName);
@@ -24,14 +29,28 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     currWindow.show();
   } else if (fs.existsSync(filePath)) {
     // Create the browser window.
-    const window = new BrowserWindow({
-      x: techFolioWindowManager.getXOffset(),
-      y: techFolioWindowManager.getYOffset(),
-      width: 1080,
-      minWidth: 680,
-      height: 840,
-      title: 'TechFolio Designer',
-    });
+    let window;
+    if (isRenderer) {
+      const RemoteBrowserWindow = electron.remote.BrowserWindow;
+      window = new RemoteBrowserWindow({
+        x: techFolioWindowManager.getXOffset(),
+        y: techFolioWindowManager.getYOffset(),
+        width: 1080,
+        minWidth: 680,
+        height: 840,
+        title: 'TechFolio Designer',
+      });
+    } else {
+      window = new BrowserWindow({
+        x: techFolioWindowManager.getXOffset(),
+        y: techFolioWindowManager.getYOffset(),
+        width: 1080,
+        minWidth: 680,
+        height: 840,
+        title: 'TechFolio Designer',
+      });
+    }
+
 
     // Tell the window manager that this window has been created.
     techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');
@@ -163,7 +182,6 @@ export async function newTechFolioWindow({ fileType }) {
     });
   return null;
 }
-<<<<<<< HEAD
 
 export function deleteFile(fileType, fileName) {
   const options = {
@@ -190,5 +208,4 @@ export function deleteFile(fileType, fileName) {
 //     buildMainMenu();
 //   });
 // }
-=======
->>>>>>> master
+
