@@ -78,7 +78,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
           message: 'This window has unsaved changes. Close anyway?',
           buttons: ['No', 'Yes, lose my changes'],
         };
-        dialog.showMessageBox(options, (index) => {
+        dialog.showMessageBox(options, (index) => { // TODO make this use remote for renderer
           if (index === 1) {
             window.destroy();
           }
