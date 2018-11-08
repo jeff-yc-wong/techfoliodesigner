@@ -182,23 +182,21 @@ export async function newTechFolioWindow({ fileType }) {
     });
   return null;
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> issue-12-fixing-btns
 export function deleteFile(fileType, fileName) {
+  const dialog2 = electron.remote.dialog;
   const options = {
     type: 'warning',
     title: 'Do you really want to delete this file?',
     message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
     buttons: ['OK', 'Cancel'],
   };
-  dialog.showMessageBox(options, (index) => {
+  dialog2.showMessageBox(options, (index) => {
     if (index === 0) {
       fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
         if (err) throw err;
         console.log(`Successfully deleted ${fileType} ${fileName}`);
-        buildMainMenu();
+        // TODO update file data props of FileExplorer.jsx so that it reloads
       });
     }
   });
@@ -211,7 +209,3 @@ export function deleteFile(fileType, fileName) {
 //     buildMainMenu();
 //   });
 // }
-<<<<<<< HEAD
-=======
-
->>>>>>> issue-12-fixing-btns

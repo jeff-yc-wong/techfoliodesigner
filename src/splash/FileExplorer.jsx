@@ -4,6 +4,8 @@ import { Table, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { createTechFolioWindow, deleteFile } from '../techfolioeditor/TechFolioEditorWindow';
 
+const electron = require('electron');
+
 class FileExplorer extends React.Component {
   handleClick(action, fileType, fileName) {
     if (action === 'edit') return createTechFolioWindow({ fileType, fileName });
