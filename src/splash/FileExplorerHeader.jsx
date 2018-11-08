@@ -28,7 +28,7 @@ class FileExplorerHeader extends React.Component {
   // TODO add state and arrows on column headers
   render() {
     return (
-      <Table celled unstackable striped sortable>
+      <Table celled unstackable striped sortable basic>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
@@ -37,7 +37,7 @@ class FileExplorerHeader extends React.Component {
               sorted={this.props.column === 'name' ? this.props.direction : null}
               onClick={() => this.handleSort('name')}
             >
-              Name
+              File Name
             </Table.HeaderCell>
             <Table.HeaderCell
               textAlign={'center'}

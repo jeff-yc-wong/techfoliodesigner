@@ -14,7 +14,7 @@ class FileExplorer extends React.Component {
   render() {
     const fileData = this.props.fileData;
     return (
-      <Table celled unstackable striped sortable>
+      <Table unstackable striped sortable basic>
         <Table.Body>
           {fileData.map(file => (
             <Table.Row key={file.key} negative={!!file.changed}>
@@ -22,7 +22,7 @@ class FileExplorer extends React.Component {
                 {file.fileName}
               </Table.Cell>
               <Table.Cell width={2} textAlign={'center'}>
-                {file.fileType === 'projects' ? 'P' : 'E' /* assumes only projects or essays */}
+                {file.fileType === 'projects' ? <Icon name={'university'} /> : <Icon name={'file alternate outline'} />}
               </Table.Cell>
               <Table.Cell width={2} textAlign={'center'}>
                 <Icon link name="edit" onClick={() => this.handleClick('edit', file.fileType, file.fileName)} />

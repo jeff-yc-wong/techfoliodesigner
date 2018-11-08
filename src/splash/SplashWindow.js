@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 async function createSplashWindow(path) {

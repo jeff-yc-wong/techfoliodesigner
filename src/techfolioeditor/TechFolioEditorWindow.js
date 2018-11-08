@@ -163,8 +163,6 @@ export async function newTechFolioWindow({ fileType }) {
     });
   return null;
 }
-<<<<<<< HEAD
-
 export function deleteFile(fileType, fileName) {
   const options = {
     type: 'warning',
@@ -190,5 +188,3 @@ export function deleteFile(fileType, fileName) {
 //     buildMainMenu();
 //   });
 // }
-=======
->>>>>>> master
