@@ -8,6 +8,7 @@ import buildConfigSubMenu from './ConfigSubMenu';
 import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
+import buildHelpSubMenu from './HelpMenu';
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
@@ -43,6 +44,7 @@ function buildEssaysMenu(template, techFolioFiles) {
 
 function buildBioMenu(template) {
   const fileName = 'bio.json';
+
   const techFolioWindowEnabled = !(techFolioWindowManager.getWindowWithName('_data', fileName, 'SimpleBioEditor'));
   const simpleBioEditorWindowEnabled = !(techFolioWindowManager.getWindowWithName(
     '_data', fileName, 'TechfolioWindow',
@@ -120,6 +122,10 @@ function buildEditmenu(template) {
   template[indexOfMenuItem(template, 'Edit')].submenu = editSubMenu;
 }
 
+function buildHelpMenu(template) {
+  template[indexOfMenuItem(template, 'Help')].submenu = buildHelpSubMenu();
+}
+
 /**
  * Builds (or rebuilds) the application menu based upon the current state of the application.
  */
@@ -127,6 +133,7 @@ function buildMainMenu() {
   const template = makeMenuTemplate();
   buildEditmenu(template);
   buildConfigMenu(template);
+  buildHelpMenu(template);
   const directory = mainStore.getState().dir;
   if (directory) {
     const techFolioFiles = new TechFolioFiles(directory);

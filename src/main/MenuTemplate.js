@@ -60,15 +60,8 @@ export default function makeMenuTemplate() {
       submenu: [],
     },
     {
-      role: 'help',
-      submenu: [
-        {
-          label: 'Learn More',
-          click() {
-            require('electron').shell.openExternal('http://electron.atom.io'); //eslint-disable-line
-          },
-        },
-      ],
+      label: 'Help',
+      submenu: [],
     },
   ];
 
@@ -105,3 +98,4 @@ export default function makeMenuTemplate() {
   }
   return template;
 }
+

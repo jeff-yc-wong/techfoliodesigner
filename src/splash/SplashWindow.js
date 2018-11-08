@@ -7,6 +7,7 @@ async function createSplashWindow(path) {
     width: 1200,
     height: 720,
     title: 'TechFolio Designer',
+
     icon: path.join(__dirname, 'assets/icons/png/64x64.png'),
   });
 
