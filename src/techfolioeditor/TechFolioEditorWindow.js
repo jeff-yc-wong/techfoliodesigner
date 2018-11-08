@@ -57,7 +57,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     techFolioWindowManager.addWindow(fileType, fileName, window);
 
     // Tell the mainmenu to rebuild the mainmenu fields to disable and enable suboptions
-    buildMainMenu();
+    if (!isRenderer) buildMainMenu(); // this breaks if done in renderer process
 
     // Load the index.html of the app.
     window.loadURL(
@@ -167,8 +167,14 @@ export async function newTechFolioWindow({ fileType }) {
     return null;
   }
   if (!validFileName(fileName, fileType)) {
-    dialog.showErrorBox('Bad file name',
-      'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
+    if (process && process.type === 'renderer') {
+      const dialog2 = electron.remote.dialog;
+      dialog2.showErrorBox('Bad file name',
+        'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
+    } else {
+      dialog.showErrorBox('Bad file name',
+        'File names must: (1) end with .md, (2) not contain spaces, (3) not already exist.');
+    }
     return null;
   }
   const directory = mainStore.getState().dir;
@@ -184,28 +190,38 @@ export async function newTechFolioWindow({ fileType }) {
 }
 
 export function deleteFile(fileType, fileName) {
-  const dialog2 = electron.remote.dialog;
-  const options = {
-    type: 'warning',
-    title: 'Do you really want to delete this file?',
-    message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
-    buttons: ['OK', 'Cancel'],
-  };
-  dialog2.showMessageBox(options, (index) => {
-    if (index === 0) {
-      fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
-        if (err) throw err;
-        console.log(`Successfully deleted ${fileType} ${fileName}`);
-        // TODO update file data props of FileExplorer.jsx so that it reloads
-      });
-    }
-  });
+  if (process && process.type === 'renderer') {
+    const dialog2 = electron.remote.dialog;
+    const options = {
+      type: 'warning',
+      title: 'Do you really want to delete this file?',
+      message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
+      buttons: ['OK', 'Cancel'],
+    };
+    dialog2.showMessageBox(options, (index) => {
+      if (index === 0) {
+        fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
+          if (err) throw err;
+          console.log(`Successfully deleted ${fileType} ${fileName}`);
+          // TODO update file data props of FileExplorer.jsx so that it reloads
+        });
+      }
+    });
+  } else {
+    const options = {
+      type: 'warning',
+      title: 'Do you really want to delete this file?',
+      message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
+      buttons: ['OK', 'Cancel'],
+    };
+    dialog.showMessageBox(options, (index) => {
+      if (index === 0) {
+        fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
+          if (err) throw err;
+          console.log(`Successfully deleted ${fileType} ${fileName}`);
+          // TODO update file data props of FileExplorer.jsx so that it reloads
+        });
+      }
+    });
+  }
 }
-//
-// export function deleteFile(fileType, fileName) {
-//   fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
-//     if (err) throw err;
-//     console.log(`Successfully deleted ${fileType} ${fileName}`);
-//     buildMainMenu();
-//   });
-// }
