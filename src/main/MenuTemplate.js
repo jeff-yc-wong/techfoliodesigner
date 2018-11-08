@@ -73,7 +73,13 @@ export default function makeMenuTemplate() {
   ];
 
   if (process.platform === 'darwin') {
-    const name = electron.app.getName();
+    const isRenderer = (process && process.type === 'renderer');
+    let name;
+    if (isRenderer) {
+      name = electron.remote.app.getName();
+    } else {
+      name = electron.app.getName();
+    }
     template.unshift({
       label: name,
       submenu: [
