@@ -52,11 +52,11 @@ export default class ImgEditor extends React.Component {
   }
 
   onImageLoaded() {
-    // console.log('Loaded Image', image);
+    this.forceUpdate();
   }
 
   onCropComplete() {
-    // console.log('Crop Completed', crop);
+    this.forceUpdate();
   }
 
   onCropChange(crop) {
