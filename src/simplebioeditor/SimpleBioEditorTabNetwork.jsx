@@ -15,6 +15,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     super(props);
     this.submit = this.submit.bind(this);
     this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -31,11 +32,32 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       this.state.model[`delete${i + 1}`] = false;
     }
     console.log('constructor');
-    console.log(this.state.entries);
-    console.log(this.state.model);
+  }
+
+  update() {
+    const bio = this.props.bio;
+    if (bio.basics === undefined) {
+      bio.basics = {};
+    }
+    if (bio.basics.profiles === undefined) {
+      bio.basics.profiles = [];
+    }
+    const profiles = bio.basics.profiles;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`network${i + 1}`] = profiles[i] && profiles[i].network;
+      this.state.model[`username${i + 1}`] = profiles[i] && profiles[i].username;
+      this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
+      this.state.model[`delete${i + 1}`] = false;
+    }
+    console.log('update');
+    // console.log(this.state.entries);
+    // console.log(this.state.model);
   }
 
   submit(data) {
+    console.log('submit');
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -53,7 +75,10 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
           url: data[dataKeysByEntry[(i + 1).toString()][2]],
         };
         entries.push(entry);
-      } else entries.push([]);
+      } else {
+        entries.push([]);
+        this.state.entries -= 1;
+      }
     }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
@@ -66,11 +91,10 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     }
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.props.handleBioChange(bio);
-    // this.constructor(this.props);
   }
 
   addRow() {
-    console.log('add button clicked');
+    console.log('add');
     const entries = this.state.entries + 1;
     const model = this.state.model;
     model[`network${entries}`] = '';
@@ -79,13 +103,13 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     model[`delete${entries}`] = false;
     this.state.entries = entries;
     this.state.model = model;
-    console.log(this.state.entries);
-    console.log(this.state.model);
+    this.props.handleBioChange(this.props.bio);
   }
 
   render() {
+    console.log('render');
     const model = {};
-    // this.constructor(this.props);
+    this.update();
     for (let i = 0; i < this.state.entries; i += 1) {
       model[`network${i + 1}`] = { type: String, optional: true, label: '' };
       model[`username${i + 1}`] = { type: String, optional: true, label: '' };
@@ -117,8 +141,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
               ))}
             </Table.Body>
           </Table>
-          <Button onClick={this.addRow}>+</Button>
-          {/*<Button onClick={this.submit}>Save</Button>*/}
+          <Button type="button" onClick={this.addRow}>+</Button>
           <SubmitField value="Save" />
           <ErrorsField />
         </AutoForm>
