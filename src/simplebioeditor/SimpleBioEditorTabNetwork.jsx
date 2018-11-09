@@ -12,6 +12,7 @@ import updateArray from './ArrayUpdater';
 
 export default class SimpleBioEditorTabNetwork extends React.Component {
   constructor(props) {
+    console.log('constructor');
     super(props);
     this.submit = this.submit.bind(this);
     this.addRow = this.addRow.bind(this);
@@ -31,10 +32,10 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
       this.state.model[`delete${i + 1}`] = false;
     }
-    console.log('constructor');
   }
 
   update() {
+    console.log('update');
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -51,9 +52,6 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
       this.state.model[`delete${i + 1}`] = false;
     }
-    console.log('update');
-    // console.log(this.state.entries);
-    // console.log(this.state.model);
   }
 
   submit(data) {
@@ -89,6 +87,9 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
     this.state.entries = bio.basics.profiles.length;
     this.props.handleBioChange(bio);
+    this.update();
+    // this.props.handleBioChange(this.props.bio);
+    this.forceUpdate();
   }
 
   addRow() {
@@ -99,15 +100,14 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     model[`username${entries}`] = '';
     model[`url${entries}`] = '';
     model[`delete${entries}`] = false;
-    this.state.entries = entries;
-    this.state.model = model;
-    this.props.handleBioChange(this.props.bio);
+    this.setState({ model, entries });
+    // this.props.handleBioChange(this.props.bio);
+    this.forceUpdate();
   }
 
   render() {
     console.log('render');
     const model = {};
-    this.update();
     for (let i = 0; i < this.state.entries; i += 1) {
       model[`network${i + 1}`] = { type: String, optional: true, label: '' };
       model[`username${i + 1}`] = { type: String, optional: true, label: '' };
