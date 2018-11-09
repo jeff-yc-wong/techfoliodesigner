@@ -75,10 +75,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
           url: data[dataKeysByEntry[(i + 1).toString()][2]],
         };
         entries.push(entry);
-      } else {
-        entries.push([]);
-        this.state.entries -= 1;
-      }
+      } else entries.push([]);
     }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
@@ -90,6 +87,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
+    this.state.entries = bio.basics.profiles.length;
     this.props.handleBioChange(bio);
   }
 
