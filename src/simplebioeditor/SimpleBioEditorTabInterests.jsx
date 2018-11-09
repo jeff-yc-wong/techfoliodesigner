@@ -18,7 +18,7 @@ export default class SimpleBioEditorTabInterests extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     let interests = this.props.bio.interests;
-    if(interests === undefined) {
+    if (interests === undefined) {
       interests = [];
     }
     this.state.model.name1 = interests[0] && interests[0].name;
@@ -34,8 +34,8 @@ export default class SimpleBioEditorTabInterests extends React.Component {
   submit(data) {
     const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
     const bio = this.props.bio;
-    if(bio.interests === undefined) {
-      bio.interests = []
+    if (bio.interests === undefined) {
+      bio.interests = [];
     }
     const interests = this.props.bio.interests;
     const entries = [];

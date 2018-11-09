@@ -16,7 +16,7 @@ export default class SimpleBioEditorTabActivities extends React.Component {
     this.submit = this.submit.bind(this);
     this.state = { model: {} };
     let volunteer = this.props.bio.volunteer;
-    if(volunteer === undefined) {
+    if (volunteer === undefined) {
       volunteer = [];
     }
     this.state.model.organization1 = volunteer[0] && volunteer[0].organization;
@@ -39,7 +39,7 @@ export default class SimpleBioEditorTabActivities extends React.Component {
       highlights1c, highlights2a, highlights2b, highlights2c,
     } = data;
     const bio = this.props.bio;
-    if(bio.volunteer === undefined) {
+    if (bio.volunteer === undefined) {
       bio.volunteer = [];
     }
     const volunteer = bio.volunteer;

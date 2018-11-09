@@ -9,6 +9,7 @@ import buildConfigSubMenu from './ConfigSubMenu';
 import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
+import buildHelpSubMenu from './HelpMenu';
 
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -155,8 +156,7 @@ function buildBioMenu(template) {
       click: () => createTechFolioWindow({ fileType: '_data', fileName }),
       enabled: techFolioWindowEnabled,
     },
-    {
-      label: 'Simple Bio Editor',
+    { label: 'Simple Bio Editor',
       click: () => createSimpleBioEditorWindow(),
       enabled: simpleBioEditorWindowEnabled,
     },
@@ -210,6 +210,10 @@ function buildEditMenu(template) {
   template[indexOfMenuItem(template, 'Edit')].submenu = editSubMenu;
 }
 
+function buildHelpMenu(template) {
+  template[indexOfMenuItem(template, 'Help')].submenu = buildHelpSubMenu();
+}
+
 function buildImagesMenu(template) {
   const imagesSubMenu = [
     {
@@ -233,6 +237,9 @@ function buildImagesMenu(template) {
  */
 function buildMainMenu() {
   const template = makeMenuTemplate();
+  buildEditMenu(template);
+  buildConfigMenu(template);
+  buildHelpMenu(template);
   const directory = mainStore.getState().dir;
   buildEditMenu(template);
   buildConfigMenu(template);

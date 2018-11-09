@@ -1,0 +1,1 @@
+The Splash Page has three parts to it: Splash Table, Command Logs, and File Manager. The Splash Table on the left consists of five rows, which tell you the status of your Techfolio. The Command Logs below it will show you a log of everything Techfolio Designer does. The File Manager on the right allows you to manage both your projects and essays.
