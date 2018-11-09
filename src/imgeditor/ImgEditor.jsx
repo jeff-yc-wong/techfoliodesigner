@@ -176,7 +176,6 @@ export default class ImgEditor extends React.Component {
 
   resetImage() {
     this.updateImage(this.state.image.path);
-    this.state.image.number = 0;
   }
 
   selectImage() {
