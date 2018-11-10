@@ -12,7 +12,6 @@ import updateArray from './ArrayUpdater';
 
 export default class SimpleBioEditorTabNetwork extends React.Component {
   constructor(props) {
-    console.log('constructor');
     super(props);
     this.submit = this.submit.bind(this);
     this.addRow = this.addRow.bind(this);
@@ -35,7 +34,6 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
   }
 
   update() {
-    console.log('update');
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -55,7 +53,6 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
   }
 
   submit(data) {
-    console.log('submit');
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -88,12 +85,10 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     this.state.entries = bio.basics.profiles.length;
     this.props.handleBioChange(bio);
     this.update();
-    // this.props.handleBioChange(this.props.bio);
     this.forceUpdate();
   }
 
   addRow() {
-    console.log('add');
     const entries = this.state.entries + 1;
     const model = this.state.model;
     model[`network${entries}`] = '';
@@ -101,12 +96,10 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
     model[`url${entries}`] = '';
     model[`delete${entries}`] = false;
     this.setState({ model, entries });
-    // this.props.handleBioChange(this.props.bio);
     this.forceUpdate();
   }
 
   render() {
-    console.log('render');
     const model = {};
     for (let i = 0; i < this.state.entries; i += 1) {
       model[`network${i + 1}`] = { type: String, optional: true, label: '' };
@@ -114,7 +107,7 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       model[`url${i + 1}`] = { type: String, optional: true, label: '' };
       model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
     }
-    const fields = _.groupBy(Object.keys(model), field => field[field.length - 1]);
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
     const formSchema = new SimpleSchema(model);
     return (
       <div>

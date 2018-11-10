@@ -15,53 +15,61 @@ export default class SimpleBioEditorTabEducation extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
+    this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     const bio = this.props.bio;
     if (bio.education === undefined) {
       bio.education = [];
     }
     const education = bio.education;
-    this.state.model.institution1 = education[0] && education[0].institution;
-    this.state.model.institution2 = education[1] && education[1].institution;
-    this.state.model.area1 = education[0] && education[0].area;
-    this.state.model.area2 = education[1] && education[1].area;
-    this.state.model.studyType1 = education[0] && education[0].studyType;
-    this.state.model.studyType2 = education[1] && education[1].studyType;
-    this.state.model.endDate1 = education[0] && education[0].endDate;
-    this.state.model.endDate2 = education[1] && education[1].endDate;
-    this.state.model.courses1 = education[0] && education[0].courses;
-    this.state.model.courses2 = education[1] && education[1].courses;
+    this.state = { model: {}, entries: education.length };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`institution${i + 1}`] = education[i] && education[i].institution;
+      this.state.model[`area${i + 1}`] = education[i] && education[i].area;
+      this.state.model[`studyType${i + 1}`] = education[i] && education[i].studyType;
+      this.state.model[`endDate${i + 1}`] = education[i] && education[i].endDate;
+      this.state.model[`courses${i + 1}`] = education[i] && education[i].courses;
+      this.state.model[`delete${i + 1}`] = false;
+    }
+  }
+
+  update() {
+    const bio = this.props.bio;
+    if (bio.education === undefined) {
+      bio.education = [];
+    }
+    const education = bio.education;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`institution${i + 1}`] = education[i] && education[i].institution;
+      this.state.model[`area${i + 1}`] = education[i] && education[i].area;
+      this.state.model[`studyType${i + 1}`] = education[i] && education[i].studyType;
+      this.state.model[`endDate${i + 1}`] = education[i] && education[i].endDate;
+      this.state.model[`courses${i + 1}`] = education[i] && education[i].courses;
+      this.state.model[`delete${i + 1}`] = false;
+    }
   }
 
   submit(data) {
-    const { institution1, institution2, area1, area2, studyType1, studyType2, endDate1, endDate2, courses1,
-      courses2, delete1, delete2 } = data;
     const bio = this.props.bio;
     if (bio.education === undefined) {
       bio.education = [];
     }
     const entries = [];
-    if (!delete1) {
-      const entry1 = institution1 && {
-        institution: institution1,
-        area: area1,
-        studyType: studyType1,
-        endDate: endDate1,
-        courses: _.compact(courses1),
-      };
-      entries.push(entry1);
-    } else entries.push([]);
-
-    if (!delete2) {
-      const entry2 = institution2 && {
-        institution: institution2,
-        area: area2,
-        studyType: studyType2,
-        endDate: endDate2,
-        courses: _.compact(courses2),
-      };
-      entries.push(entry2);
-    } else entries.push([]);
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][5]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          institution: data[dataKeysByEntry[(i + 1).toString()][0]],
+          area: data[dataKeysByEntry[(i + 1).toString()][1]],
+          studyType: data[dataKeysByEntry[(i + 1).toString()][2]],
+          endDate: data[dataKeysByEntry[(i + 1).toString()][3]],
+          courses: _.compact(data[dataKeysByEntry[(i + 1).toString()][4]]),
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.education = updateArray(bio.education, entries[i], j);
@@ -72,27 +80,38 @@ export default class SimpleBioEditorTabEducation extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated education section of bio.');
+    this.state.entries = bio.education.length;
     this.props.handleBioChange(bio);
+    this.update();
+    this.forceUpdate();
+  }
+
+  addRow() {
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`institution${entries}`] = '';
+    model[`area${entries}`] = '';
+    model[`studyType${entries}`] = '';
+    model[`endDate${entries}`] = '';
+    model[`courses${entries}`] = [];
+    model[`delete${entries}`] = false;
+    this.setState({ model, entries });
+    this.forceUpdate();
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      institution1: { type: String, optional: true, label: '' },
-      institution2: { type: String, optional: true, label: '' },
-      area1: { type: String, optional: true, label: '' },
-      area2: { type: String, optional: true, label: '' },
-      studyType1: { type: String, optional: true, label: '' },
-      studyType2: { type: String, optional: true, label: '' },
-      endDate1: { type: String, optional: true, label: '' },
-      endDate2: { type: String, optional: true, label: '' },
-      courses1: { type: Array, optional: true, label: '' },
-      'courses1.$': { type: String, optional: true, label: '' },
-      courses2: { type: Array, optional: true, label: '' },
-      'courses2.$': { type: String, optional: true, label: '' },
-      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
-      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
-    });
-    this.constructor(this.props);
+    const model = {};
+    for (let i = 0; i < this.state.entries; i += 1) {
+      model[`institution${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`area${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`studyType${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`endDate${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`courses${i + 1}`] = { type: Array, optional: true, label: '' };
+      model[`courses${i + 1}.$`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
+    const formSchema = new SimpleSchema(model);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
@@ -107,43 +126,24 @@ export default class SimpleBioEditorTabEducation extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField name="institution1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Program" name="area1" />
-                  <AutoField placeholder="Degree" name="studyType1" />
-                  <AutoField placeholder="End Date" name="endDate1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="courses1" />
-                  <ListAddField name="courses1.$" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete1" />
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField name="institution2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Program" name="area2" />
-                  <AutoField placeholder="Degree" name="studyType2" />
-                  <AutoField placeholder="End Date" name="endDate2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="courses2" />
-                  <ListAddField name="courses2.$" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete2" />
-                </Table.Cell>
-              </Table.Row>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell><AutoField name={entry[0]} /></Table.Cell>
+                  <Table.Cell>
+                    <AutoField placeholder="Program" name={entry[1]} />
+                    <AutoField placeholder="Degree" name={entry[2]} />
+                    <AutoField placeholder="End Date" name={entry[3]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField name={entry[4]} />
+                    <ListAddField name={entry[5]} />
+                  </Table.Cell>
+                  <Table.Cell><AutoField name={entry[6]} /></Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
-          <Button>+</Button>
+          <Button type="button" onClick={this.addRow}>+</Button>
           <SubmitField value="Save" />
           <ErrorsField />
         </AutoForm>
