@@ -15,39 +15,66 @@ export default class SimpleBioEditorTabAwards extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
+    this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     let awards = this.props.bio.awards;
     if (awards === undefined) {
       awards = [];
     }
+    this.state = { model: {}, entries: awards.length };
     this.state.model.title1 = awards[0] && awards[0].title;
-    this.state.model.title2 = awards[1] && awards[1].title;
     this.state.model.type1 = awards[0] && awards[0].type;
-    this.state.model.type2 = awards[1] && awards[1].type;
     this.state.model.date1 = awards[0] && awards[0].date;
-    this.state.model.date2 = awards[1] && awards[1].date;
     this.state.model.awarder1 = awards[0] && awards[0].awarder;
-    this.state.model.awarder2 = awards[1] && awards[1].awarder;
     this.state.model.summary1 = awards[0] && awards[0].summary;
-    this.state.model.summary2 = awards[1] && awards[1].summary;
+
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`title${i + 1}`] = awards[i] && awards[i].title;
+      this.state.model[`type${i + 1}`] = awards[i] && awards[i].type;
+      this.state.model[`date${i + 1}`] = awards[i] && awards[i].date;
+      this.state.model[`awarder${i + 1}`] = awards[i] && awards[i].awarder;
+      this.state.model[`summary${i + 1}`] = awards[i] && awards[i].summary;
+      this.state.model[`delete${i + 1}`] = false;
+    }
+  }
+
+  update() {
+    const bio = this.props.bio;
+    if (bio.awards === undefined) {
+      bio.awards = [];
+    }
+    const awards = bio.awards;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`title${i + 1}`] = awards[i] && awards[i].title;
+      this.state.model[`type${i + 1}`] = awards[i] && awards[i].type;
+      this.state.model[`date${i + 1}`] = awards[i] && awards[i].date;
+      this.state.model[`awarder${i + 1}`] = awards[i] && awards[i].awarder;
+      this.state.model[`summary${i + 1}`] = awards[i] && awards[i].summary;
+      this.state.model[`delete${i + 1}`] = false;
+    }
   }
 
   submit(data) {
-    const { title1, title2, type1, date1, awarder1, summary1, type2, date2, awarder2, summary2, delete1, delete2 }
-    = data;
     const bio = this.props.bio;
     if (bio.awards === undefined) {
       bio.awards = [];
     }
     const entries = [];
-    if (!delete1) {
-      const entry1 = title1 && { title: title1, type: type1, date: date1, awarder: awarder1, summary: summary1 };
-      entries.push(entry1);
-    } else entries.push([]);
-    if (!delete2) {
-      const entry2 = title2 && { title: title2, type: type2, date: date2, awarder: awarder2, summary: summary2 };
-      entries.push(entry2);
-    } else entries.push([]);
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][5]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          title: data[dataKeysByEntry[(i + 1).toString()][0]],
+          type: data[dataKeysByEntry[(i + 1).toString()][1]],
+          date: data[dataKeysByEntry[(i + 1).toString()][2]],
+          awarder: data[dataKeysByEntry[(i + 1).toString()][3]],
+          summary: data[dataKeysByEntry[(i + 1).toString()][4]],
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.awards = updateArray(bio.awards, entries[i], j);
@@ -58,25 +85,37 @@ export default class SimpleBioEditorTabAwards extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated awards section of bio.');
+    this.state.entries = bio.awards.length;
     this.props.handleBioChange(bio);
+    this.update();
+    this.forceUpdate();
+  }
+
+  addRow() {
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`title${entries}`] = '';
+    model[`type${entries}`] = '';
+    model[`date${entries}`] = '';
+    model[`awarder${entries}`] = '';
+    model[`summary${entries}`] = '';
+    model[`delete${entries}`] = false;
+    this.setState({ model, entries });
+    this.forceUpdate();
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      title1: { type: String, optional: true, label: '' },
-      title2: { type: String, optional: true, label: '' },
-      type1: { type: String, optional: true, label: '' },
-      type2: { type: String, optional: true, label: '' },
-      date1: { type: String, optional: true, label: '' },
-      date2: { type: String, optional: true, label: '' },
-      awarder1: { type: String, optional: true, label: '' },
-      awarder2: { type: String, optional: true, label: '' },
-      summary1: { type: String, optional: true, label: '' },
-      summary2: { type: String, optional: true, label: '' },
-      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
-      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
-    });
-    this.constructor(this.props);
+    const model = {};
+    for (let i = 0; i < this.state.entries; i += 1) {
+      model[`title${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`type${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`date${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`awarder${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`summary${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
+    const formSchema = new SimpleSchema(model);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
@@ -91,41 +130,27 @@ export default class SimpleBioEditorTabAwards extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField placeholder="Title" name="title1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Type" name="type1" />
-                  <AutoField placeholder="Date" name="date1" />
-                  <AutoField placeholder="Awarder" name="awarder1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <LongTextField name="summary1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete1" />
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField placeholder="Title" name="title2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Type" name="type2" />
-                  <AutoField placeholder="Date" name="date2" />
-                  <AutoField placeholder="Awarder" name="awarder2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <LongTextField name="summary2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete2" />
-                </Table.Cell>
-              </Table.Row>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell>
+                    <AutoField name={entry[0]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField placeholder="Type" name={entry[1]} />
+                    <AutoField placeholder="Date" name={entry[2]} />
+                    <AutoField placeholder="Awarder" name={entry[3]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <LongTextField name={entry[4]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField name={entry[5]} />
+                  </Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
-          <Button>+</Button>
+          <Button type="button" onClick={this.addRow}>+</Button>
           <SubmitField value="Save" />
           <ErrorsField />
         </AutoForm>

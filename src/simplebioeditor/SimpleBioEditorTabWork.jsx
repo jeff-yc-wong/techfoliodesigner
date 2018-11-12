@@ -17,83 +17,67 @@ export default class SimpleBioEditorTabWork extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
+    this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     const bio = this.props.bio;
     if (bio.work === undefined) {
       bio.work = [];
     }
     const work = bio.work;
-    this.state.model.company1 = work[0] && work[0].company;
-    this.state.model.company2 = work[1] && work[1].company;
-    this.state.model.company3 = work[2] && work[2].company;
-    this.state.model.position1 = work[0] && work[0].position;
-    this.state.model.position2 = work[1] && work[1].position;
-    this.state.model.position3 = work[2] && work[2].position;
-    this.state.model.website1 = work[0] && work[0].website;
-    this.state.model.website2 = work[1] && work[1].website;
-    this.state.model.website3 = work[2] && work[2].website;
-    this.state.model.startDate1 = work[0] && work[0].startDate;
-    this.state.model.startDate2 = work[1] && work[1].startDate;
-    this.state.model.startDate3 = work[2] && work[2].startDate;
-    this.state.model.endDate1 = work[0] && work[0].endDate;
-    this.state.model.endDate2 = work[1] && work[1].endDate;
-    this.state.model.endDate3 = work[2] && work[2].endDate;
-    this.state.model.summary1 = work[0] && work[0].summary;
-    this.state.model.summary2 = work[1] && work[1].summary;
-    this.state.model.summary3 = work[2] && work[2].summary;
-    this.state.model.highlights1 = work[0] && work[0].highlights;
-    this.state.model.highlights2 = work[1] && work[1].highlights;
-    this.state.model.highlights3 = work[2] && work[2].highlights;
+    this.state = { model: {}, entries: work.length };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`company${i + 1}`] = work[i] && work[i].company;
+      this.state.model[`position${i + 1}`] = work[i] && work[i].position;
+      this.state.model[`website${i + 1}`] = work[i] && work[i].website;
+      this.state.model[`startDate${i + 1}`] = work[i] && work[i].startDate;
+      this.state.model[`endDate${i + 1}`] = work[i] && work[i].endDate;
+      this.state.model[`summary${i + 1}`] = work[i] && work[i].summary;
+      this.state.model[`highlights${i + 1}`] = work[i] && work[i].highlights;
+      this.state.model[`delete${i + 1}`] = false;
+    }
+  }
+
+  update() {
+    const bio = this.props.bio;
+    if (bio.work === undefined) {
+      bio.work = [];
+    }
+    const work = bio.work;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`company${i + 1}`] = work[i] && work[i].company;
+      this.state.model[`position${i + 1}`] = work[i] && work[i].position;
+      this.state.model[`website${i + 1}`] = work[i] && work[i].website;
+      this.state.model[`startDate${i + 1}`] = work[i] && work[i].startDate;
+      this.state.model[`endDate${i + 1}`] = work[i] && work[i].endDate;
+      this.state.model[`summary${i + 1}`] = work[i] && work[i].summary;
+      this.state.model[`highlights${i + 1}`] = work[i] && work[i].highlights;
+      this.state.model[`delete${i + 1}`] = false;
+    }
   }
 
   submit(data) {
-    const {
-      company1, company2, company3, position1, position2, position3, website1, website2, website3,
-      startDate1, startDate2, startDate3, endDate1, endDate2, endDate3, summary1, summary2, summary3,
-      highlights1, highlights2, highlights3, delete1, delete2, delete3 } = data;
     const bio = this.props.bio;
     if (bio.work === undefined) {
       bio.work = [];
     }
     const entries = [];
-    if (!delete1) {
-      const entry1 = company1 && {
-        company: company1,
-        position: position1,
-        website: website1,
-        startDate: startDate1,
-        endDate: endDate1,
-        summary: summary1,
-        highlights: _.compact(highlights1),
-      };
-      entries.push(entry1);
-    } else entries.push([]);
-
-    if (!delete2) {
-      const entry2 = company2 && {
-        company: company2,
-        position: position2,
-        website: website2,
-        startDate: startDate2,
-        endDate: endDate2,
-        summary: summary2,
-        highlights: _.compact(highlights2),
-      };
-      entries.push(entry2);
-    } else entries.push([]);
-
-    if (!delete3) {
-      const entry3 = company3 && {
-        company: company3,
-        position: position3,
-        website: website3,
-        startDate: startDate3,
-        endDate: endDate3,
-        summary: summary3,
-        highlights: _.compact(highlights3),
-      };
-      entries.push(entry3);
-    } else entries.push([]);
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][7]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          company: data[dataKeysByEntry[(i + 1).toString()][0]],
+          position: data[dataKeysByEntry[(i + 1).toString()][1]],
+          website: data[dataKeysByEntry[(i + 1).toString()][2]],
+          startDate: data[dataKeysByEntry[(i + 1).toString()][3]],
+          endDate: data[dataKeysByEntry[(i + 1).toString()][4]],
+          summary: data[dataKeysByEntry[(i + 1).toString()][5]],
+          highlights: _.compact(data[dataKeysByEntry[(i + 1).toString()][6]]),
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.work = updateArray(bio.work, entries[i], j);
@@ -104,40 +88,42 @@ export default class SimpleBioEditorTabWork extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated work section of bio.');
+    this.state.entries = bio.work.length;
     this.props.handleBioChange(bio);
+    this.update();
+    this.forceUpdate();
+  }
+
+  addRow() {
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`company${entries}`] = '';
+    model[`position${entries}`] = '';
+    model[`website${entries}`] = '';
+    model[`startDate${entries}`] = '';
+    model[`endDate${entries}`] = '';
+    model[`summary${entries}`] = '';
+    model[`highlights${entries}`] = [];
+    model[`delete${entries}`] = false;
+    this.setState({ model, entries });
+    this.forceUpdate();
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      company1: { type: String, optional: true, label: '' },
-      company2: { type: String, optional: true, label: '' },
-      company3: { type: String, optional: true, label: '' },
-      position1: { type: String, optional: true, label: '' },
-      position2: { type: String, optional: true, label: '' },
-      position3: { type: String, optional: true, label: '' },
-      website1: { type: String, optional: true, label: '' },
-      website2: { type: String, optional: true, label: '' },
-      website3: { type: String, optional: true, label: '' },
-      startDate1: { type: String, optional: true, label: '' },
-      startDate2: { type: String, optional: true, label: '' },
-      startDate3: { type: String, optional: true, label: '' },
-      endDate1: { type: String, optional: true, label: '' },
-      endDate2: { type: String, optional: true, label: '' },
-      endDate3: { type: String, optional: true, label: '' },
-      summary1: { type: String, optional: true, label: '' },
-      summary2: { type: String, optional: true, label: '' },
-      summary3: { type: String, optional: true, label: '' },
-      highlights1: { type: Array, optional: true, label: '' },
-      'highlights1.$': { type: String, optional: true, label: '' },
-      highlights2: { type: Array, optional: true, label: '' },
-      'highlights2.$': { type: String, optional: true, label: '' },
-      highlights3: { type: Array, optional: true, label: '' },
-      'highlights3.$': { type: String, optional: true, label: '' },
-      delete1: { type: Boolean, optional: true, label: '', defaultValue: false },
-      delete2: { type: Boolean, optional: true, label: '', defaultValue: false },
-      delete3: { type: Boolean, optional: true, label: '', defaultValue: false },
-    });
-    this.constructor(this.props);
+    const model = {};
+    for (let i = 0; i < this.state.entries; i += 1) {
+      model[`company${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`position${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`website${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`startDate${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`endDate${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`summary${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`highlights${i + 1}`] = { type: Array, optional: true, label: '' };
+      model[`highlights${i + 1}.$`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
+    const formSchema = new SimpleSchema(model);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
@@ -152,66 +138,28 @@ export default class SimpleBioEditorTabWork extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField placeholder="Company" name="company1" />
-                  <AutoField placeholder="Position" name="position1" />
-                  <AutoField placeholder="Website" name="website1" />
-                  <AutoField placeholder="Summary" name="summary1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Start Date" name="startDate1" />
-                  <AutoField placeholder="End Date" name="endDate1" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="highlights1" />
-                  <ListAddField name="highlights1.$" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete1" />
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField placeholder="Company" name="company2" />
-                  <AutoField placeholder="Position" name="position2" />
-                  <AutoField placeholder="Website" name="website2" />
-                  <AutoField placeholder="Summary" name="summary2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Start Date" name="startDate2" />
-                  <AutoField placeholder="End Date" name="endDate2" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="highlights2" />
-                  <ListAddField name="highlights2.$" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete2" />
-                </Table.Cell>
-              </Table.Row>
-              <Table.Row verticalAlign="top">
-                <Table.Cell>
-                  <AutoField placeholder="Company" name="company3" />
-                  <AutoField placeholder="Position" name="position3" />
-                  <AutoField placeholder="Website" name="website3" />
-                  <AutoField placeholder="Summary" name="summary3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField placeholder="Start Date" name="startDate3" />
-                  <AutoField placeholder="End Date" name="endDate3" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="highlights3" />
-                  <ListAddField name="highlights3.$" />
-                </Table.Cell>
-                <Table.Cell>
-                  <AutoField name="delete3" />
-                </Table.Cell>
-              </Table.Row>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell>
+                    <AutoField placeholder="Company" name={entry[0]} />
+                    <AutoField placeholder="Position" name={entry[1]} />
+                    <AutoField placeholder="Website" name={entry[2]} />
+                    <AutoField placeholder="Summary" name={entry[5]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField placeholder="Start Date" name={entry[3]} />
+                    <AutoField placeholder="End Date" name={entry[4]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField name={entry[6]} />
+                    <ListAddField name={entry[7]} />
+                  </Table.Cell>
+                  <Table.Cell><AutoField name={entry[8]} /></Table.Cell>
+                </Table.Row>
+              ))}
             </Table.Body>
           </Table>
-          <Button>+</Button>
+          <Button type="button" onClick={this.addRow}>+</Button>
           <SubmitField value="Save" />
           <ErrorsField />
         </AutoForm>
