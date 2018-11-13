@@ -41,6 +41,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
         title: 'TechFolio Designer',
       });
     } else {
+      // const RemoteBrowserWindow = electron.remote.BrowserWindow;
       window = new BrowserWindow({
         x: techFolioWindowManager.getXOffset(),
         y: techFolioWindowManager.getYOffset(),
@@ -70,6 +71,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     }
 
     window.on('close', (e) => {
+      // If isRenderer, e.preventDefault doesn't work and the window closes anyway
       e.preventDefault();
       if (window.getTitle().startsWith('*')) {
         const options = {
