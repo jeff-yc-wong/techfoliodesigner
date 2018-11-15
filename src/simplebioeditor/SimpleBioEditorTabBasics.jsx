@@ -139,6 +139,7 @@ export default class SimpleBioEditorTabBasics extends React.Component {
       region: { type: String, optional: true, label: 'State' },
       countryCode: { type: String, optional: true, label: 'Country' },
     });
+    this.constructor(this.props);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>

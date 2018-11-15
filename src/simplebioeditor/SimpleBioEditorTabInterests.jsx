@@ -3,9 +3,10 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import ListAddField from 'uniforms-semantic/ListAddField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -16,50 +17,52 @@ export default class SimpleBioEditorTabInterests extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
+    this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     let interests = this.props.bio.interests;
     if (interests === undefined) {
       interests = [];
     }
-    this.state.model.name1 = interests[0] && interests[0].name;
-    this.state.model.name2 = interests[1] && interests[1].name;
-    this.state.model.keywords1a = interests[0] && interests[0].keywords && interests[0].keywords[0];
-    this.state.model.keywords1b = interests[0] && interests[0].keywords && interests[0].keywords[1];
-    this.state.model.keywords1c = interests[0] && interests[0].keywords && interests[0].keywords[2];
-    this.state.model.keywords2a = interests[1] && interests[1].keywords && interests[1].keywords[0];
-    this.state.model.keywords2b = interests[1] && interests[1].keywords && interests[1].keywords[1];
-    this.state.model.keywords2c = interests[1] && interests[1].keywords && interests[1].keywords[2];
+    this.state = { model: {}, entries: interests.length };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`name${i + 1}`] = interests[i] && interests[i].name;
+      this.state.model[`keywords${i + 1}`] = interests[i] && interests[i].keywords;
+      this.state.model[`delete${i + 1}`] = false;
+    }
   }
 
-  submit(data) {
-    const { name1, name2, keywords1a, keywords1b, keywords1c, keywords2a, keywords2b, keywords2c } = data;
+  update() {
     const bio = this.props.bio;
     if (bio.interests === undefined) {
       bio.interests = [];
     }
-    const interests = this.props.bio.interests;
-    const entries = [];
-    let newKeywords1 = [keywords1a, keywords1b, keywords1c];
-    if (bio.interests[0]) {
-      interests[0].keywords.splice(0, newKeywords1.length, ...newKeywords1);
-      newKeywords1 = interests[0].keywords;
+    const interests = bio.interests;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`name${i + 1}`] = interests[i] && interests[i].name;
+      this.state.model[`keywords${i + 1}`] = interests[i] && interests[i].keywords;
+      this.state.model[`delete${i + 1}`] = false;
     }
-    const entry1 = name1 && {
-      name: name1,
-      keywords: _.compact(newKeywords1),
-    };
-    entries.push(entry1);
+  }
 
-    let newKeywords2 = [keywords2a, keywords2b, keywords2c];
-    if (bio.interests[1]) {
-      interests[1].keywords.splice(0, newKeywords2.length, ...newKeywords2);
-      newKeywords2 = interests[1].keywords;
+  submit(data) {
+    const bio = this.props.bio;
+    if (bio.interests === undefined) {
+      bio.interests = [];
     }
-    const entry2 = name2 && {
-      name: name2,
-      keywords: _.compact(newKeywords2),
-    };
-    entries.push(entry2);
+    const entries = [];
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][2]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          name: data[dataKeysByEntry[(i + 1).toString()][0]],
+          keywords: _.compact(data[dataKeysByEntry[(i + 1).toString()][1]]),
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
+
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.interests = updateArray(bio.interests, entries[i], j);
       // if entry is defined and not null nor empty string
@@ -69,64 +72,60 @@ export default class SimpleBioEditorTabInterests extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated interests section of bio.');
+    this.state.entries = bio.interests.length;
     this.props.handleBioChange(bio);
+    this.update();
+    this.forceUpdate();
+  }
+
+  addRow() {
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`name${entries}`] = '';
+    model[`keywords${entries}`] = [];
+    model[`delete${entries}`] = false;
+    this.setState({ model, entries });
+    this.forceUpdate();
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      name1: { type: String, optional: true, label: 'Interest' },
-      name2: { type: String, optional: true, label: 'Interest' },
-      keywords1a: { type: String, optional: true, label: 'Keyword' },
-      keywords1b: { type: String, optional: true, label: 'Keyword' },
-      keywords1c: { type: String, optional: true, label: 'Keyword' },
-      keywords2a: { type: String, optional: true, label: 'Keyword' },
-      keywords2b: { type: String, optional: true, label: 'Keyword' },
-      keywords2c: { type: String, optional: true, label: 'Keyword' },
-    });
+    const model = {};
+    for (let i = 0; i < this.state.entries; i += 1) {
+      model[`name${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`keywords${i + 1}`] = { type: Array, optional: true, label: '' };
+      model[`keywords${i + 1}.$`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
+    const formSchema = new SimpleSchema(model);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={4}>
-              <Grid.Column>
-                <AutoField name="name1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords1a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords1b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords1c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={4}>
-              <Grid.Column>
-                <AutoField name="name2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords2a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords2b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="keywords2c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Interest</Table.HeaderCell>
+                <Table.HeaderCell>Keywords</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell><AutoField name={entry[0]} /></Table.Cell>
+                  <Table.Cell>
+                    <AutoField name={entry[1]} />
+                    <ListAddField name={entry[2]} />
+                  </Table.Cell>
+                  <Table.Cell><AutoField name={entry[3]} /></Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+          <Button type="button" onClick={this.addRow}>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
       </div>
     );

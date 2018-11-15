@@ -5,7 +5,7 @@ import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -14,7 +14,8 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
+    this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -23,20 +24,35 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       bio.basics.profiles = [];
     }
     const profiles = bio.basics.profiles;
-    this.state.model.network1 = profiles[0] && profiles[0].network;
-    this.state.model.network2 = profiles[1] && profiles[1].network;
-    this.state.model.network3 = profiles[2] && profiles[2].network;
-    this.state.model.username1 = profiles[0] && profiles[0].username;
-    this.state.model.username2 = profiles[1] && profiles[1].username;
-    this.state.model.username3 = profiles[2] && profiles[2].username;
-    this.state.model.url1 = profiles[0] && profiles[0].url;
-    this.state.model.url2 = profiles[1] && profiles[1].url;
-    this.state.model.url3 = profiles[2] && profiles[2].url;
+    this.state = { model: {}, entries: profiles.length };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`network${i + 1}`] = profiles[i] && profiles[i].network;
+      this.state.model[`username${i + 1}`] = profiles[i] && profiles[i].username;
+      this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
+      this.state.model[`delete${i + 1}`] = false;
+    }
+  }
+
+  update() {
+    const bio = this.props.bio;
+    if (bio.basics === undefined) {
+      bio.basics = {};
+    }
+    if (bio.basics.profiles === undefined) {
+      bio.basics.profiles = [];
+    }
+    const profiles = bio.basics.profiles;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`network${i + 1}`] = profiles[i] && profiles[i].network;
+      this.state.model[`username${i + 1}`] = profiles[i] && profiles[i].username;
+      this.state.model[`url${i + 1}`] = profiles[i] && profiles[i].url;
+      this.state.model[`delete${i + 1}`] = false;
+    }
   }
 
   submit(data) {
-    const
-      { network1, network2, network3, username1, username2, username3, url1, url2, url3 } = data;
     const bio = this.props.bio;
     if (bio.basics === undefined) {
       bio.basics = {};
@@ -45,12 +61,17 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       bio.basics.profiles = [];
     }
     const entries = [];
-    const entry1 = network1 && { network: network1, username: username1, url: url1 };
-    entries.push(entry1);
-    const entry2 = network2 && { network: network2, username: username2, url: url2 };
-    entries.push(entry2);
-    const entry3 = network3 && { network: network3, username: username3, url: url3 };
-    entries.push(entry3);
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][3]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          network: data[dataKeysByEntry[(i + 1).toString()][0]],
+          username: data[dataKeysByEntry[(i + 1).toString()][1]],
+          url: data[dataKeysByEntry[(i + 1).toString()][2]],
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
 
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.basics.profiles = updateArray(bio.basics.profiles, entries[i], j);
@@ -61,70 +82,59 @@ export default class SimpleBioEditorTabNetwork extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated network section of bio.');
+    this.state.entries = bio.basics.profiles.length;
     this.props.handleBioChange(bio);
+    this.update();
+    this.forceUpdate();
+  }
+
+  addRow() {
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`network${entries}`] = '';
+    model[`username${entries}`] = '';
+    model[`url${entries}`] = '';
+    model[`delete${entries}`] = false;
+    this.setState({ model, entries });
+    this.forceUpdate();
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      network1: { type: String, optional: true, label: 'Network' },
-      network2: { type: String, optional: true, label: 'Network' },
-      network3: { type: String, optional: true, label: 'Network' },
-      username1: { type: String, optional: true, label: 'Username' },
-      username2: { type: String, optional: true, label: 'Username' },
-      username3: { type: String, optional: true, label: 'Username' },
-      url1: { type: String, optional: true, label: 'Url' },
-      url2: { type: String, optional: true, label: 'Url' },
-      url3: { type: String, optional: true, label: 'Url' },
-
-    });
+    const model = {};
+    for (let i = 0; i < this.state.entries; i += 1) {
+      model[`network${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`username${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`url${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
+    const formSchema = new SimpleSchema(model);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="network1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="username1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="url1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="network2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="username2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="url2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="network3" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="username3" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="url3" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Network</Table.HeaderCell>
+                <Table.HeaderCell>Username</Table.HeaderCell>
+                <Table.HeaderCell>URL</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell><AutoField name={entry[0]} /></Table.Cell>
+                  <Table.Cell><AutoField name={entry[1]} /></Table.Cell>
+                  <Table.Cell><AutoField name={entry[2]} /></Table.Cell>
+                  <Table.Cell><AutoField name={entry[3]} /></Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+          <Button type="button" onClick={this.addRow}>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
       </div>
     );

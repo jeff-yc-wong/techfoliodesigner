@@ -3,9 +3,11 @@ import SimpleSchema from 'simpl-schema';
 import PropTypes from 'prop-types';
 import AutoForm from 'uniforms-semantic/AutoForm';
 import AutoField from 'uniforms-semantic/AutoField';
+import LongTextField from 'uniforms-semantic/LongTextField';
+import ListAddField from 'uniforms-semantic/ListAddField';
 import SubmitField from 'uniforms-semantic/SubmitField';
 import ErrorsField from 'uniforms-semantic/ErrorsField';
-import { Grid, Divider } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import { _ } from 'underscore';
 import { writeBioFile } from './BioFileIO';
 import updateArray from './ArrayUpdater';
@@ -14,61 +16,58 @@ export default class SimpleBioEditorTabActivities extends React.Component {
   constructor(props) {
     super(props);
     this.submit = this.submit.bind(this);
-    this.state = { model: {} };
+    this.addRow = this.addRow.bind(this);
+    this.update = this.update.bind(this);
     let volunteer = this.props.bio.volunteer;
     if (volunteer === undefined) {
       volunteer = [];
     }
-    this.state.model.organization1 = volunteer[0] && volunteer[0].organization;
-    this.state.model.organization2 = volunteer[1] && volunteer[1].organization;
-    this.state.model.position1 = volunteer[0] && volunteer[0].position;
-    this.state.model.position2 = volunteer[1] && volunteer[1].position;
-    this.state.model.summary1 = volunteer[0] && volunteer[0].summary;
-    this.state.model.summary2 = volunteer[1] && volunteer[1].summary;
-    this.state.model.highlights1a = volunteer[0] && volunteer[0].highlights && volunteer[0].highlights[0];
-    this.state.model.highlights1b = volunteer[0] && volunteer[0].highlights && volunteer[0].highlights[1];
-    this.state.model.highlights1c = volunteer[0] && volunteer[0].highlights && volunteer[0].highlights[2];
-    this.state.model.highlights2a = volunteer[1] && volunteer[1].highlights && volunteer[1].highlights[0];
-    this.state.model.highlights2b = volunteer[1] && volunteer[1].highlights && volunteer[1].highlights[1];
-    this.state.model.highlights2c = volunteer[1] && volunteer[1].highlights && volunteer[1].highlights[2];
+    this.state = { model: {}, entries: volunteer.length };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`organization${i + 1}`] = volunteer[i] && volunteer[i].organization;
+      this.state.model[`position${i + 1}`] = volunteer[i] && volunteer[i].position;
+      this.state.model[`summary${i + 1}`] = volunteer[i] && volunteer[i].summary;
+      this.state.model[`highlights${i + 1}`] = volunteer[i] && volunteer[i].highlights;
+      this.state.model[`delete${i + 1}`] = false;
+    }
   }
 
-  submit(data) {
-    const {
-      organization1, organization2, position1, position2, summary1, summary2, highlights1a, highlights1b,
-      highlights1c, highlights2a, highlights2b, highlights2c,
-    } = data;
+  update() {
     const bio = this.props.bio;
     if (bio.volunteer === undefined) {
       bio.volunteer = [];
     }
     const volunteer = bio.volunteer;
-    const entries = [];
-    let newHighlights1 = [highlights1a, highlights1b, highlights1c];
-    if (bio.volunteer[0]) {
-      volunteer[0].highlights.splice(0, newHighlights1.length, ...newHighlights1);
-      newHighlights1 = volunteer[0].highlights;
+    const entries = this.state.entries;
+    this.state = { model: {}, entries };
+    for (let i = 0; i < this.state.entries; i += 1) {
+      this.state.model[`organization${i + 1}`] = volunteer[i] && volunteer[i].organization;
+      this.state.model[`position${i + 1}`] = volunteer[i] && volunteer[i].position;
+      this.state.model[`summary${i + 1}`] = volunteer[i] && volunteer[i].summary;
+      this.state.model[`highlights${i + 1}`] = volunteer[i] && volunteer[i].highlights;
+      this.state.model[`delete${i + 1}`] = false;
     }
-    const entry1 = organization1 && {
-      organization: organization1,
-      position: position1,
-      summary: summary1,
-      highlights: _.compact(newHighlights1),
-    };
-    entries.push(entry1);
+  }
 
-    let newHighlights2 = [highlights2a, highlights2b, highlights2c];
-    if (bio.volunteer[1]) {
-      volunteer[1].highlights.splice(0, newHighlights2.length, ...newHighlights2);
-      newHighlights2 = volunteer[1].highlights;
+  submit(data) {
+    const bio = this.props.bio;
+    if (bio.volunteer === undefined) {
+      bio.volunteer = [];
     }
-    const entry2 = organization2 && {
-      organization: organization2,
-      position: position2,
-      summary: summary2,
-      highlights: _.compact(newHighlights2),
-    };
-    entries.push(entry2);
+    const entries = [];
+    const dataKeysByEntry = _.groupBy(Object.keys(data), field => field[field.length - 1]);
+    for (let i = 0; i < Object.keys(dataKeysByEntry).length; i += 1) {
+      if (!data[dataKeysByEntry[(i + 1).toString()][4]]) {
+        const entry = data[dataKeysByEntry[(i + 1).toString()][0]] && {
+          organization: data[dataKeysByEntry[(i + 1).toString()][0]],
+          position: data[dataKeysByEntry[(i + 1).toString()][1]],
+          summary: data[dataKeysByEntry[(i + 1).toString()][2]],
+          highlights: _.compact(data[dataKeysByEntry[(i + 1).toString()][3]]),
+        };
+        entries.push(entry);
+      } else entries.push([]);
+    }
+
     for (let i = 0, j = 0; i < entries.length; i += 1) {
       bio.volunteer = updateArray(bio.volunteer, entries[i], j);
       // if entry is defined and not null nor empty string
@@ -78,84 +77,73 @@ export default class SimpleBioEditorTabActivities extends React.Component {
       }
     }
     writeBioFile(this.props.directory, bio, 'Updated activities section of bio.');
+    this.state.entries = bio.volunteer.length;
     this.props.handleBioChange(bio);
+    this.update();
+    this.forceUpdate();
+  }
+
+  addRow() {
+    const entries = this.state.entries + 1;
+    const model = this.state.model;
+    model[`organization${entries}`] = '';
+    model[`position${entries}`] = '';
+    model[`summary${entries}`] = '';
+    model[`highlights${entries}`] = [];
+    model[`delete${entries}`] = false;
+    this.setState({ model, entries });
+    this.forceUpdate();
   }
 
   render() {
-    const formSchema = new SimpleSchema({
-      organization1: { type: String, optional: true, label: 'Organization' },
-      organization2: { type: String, optional: true, label: 'Organization' },
-      position1: { type: String, optional: true, label: 'Position' },
-      position2: { type: String, optional: true, label: 'Position' },
-      summary1: { type: String, optional: true, label: 'Summary' },
-      summary2: { type: String, optional: true, label: 'Summary' },
-      highlights1a: { type: String, optional: true, label: 'Highlight' },
-      highlights1b: { type: String, optional: true, label: 'Highlight' },
-      highlights1c: { type: String, optional: true, label: 'Highlight' },
-      highlights2a: { type: String, optional: true, label: 'Highlight' },
-      highlights2b: { type: String, optional: true, label: 'Highlight' },
-      highlights2c: { type: String, optional: true, label: 'Highlight' },
-    });
+    const model = {};
+    for (let i = 0; i < this.state.entries; i += 1) {
+      model[`organization${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`position${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`summary${i + 1}`] = { type: String, optional: true, label: '' };
+      model[`highlights${i + 1}`] = { type: Array, optional: true, label: '' };
+      model[`highlights${i + 1}.$`] = { type: String, optional: true, label: '' };
+      model[`delete${i + 1}`] = { type: Boolean, optional: true, label: '', defaultValue: false };
+    }
+    const fields = _.groupBy(Object.keys(model), field => field.match(/\d+/)[0]);
+    const formSchema = new SimpleSchema(model);
     return (
       <div>
         <AutoForm schema={formSchema} onSubmit={this.submit} model={this.state.model}>
-          <Grid>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="organization1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position1" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="summary1" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights1a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights1b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights1c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Divider />
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="organization2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="position2" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="summary2" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row columns={3}>
-              <Grid.Column>
-                <AutoField name="highlights2a" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights2b" />
-              </Grid.Column>
-              <Grid.Column>
-                <AutoField name="highlights2c" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <SubmitField value="Save" />
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column>
-                <ErrorsField />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+          <Table celled striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Organization/Position</Table.HeaderCell>
+                <Table.HeaderCell>Summary</Table.HeaderCell>
+                <Table.HeaderCell>Highlights</Table.HeaderCell>
+                <Table.HeaderCell>Delete</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              {_.map(fields, entry => (
+                <Table.Row key={entry[0]} verticalAlign="top">
+                  <Table.Cell>
+                    <AutoField placeholder="Organization" name={entry[0]} />
+                    <AutoField placeholder="Position" name={entry[1]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <LongTextField name={entry[2]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField name={entry[3]} />
+                    <ListAddField name={entry[4]} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <AutoField name={entry[5]} />
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+          <Button type="button" onClick={this.addRow}>+</Button>
+          <SubmitField value="Save" />
+          <ErrorsField />
         </AutoForm>
       </div>
     );
