@@ -464,7 +464,7 @@ export default class TechFolioEditor extends React.Component {
     // preview conditionally rendered
     const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     if (fileExtension[0] !== '.md') {
-      return(
+      return (
         <div>
           <CodeMirror
             value={this.state.value}
