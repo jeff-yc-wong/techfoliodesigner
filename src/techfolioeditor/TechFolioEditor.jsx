@@ -420,7 +420,7 @@ export default class TechFolioEditor extends React.Component {
     // preview conditionally rendered
     const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     if (fileExtension[0] !== '.md') {
-      return(
+      return (
         <div>
           <CodeMirror
             value={this.state.value}
@@ -480,27 +480,28 @@ export default class TechFolioEditor extends React.Component {
         >
           <CodeMirror
             value={this.state.value}
-              onBeforeChange={this.onBeforeChange}
-              options={this.options}
-              editorDidMount={(editor) => { this.instance = editor; }}
-              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-            />
-          </div>);
-      }
-      return (
-        <div>
+            onBeforeChange={this.onBeforeChange}
+            options={this.options}
+            editorDidMount={(editor) => { this.instance = editor; }}
+            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+          />
+        </div>);
+    }
+    return (
+      <div>
+        <div id="wrapper">
           <label
             htmlFor="previewMode"
-            className="switch fixed-button"
+            className="hover switch fixed-button"
             onChange={this.handleClick}
           >
             <input type="checkbox" id="previewMode" />
             <span className="slider round" />
           </label>
-          {editorJSX}
         </div>
-      );
-
+        {editorJSX}
+      </div>
+    );
   }
 }
 
