@@ -227,6 +227,8 @@ export default class TechFolioEditor extends React.Component {
     const lineByLine = actualText[2].split(/\n+/);
     const yaml = actualText[1].split(/\n+/);
 
+    console.log(yaml);
+
     // Check if word count is less than 50
     const wordCount = wordByWord.length - 2;
     if (wordCount < 50) {
@@ -278,13 +280,45 @@ export default class TechFolioEditor extends React.Component {
       }
     }
 
-    // Check if title contains the word "reflect"
     results.set('titleContainsReflect', false);
-    if (yaml[2].includes('essay')) {
-      if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
+    results.set('titleMissingQuotes', true);
+    results.set('dateNotProperFormat', true);
+    let type = '';
+    for (let i = 1; i < yaml.length - 1; i += 1) {
+      // Check if title contains the word "reflect"
+      if (yaml[i].includes('type:') && yaml[i].includes('essay')) {
+        type = 'essay';
+      }
+      if (type === 'essay' && yaml[i].includes('title:') && yaml[i].toUpperCase().includes('reflect'.toUpperCase())) {
         results.set('titleContainsReflect', true);
       }
+      // Check if title is surrounded by quotes
+      if (yaml[i].includes('title')) {
+        if (yaml[i].match(/title: ".*"/)) {
+          results.set('titleMissingQuotes', false);
+          // console.log('titleQuotes');
+        }
+      }
+      // Check if date is YYYY-MM-DD format
+      if (yaml[i].includes('date:')) {
+        if (yaml[i].match(/date: \d{4}-\d{2}-\d{2}/)) {
+          results.set('dateNotProperFormat', false);
+        }
+      }
     }
+
+    // Check if title contains the word "reflect"
+    // results.set('titleContainsReflect', false);
+    // if (yaml[2].includes('essay')) {
+    //   if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
+    //     results.set('titleContainsReflect', true);
+    //   }
+    // }
+
+    // Check if title is in quotes
+    // yaml[]
+
+    // Check if date is YYYY-MM-DD format
 
     // console.log(results);
     return results;
@@ -320,13 +354,23 @@ export default class TechFolioEditor extends React.Component {
       error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
       errorCount += 1;
     }
+      // results.set('titleMissingQuotes', true);
+      // results.set('dateNotProperFormat', true);
+    if (results.get('titleMissingQuotes') === true) {
+      error = error.concat(`${errorCount + 1}. Title is missing quotes around it.\n`);
+      errorCount += 1;
+    }
+    if (results.get('dateNotProperFormat') === true) {
+      error = error.concat(`${errorCount + 1}. Date is not in YYYY-MM-DD format.\n`);
+      errorCount += 1;
+    }
     if (calledBySave) {
       calledMessage = '\nYour file has been saved anyway, but it is in your best interest to correct these errors.';
     }
     if (error !== '') {
       dialog.showErrorBox('TFLint Results',
             errorCount + ' errors were found in your file.\nTFLint detects the following errors: \n\n' // eslint-disable-line
-          + error + calledMessage);
+          + error + calledMessage + ' These errors may interfere with Techfolio Designer\'s preview mode or the quality of your writeup.'); // eslint-disable-line
     } else {
       dialog.showMessageBox({ type: 'info', title: 'TFLint Results', message: 'No errors were found in your file.' });
     }
