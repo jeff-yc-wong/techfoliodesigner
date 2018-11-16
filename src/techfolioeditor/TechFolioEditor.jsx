@@ -124,7 +124,7 @@ export default class TechFolioEditor extends React.Component {
       previewMode: !this.state.previewMode,
     }));
     if (this.state.previewMode) {
-      // preview mode is on, which emans it was just toggled off
+      // preview mode is on, which means it was just toggled off
       this.window.setSize(this.codeMirrorDiv.offsetWidth, this.codeMirrorDiv.offsetHeight + titleBarHeight);
     } else {
       // preview mode is off, which means it was just toggled on
@@ -462,20 +462,28 @@ export default class TechFolioEditor extends React.Component {
 
   render() {
     // preview conditionally rendered
-    let editorJSX;
-    let buttonPosition = {};
+    const fileExtension = this.props.fileName.match(/\.(.*)/gi);
+    if (fileExtension[0] !== '.md') {
+      return (
+        <div>
+          <CodeMirror
+            value={this.state.value}
+            onBeforeChange={this.onBeforeChange}
+            options={this.options}
+            editorDidMount={(editor) => { this.instance = editor; }}
+          />
+        </div>);
+    }
 
+    let editorJSX;
+    // preview conditionally rendered
     if (this.state.previewMode) {
       const codeMirrorWidth = this.codeMirrorDiv.offsetWidth;
-      const codeMirrorRadius = codeMirrorWidth / 2;
-      buttonPosition = {
-        left: codeMirrorRadius,
-      };
       let markdown = this.state.value;
       const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
       markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
 
-      // date and title header
+        // date and title header
       let title = yaml.match(/title:[^\n]*/g)[0];
       title = title.replace('title: ', '');
       let date = yaml.match(/date:[^\n]*/g)[0];
@@ -525,15 +533,16 @@ export default class TechFolioEditor extends React.Component {
     }
     return (
       <div>
-        <label
-          htmlFor="previewMode"
-          className="switch fixed-button"
-          onChange={this.handleClick}
-          style={buttonPosition}
-        >
-          <input type="checkbox" id="previewMode" />
-          <span className="slider round" />
-        </label>
+        <div id="wrapper">
+          <label
+            htmlFor="previewMode"
+            className="hover switch fixed-button"
+            onChange={this.handleClick}
+          >
+            <input type="checkbox" id="previewMode" />
+            <span className="slider round" />
+          </label>
+        </div>
         {editorJSX}
       </div>
     );
