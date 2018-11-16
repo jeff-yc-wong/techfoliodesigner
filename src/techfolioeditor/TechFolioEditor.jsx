@@ -418,15 +418,28 @@ export default class TechFolioEditor extends React.Component {
 
   render() {
     // preview conditionally rendered
-    let editorJSX;
+    const fileExtension = this.props.fileName.match(/\.(.*)/gi);
+    if (fileExtension[0] !== '.md') {
+      return(
+        <div>
+          <CodeMirror
+            value={this.state.value}
+            onBeforeChange={this.onBeforeChange}
+            options={this.options}
+            editorDidMount={(editor) => { this.instance = editor; }}
+          />
+        </div>);
+    }
 
+    let editorJSX;
+    // preview conditionally rendered
     if (this.state.previewMode) {
       const codeMirrorWidth = this.codeMirrorDiv.offsetWidth;
       let markdown = this.state.value;
       const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
       markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
 
-      // date and title header
+        // date and title header
       let title = yaml.match(/title:[^\n]*/g)[0];
       title = title.replace('title: ', '');
       let date = yaml.match(/date:[^\n]*/g)[0];
@@ -467,26 +480,27 @@ export default class TechFolioEditor extends React.Component {
         >
           <CodeMirror
             value={this.state.value}
-            onBeforeChange={this.onBeforeChange}
-            options={this.options}
-            editorDidMount={(editor) => { this.instance = editor; }}
-            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-          />
-        </div>);
-    }
-    return (
-      <div>
-        <label
-          htmlFor="previewMode"
-          className="switch fixed-button"
-          onChange={this.handleClick}
-        >
-          <input type="checkbox" id="previewMode" />
-          <span className="slider round" />
-        </label>
-        {editorJSX}
-      </div>
-    );
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => { this.instance = editor; }}
+              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+            />
+          </div>);
+      }
+      return (
+        <div>
+          <label
+            htmlFor="previewMode"
+            className="switch fixed-button"
+            onChange={this.handleClick}
+          >
+            <input type="checkbox" id="previewMode" />
+            <span className="slider round" />
+          </label>
+          {editorJSX}
+        </div>
+      );
+
   }
 }
 
