@@ -149,3 +149,14 @@ input:checked + .slider:before {
     top: 3px;
     left: 3px;
 }
+
+.wrapper .text {
+  position:relative;
+  bottom:0px;
+  left:0px;
+  visibility:hidden;
+}
+
+.wrapper:hover .text {
+  visibility:visible;
+}

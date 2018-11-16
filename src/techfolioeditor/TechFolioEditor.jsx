@@ -420,7 +420,7 @@ export default class TechFolioEditor extends React.Component {
     // preview conditionally rendered
     const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     if (fileExtension[0] !== '.md') {
-      return (
+      return(
         <div>
           <CodeMirror
             value={this.state.value}
@@ -489,16 +489,17 @@ export default class TechFolioEditor extends React.Component {
     }
     return (
       <div>
-        <div id="wrapper">
-          <label
-            htmlFor="previewMode"
-            className="hover switch fixed-button"
-            onChange={this.handleClick}
-          >
-            <input type="checkbox" id="previewMode" />
-            <span className="slider round" />
-          </label>
-        </div>
+        <label
+          htmlFor="previewMode"
+          className="switch fixed-button"
+          onChange={this.handleClick}
+        >
+          <input type="checkbox" id="previewMode" />
+          <div className="wrapper">
+            <span className="hover slider round" />
+            <p className="text">Preview Mode</p>
+          </div>
+        </label>
         {editorJSX}
       </div>
     );
