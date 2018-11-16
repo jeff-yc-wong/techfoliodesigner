@@ -124,7 +124,7 @@ export default class TechFolioEditor extends React.Component {
       previewMode: !this.state.previewMode,
     }));
     if (this.state.previewMode) {
-      // preview mode is on, which emans it was just toggled off
+      // preview mode is on, which means it was just toggled off
       this.window.setSize(this.codeMirrorDiv.offsetWidth, this.codeMirrorDiv.offsetHeight + titleBarHeight);
     } else {
       // preview mode is off, which means it was just toggled on
@@ -419,14 +419,9 @@ export default class TechFolioEditor extends React.Component {
   render() {
     // preview conditionally rendered
     let editorJSX;
-    let buttonPosition = {};
 
     if (this.state.previewMode) {
       const codeMirrorWidth = this.codeMirrorDiv.offsetWidth;
-      const codeMirrorRadius = codeMirrorWidth / 2;
-      buttonPosition = {
-        left: codeMirrorRadius,
-      };
       let markdown = this.state.value;
       const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
       markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
@@ -485,7 +480,6 @@ export default class TechFolioEditor extends React.Component {
           htmlFor="previewMode"
           className="switch fixed-button"
           onChange={this.handleClick}
-          style={buttonPosition}
         >
           <input type="checkbox" id="previewMode" />
           <span className="slider round" />
