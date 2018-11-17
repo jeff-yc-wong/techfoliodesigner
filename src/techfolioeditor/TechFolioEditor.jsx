@@ -47,6 +47,7 @@ require('codemirror/addon/lint/json-lint');
 require('../lib/autorefresh.ext');
 
 export default class TechFolioEditor extends React.Component {
+  /* eslint class-methods-use-this: ["error", { "exceptMethods": ["spellCheck", "printResultsBox"] }] */
   constructor(props) {
     super(props);
     this.instance = null;
@@ -226,8 +227,6 @@ export default class TechFolioEditor extends React.Component {
     const wordByWord = actualText[2].split(/\s+/);
     const lineByLine = actualText[2].split(/\n+/);
     const yaml = actualText[1].split(/\n+/);
-
-    console.log(yaml);
 
     // Check if word count is less than 50
     const wordCount = wordByWord.length - 2;
@@ -439,7 +438,7 @@ export default class TechFolioEditor extends React.Component {
           }
 
           // eslint-disable-next-line no-cond-assign
-          while ((ch = stream.peek()) != null && !rxWord.includes(ch)) {
+          while ((ch = stream.peek()) != null && !rxWord.includes(ch)) { // eslint-disable-line
             word += ch;
             stream.next();
           }

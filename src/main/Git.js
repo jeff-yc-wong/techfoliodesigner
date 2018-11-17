@@ -79,7 +79,8 @@ function runPushThenStatus() {
     .then(result => mainStore.dispatch(action.addLog(`Finished push. ${result}`)))
     .catch(err => mainStore.dispatch(action.addLog(`Finished push with failure: ${err}
       \nTo fix this problem, please update your local repo by invoking the command Config > Advanced >
-      Pull changes from GitHub repo. Then try committing your changes again.
+      Pull changes from
+       GitHub repo. Then try committing your changes again.
       `)));
 }
 
