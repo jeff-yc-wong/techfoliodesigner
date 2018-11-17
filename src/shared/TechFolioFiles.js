@@ -54,6 +54,10 @@ class TechFolioFiles {
     return _.filter(fs.readdirSync(path.join(this.directory, 'projects')), fileName => fileName.endsWith('.md'));
   }
 
+  imageNames() {
+    return _.filter(fs.readdirSync(path.join(this.directory, 'images')), fileName => fileName.endsWith('.png'));
+  }
+
   bioJsonFile() {
     return fs.readdirSync(path.join(this.directory, '_data', 'bio.json'));
   }

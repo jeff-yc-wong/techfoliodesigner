@@ -44,6 +44,10 @@ export default function makeMenuTemplate() {
       submenu: [],
     },
     {
+      label: 'Images',
+      submenu: [],
+    },
+    {
       label: 'Config',
       submenu: [],
     },
