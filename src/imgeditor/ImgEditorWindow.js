@@ -35,8 +35,8 @@ export async function createImgEditorWindow({ isDevMode = true, fileType = '', f
       const options = {
         type: 'info',
         title: 'Do you really want to close this window?',
-        message: 'This window has unsaved changes. Close anyway?',
-        buttons: ['No', 'Yes, lose my changes'],
+        message: "There might be changes you didn't save, do you still want to exit?",
+        buttons: ['No', "Yes, I'm sure"],
       };
       dialog.showMessageBox(options, (index) => {
         if (index === 1) {

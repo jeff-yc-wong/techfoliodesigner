@@ -228,8 +228,6 @@ export default class TechFolioEditor extends React.Component {
     const lineByLine = actualText[2].split(/\n+/);
     const yaml = actualText[1].split(/\n+/);
 
-    console.log(yaml);
-
     // Check if word count is less than 50
     const wordCount = wordByWord.length - 2;
     if (wordCount < 50) {
