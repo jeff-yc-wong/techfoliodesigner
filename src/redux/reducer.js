@@ -35,6 +35,16 @@ export default function reducer(state = initialState(), action) {
     case 'SET_CHANGED': {
       return Object.assign({}, state, { changed: action.payload });
     }
+    case 'ADD_FILE_DATA': {
+      const copyFiles = state.fileData;
+      copyFiles.push(action.payload);
+      return Object.assign({}, state, { fileData: copyFiles });
+    }
+    case 'REMOVE_FILE_DATA': {
+      const copyFiles = state.fileData;
+      copyFiles.splice(copyFiles.indexOf(action.payload), 1);
+      return Object.assign({}, state, { fileData: copyFiles });
+    }
     default:
       return state;
   }

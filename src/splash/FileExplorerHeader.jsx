@@ -5,24 +5,34 @@ import { connect } from 'react-redux';
 import { _ } from 'underscore';
 import mainStore from '../redux/mainstore';
 import * as action from '../redux/actions';
+import { getBioAsJson } from '../simplebioeditor/SimpleBioEditorWindow';
 
 class FileExplorerHeader extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.handleSort = this.handleSort.bind(this);
+    this.state = { fileData: this.props.fileData, column: '', direction: '' };
+  }
+
   handleSort(column) {
     // TODO make these toggles
-    if (this.props.column !== column) {
+    console.log(`Doing sort on ${column}`);
+    if (this.state.column !== column) {
       this.setState({
         column,
-        fileData: _.sortBy(this.props.fileData, [column]),
+        fileData: _.sortBy(this.state.fileData, [column]),
         direction: 'ascending',
       });
-      mainStore.dispatch(action.setFileData(_.sortBy(this.props.fileData, [column])));
+      // mainStore.dispatch(action.setFileData(_.sortBy(this.state.fileData, [column])));
       return;
     }
     this.setState({
-      data: this.props.fileData.reverse(),
-      direction: this.props.direction === 'ascending' ? 'descending' : 'ascending',
+      data: this.state.fileData.reverse(),
+      direction: this.state.direction === 'ascending' ? 'descending' : 'ascending',
     });
-    mainStore.dispatch(action.setFileData(this.props.fileData.reverse()));
+    console.log(this.state.column, this.state.fileData);
+    // mainStore.dispatch(action.setFileData(this.props.fileData.reverse()));
   }
 
   // TODO add state and arrows on column headers

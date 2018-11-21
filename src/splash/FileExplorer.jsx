@@ -3,14 +3,30 @@ import PropTypes from 'prop-types';
 import { Table, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { createTechFolioWindow, deleteFile } from '../techfolioeditor/TechFolioEditorWindow';
+import mainStore from '../redux/mainstore';
+import { deleteFileData } from '../redux/actions';
 
 const electron = require('electron');
 
 class FileExplorer extends React.Component {
-  handleClick(action, fileType, fileName) {
+  handleClick(action, fileType, fileName) { // TODO use this.props here and modify the state elsewhere(?)
     if (action === 'edit') return createTechFolioWindow({ fileType, fileName });
-    if (action === 'delete') return deleteFile(fileType, fileName);
-    return -1;
+    else if (action === 'delete') {
+      const done = deleteFile(fileType, fileName);
+      if (done) {
+        if (fileType === 'essays') {
+          const index = this.props.fileData.indexOf({ key: `essay-${fileName}`, fileType, fileName });
+          console.log(index);
+          this.props.fileData.splice(index, 1);
+        } else {
+          const index = this.props.fileData.indexOf({ key: `project-${fileName}`, fileType, fileName });
+          console.log(index);
+          this.props.fileData.splice(index, 1);
+        }
+        console.log(this.props.fileData);
+        return 0;
+      }
+    } else return -1; // this should never happen
   }
   // TODO make 'commit' column functional
   render() {

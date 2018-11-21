@@ -183,7 +183,7 @@ export async function newTechFolioWindow({ fileType }) {
   techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
     () => {
       createTechFolioWindow({ fileType, fileName });
-      buildMainMenu();
+      if (!(process && process.type === 'renderer')) buildMainMenu();
       runAddFile(filePath);
     });
   return null;
@@ -204,8 +204,10 @@ export function deleteFile(fileType, fileName) {
           if (err) throw err;
           console.log(`Successfully deleted ${fileType} ${fileName}`);
           // TODO update file data props of FileExplorer.jsx so that it reloads
+          return true;
         });
       }
+      return false;
     });
   } else {
     const options = {
@@ -220,8 +222,10 @@ export function deleteFile(fileType, fileName) {
           if (err) throw err;
           console.log(`Successfully deleted ${fileType} ${fileName}`);
           // TODO update file data props of FileExplorer.jsx so that it reloads
+          return true;
         });
       }
+      return false;
     });
   }
 }
