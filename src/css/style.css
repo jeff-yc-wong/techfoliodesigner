@@ -159,4 +159,8 @@ input:checked + .slider:before {
 
 .wrapper:hover .text {
   visibility:visible;
+  border:6px solid transparent;
+  width: 63px;
+  color: white;
+  background-color: grey;
 }
