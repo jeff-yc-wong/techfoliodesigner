@@ -537,11 +537,11 @@ export default class TechFolioEditor extends React.Component {
           className="switch fixed-button"
           onChange={this.handleClick}
         >
-            <div className="wrapper">
-              <input type="checkbox" id="previewMode" />
-              <span className="hover slider round" />
-              <p className="text">Preview Mode</p>
-            </div>
+          <div className="wrapper">
+            <input type="checkbox" id="previewMode" />
+            <span className="hover slider round" />
+            <p className="text">Preview Mode</p>
+          </div>
         </label>
         {editorJSX}
       </div>
