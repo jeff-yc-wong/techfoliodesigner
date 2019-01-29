@@ -83,6 +83,7 @@
     "clipboardy": "^1.2.3",
     "codemirror": "^5.41.0",
     "codemirror-spell-checker": "^1.1.2",
+    "electron": "^4.0.1",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
     "electron-oauth2": "^3.0.0",
