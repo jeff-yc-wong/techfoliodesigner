@@ -247,6 +247,7 @@ export default class TechFolioEditor extends React.Component {
       results.set('singleParagraph', true);
     } else results.set('singleParagraph', false);
 
+    // Check img html
     // Check if img html uses ui image class
     // Sets badImg value to line numbers of errors over true/false
     let lineNumberImage = '';
@@ -255,6 +256,16 @@ export default class TechFolioEditor extends React.Component {
         if (!lineByLine[i].includes('ui image')) {
           lineNumberImage = lineNumberImage.concat(` ${(i + yaml.length).toString()}`);
         }
+        // Check image size and other stuff
+        // Isolate image path
+        let imagePath = lineByLine[i].match(/<img.*>/).input;
+        imagePath = imagePath.match(/src=".*images.*"/)[0];
+        imagePath = imagePath.split('"');
+        imagePath = imagePath[1];
+        console.log(imagePath);
+
+        // Use Jimp to open image and pull data from it using given path
+
       }
     }
     results.set('badImg', lineNumberImage);
@@ -305,21 +316,6 @@ export default class TechFolioEditor extends React.Component {
         }
       }
     }
-
-    // Check if title contains the word "reflect"
-    // results.set('titleContainsReflect', false);
-    // if (yaml[2].includes('essay')) {
-    //   if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
-    //     results.set('titleContainsReflect', true);
-    //   }
-    // }
-
-    // Check if title is in quotes
-    // yaml[]
-
-    // Check if date is YYYY-MM-DD format
-
-    // console.log(results);
     return results;
   }
 
@@ -353,8 +349,6 @@ export default class TechFolioEditor extends React.Component {
       error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
       errorCount += 1;
     }
-      // results.set('titleMissingQuotes', true);
-      // results.set('dateNotProperFormat', true);
     if (results.get('titleMissingQuotes') === true) {
       error = error.concat(`${errorCount + 1}. Title is missing quotes around it.\n`);
       errorCount += 1;
