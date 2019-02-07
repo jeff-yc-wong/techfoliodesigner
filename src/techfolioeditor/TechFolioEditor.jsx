@@ -264,7 +264,7 @@ export default class TechFolioEditor extends React.Component {
     let lineNumberUrl = '';
     for (let i = 0; i < lineByLine.length; i += 1) {
       if (lineByLine[i].includes('http://') || lineByLine[i].includes('https://')) {
-        if (!lineByLine[i].match(/.*\[.+\]\(https?:\/\/.*\/?\).*/)) {
+        if (!lineByLine[i].match(/.*\[.+]\(https?:\/\/.*\/?\).*/)) {
           lineNumberUrl = lineNumberUrl.concat(` ${(i + yaml.length).toString()}`);
         }
       }
@@ -376,7 +376,7 @@ export default class TechFolioEditor extends React.Component {
   }
 
   spellCheck() {
-  // Define the new mode
+    // Define the new mode
     let numLoaded = 0;
     let affLoading = false;
     let dicLoading = false;

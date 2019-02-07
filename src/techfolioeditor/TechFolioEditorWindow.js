@@ -1,4 +1,4 @@
-import { dialog, shell, remote, BrowserWindow } from 'electron';
+import { dialog, shell, BrowserWindow } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import path from 'path';
 import prompt from 'electron-prompt';
@@ -15,7 +15,7 @@ const electron = require('electron');
 
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const isRenderer = (process && process.type === 'renderer');
-  console.log(isRenderer);
+  // console.log(isRenderer);
 
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
@@ -190,42 +190,42 @@ export async function newTechFolioWindow({ fileType }) {
 }
 
 export function deleteFile(fileType, fileName) {
-  if (process && process.type === 'renderer') {
-    const dialog2 = electron.remote.dialog;
-    const options = {
-      type: 'warning',
-      title: 'Do you really want to delete this file?',
-      message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
-      buttons: ['OK', 'Cancel'],
-    };
-    dialog2.showMessageBox(options, (index) => {
-      if (index === 0) {
-        fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
-          if (err) throw err;
-          console.log(`Successfully deleted ${fileType} ${fileName}`);
-          // TODO update file data props of FileExplorer.jsx so that it reloads
-          return true;
-        });
-      }
-      return false;
-    });
-  } else {
-    const options = {
-      type: 'warning',
-      title: 'Do you really want to delete this file?',
-      message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
-      buttons: ['OK', 'Cancel'],
-    };
-    dialog.showMessageBox(options, (index) => {
-      if (index === 0) {
-        fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
-          if (err) throw err;
-          console.log(`Successfully deleted ${fileType} ${fileName}`);
-          // TODO update file data props of FileExplorer.jsx so that it reloads
-          return true;
-        });
-      }
-      return false;
-    });
-  }
+  return new Promise((resolve) => {
+    if (process && process.type === 'renderer') {
+      const dialog2 = electron.remote.dialog;
+      const options = {
+        type: 'warning',
+        title: 'Do you really want to delete this file?',
+        message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
+        buttons: ['OK', 'Cancel'],
+      };
+      dialog2.showMessageBox(options, (index) => {
+        if (index === 0) {
+          fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
+            if (err) throw err;
+            // console.log(`Successfully deleted ${fileType} ${fileName}`);
+            // TODO update file data props of FileExplorer.jsx so that it reloads
+            resolve();
+          });
+        }
+      });
+    } else {
+      const options = {
+        type: 'warning',
+        title: 'Do you really want to delete this file?',
+        message: `Are you sure you want to delete ${fileType} ${fileName}? This action cannot be undone.`,
+        buttons: ['OK', 'Cancel'],
+      };
+      dialog.showMessageBox(options, (index) => {
+        if (index === 0) {
+          fs.unlink(path.join(mainStore.getState().dir, fileType, fileName), (err) => {
+            if (err) throw err;
+            // console.log(`Successfully deleted ${fileType} ${fileName}`);
+            // TODO update file data props of FileExplorer.jsx so that it reloads
+            resolve();
+          });
+        }
+      });
+    }
+  });
 }

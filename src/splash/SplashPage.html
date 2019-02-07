@@ -5,11 +5,11 @@
   <link rel="stylesheet" href="../../node_modules/semantic-ui-css/semantic.css">
 </head>
 <body>
-<div id="SplashPage" style="position: absolute; width: 49%; left: 0px"></div>
+<div id="SplashPage" style="position: absolute; width: 49%; left: 0"></div>
 <div id="FileExplorerHeader" style="position: absolute; width: 50%; height: 10%; right: 10px; top: 10px"></div>
 <div id="FileExplorer"
      style="position: absolute; width: 50%; height: 80%; right: 10px; top: 57px; overflow-y: scroll; overflow-x: hidden"></div>
-<div id="FileExplorerFooter" style="position: absolute; width: 50%; height: 10%; right: 10px; bottom: 0px;"></div>
+<div id="FileExplorerFooter" style="position: absolute; width: 50%; height: 10%; right: 10px; bottom: 0;"></div>
 </body>
 
 <script type="text/jsx">
@@ -34,10 +34,6 @@
   // ForwardToMain must be first middleware.
   const store = createStore(reducer, initialState, applyMiddleware(forwardToMain));
   replayActionRenderer(store);
-
-  function newClick(fileType) {
-    return newTechFolioWindow(fileType);
-  }
 
   const render = () => {
     ReactDOM.render(
@@ -71,23 +67,6 @@
         </Grid>
       </Provider>,
       document.getElementById('FileExplorer'));
-
-    ReactDOM.render(
-      <Provider store={store}>
-        <Table celled unstackable striped sortable>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell selectable textAlign="center" onClick={() => newClick({ fileType: 'projects' })}>
-                Create a new project
-              </Table.HeaderCell>
-              <Table.HeaderCell selectable textAlign="center" onClick={() => newClick({ fileType: 'essays' })}>
-                Create a new essay
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-        </Table>
-      </Provider>,
-      document.getElementById('FileExplorerFooter'));
 
   };
   render();
