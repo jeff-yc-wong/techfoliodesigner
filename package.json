@@ -13,7 +13,10 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --cache --color --ext .jsx,.js src"
+    "lint": "eslint --cache --color --ext .jsx,.js src",
+    "doc": "documentation build src/** -f html -o docs --document-exported --github",
+    "doc-readme": "documentation readme src/** -s 'API Docs' --github",
+    "doc-lint": "documentation lint src/**"
   },
   "keywords": [],
   "author": "philipjohnson",
@@ -128,6 +131,7 @@
     "yaml-front-matter": "^4.0.0"
   },
   "devDependencies": {
+    "documentation": "^9.1.1",
     "electron-forge": "^5.2.2",
     "electron-prebuilt-compile": "2.0.3",
     "eslint": "^3.19.0",
