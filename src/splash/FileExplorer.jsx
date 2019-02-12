@@ -4,6 +4,7 @@ import { Table, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { createTechFolioWindow, deleteFile, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import { setFileData } from '../redux/actions';
+import mainStore from '../redux/mainstore';
 
 class FileExplorer extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class FileExplorer extends React.Component {
     this.state = {
       fileData: this.props.fileData,
     };
-    setFileData(this.props.fileData);
+    setFileData(this.state.fileData);
     this.newClick = this.newClick.bind(this);
   }
 
@@ -21,9 +22,13 @@ class FileExplorer extends React.Component {
    * @param fileType Type of file to make, either 'essay' or 'project'
    */
   newClick(fileType) {
-    setFileData(this.props.fileData);
-    this.setState({ fileData: this.props.fileData });
-    newTechFolioWindow(fileType);
+    // TODO create a way to update state when creating new file
+    const promise = new Promise((resolve) => {
+      newTechFolioWindow(fileType);
+      resolve();
+    });
+
+    promise.then(() => { this.setState({ fileData: this.state.fileData }); });
   }
 
   /**
@@ -35,6 +40,7 @@ class FileExplorer extends React.Component {
    * @returns {*}
    */
   handleClick(action, fileType, fileName) {
+    console.log(mainStore.getState());
     if (action === 'edit') return createTechFolioWindow({ fileType, fileName });
     else if (action === 'delete') {
       deleteFile(fileType, fileName).then(
