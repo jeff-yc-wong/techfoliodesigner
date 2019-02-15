@@ -1,0 +1,12 @@
+toc:
+  - name: Geography
+    children:
+      - Map
+      - LngLat
+      - LngLatBounds
+  - name: Navigation
+    description: |
+      Here are some helper functions for navigation.
+    children:
+      - shortestPath
+      - salesman

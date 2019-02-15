@@ -14,7 +14,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --cache --color --ext .jsx,.js src",
-    "doc": "documentation build src/** -f html -o docs --document-exported --github",
+    "doc": "documentation build src/** -f html -o docs --github ",
     "doc-readme": "documentation readme src/** -s 'API Docs' --github",
     "doc-lint": "documentation lint src/**"
   },

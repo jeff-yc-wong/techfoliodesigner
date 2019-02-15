@@ -5,8 +5,14 @@ import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 import buildMainMenu from './MainMenu';
 
+/** @module Git */
+
 const git = require('simple-git/promise');
 
+/**
+ * Returns the URL to the user's techfolio repository.
+ * @returns {string}
+ */
 function getRepoURL() {
   const user = mainStore.getState().username;
   const token = mainStore.getState().token;

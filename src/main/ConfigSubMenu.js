@@ -1,3 +1,8 @@
+/**
+ * @file File containing functions to build the Config Submenu.
+ * @module ConfigTheSubMenu
+ */
+
 import { dialog } from 'electron';
 import prompt from 'electron-prompt';
 import buildMainMenu from './MainMenu';
@@ -117,6 +122,10 @@ function buildAdvancedMenu() {
   return { label: 'Advanced', submenu: [item1, item2, item3, item4, item5] };
 }
 
+/**
+ * Builds the Config submenu.
+ * @returns {*[]} The various menu entries for the config submenu.
+ */
 export default function buildConfigSubMenu() {
   const configSubMenu = [
     buildAuthenticationSubMenu(),
