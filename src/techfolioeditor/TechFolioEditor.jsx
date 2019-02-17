@@ -18,6 +18,8 @@ const md = require('markdown-it')({
   linkify: true,
   typographer: true,
 });
+// const Jimp = require('jimp');
+const sizeOf = require('image-size');
 
 const mdLintOptions = {
   'strings': { // eslint-disable-line
@@ -215,10 +217,13 @@ export default class TechFolioEditor extends React.Component {
   }
 
   callTfLint(calledBySave) {
+    const results;
     if (this.mode !== 'application/json') {
-      const results = this.tfLint();
-      this.printResultsBox(results, calledBySave);
+      results = this.tfLint();
+    } else {
+      results = this.tfBioLint();
     }
+    this.printResultsBox(results, calledBySave);
   }
 
   tfLint() {
@@ -250,25 +255,54 @@ export default class TechFolioEditor extends React.Component {
     // Check img html
     // Check if img html uses ui image class
     // Sets badImg value to line numbers of errors over true/false
-    let lineNumberImage = '';
+    let lineNumberImageUi = '';
+    let lineNumberImagePx = '';
+    let lineNumberImageSize = '';
     for (let i = 0; i < lineByLine.length; i += 1) {
       if (lineByLine[i].includes('<img')) {
         if (!lineByLine[i].includes('ui image')) {
-          lineNumberImage = lineNumberImage.concat(` ${(i + yaml.length).toString()}`);
+          lineNumberImageUi = lineNumberImageUi.concat(` ${(i + yaml.length).toString()}`);
         }
         // Check image size and other stuff
-        // Isolate image path
+        // Isolate image path and join it to base directory to get total image path
         let imagePath = lineByLine[i].match(/<img.*>/).input;
         imagePath = imagePath.match(/src=".*images.*"/)[0];
         imagePath = imagePath.split('"');
         imagePath = imagePath[1];
-        console.log(imagePath);
+        imagePath = imagePath.substring(2);
+        imagePath = path.join(this.props.directory, imagePath);
+        // console.log(imagePath);
 
+        // todo Can I extract image properties from the function
+          // todo Use different+simpler npm package probably might be easier
         // Use Jimp to open image and pull data from it using given path
+        // Jimp.read(imagePath, (err, image) => {
+        //   if (err) throw err;
+        //   // console.log(image.bitmap.height);
+        //   // console.log(image.bitmap.width);
+        //
+        //   if (image.bitmap.height < 200 && image.bitmap.width < 200) {
+        //     lineNumberImagePx = lineNumberImagePx.concat(` ${(i + yaml.length).toString()}`);
+        //   }
+        // });
 
+        const imageDimensions = sizeOf(imagePath);
+        // console.log(imageDimensions);
+
+        if (imageDimensions.height < 200 && imageDimensions.width < 200) {
+          lineNumberImagePx = lineNumberImagePx.concat(` ${(i + yaml.length).toString()}`);
+          console.log(lineNumberImagePx);
+        }
+
+        const imageStats = fs.statSync(imagePath);
+        if (imageStats.size > 500000) {
+          lineNumberImageSize = lineNumberImageSize.concat(` ${(i + yaml.length).toString()}`);
+        }
       }
     }
-    results.set('badImg', lineNumberImage);
+    results.set('badImgUi', lineNumberImageUi);
+    results.set('badImgPx', lineNumberImagePx);
+    results.set('badImgSize', lineNumberImageSize);
 
     // Check if URL used proper MD format
     // Sets badUrl value to line numbers of errors over true/false
@@ -295,13 +329,34 @@ export default class TechFolioEditor extends React.Component {
     results.set('dateNotProperFormat', true);
     let type = '';
     for (let i = 1; i < yaml.length - 1; i += 1) {
-      // Check if title contains the word "reflect"
+      // Check type (essay or project)
       if (yaml[i].includes('type:') && yaml[i].includes('essay')) {
         type = 'essay';
+      } else {
+        type = 'project';
       }
+
+        // Check if title contains the word "reflect"
       if (type === 'essay' && yaml[i].includes('title:') && yaml[i].toUpperCase().includes('reflect'.toUpperCase())) {
         results.set('titleContainsReflect', true);
       }
+
+      // Check if project image is square
+      if (type === 'project' && yaml[i].includes('image:')) {
+        // Get image path
+        let imagePath = yaml[i];
+        imagePath = imagePath.split(' ');
+        imagePath = imagePath[1];
+        imagePath = `/${imagePath}`;
+        imagePath = path.join(this.props.directory, imagePath);
+
+        const imageDimensions = sizeOf(imagePath);
+
+        if (imageDimensions.height !== imageDimensions.width) {
+          results.set('imageNotSquare', true);
+        }
+      }
+
       // Check if title is surrounded by quotes
       if (yaml[i].includes('title')) {
         if (yaml[i].match(/title: ".*"/)) {
@@ -336,9 +391,23 @@ export default class TechFolioEditor extends React.Component {
           'Error occurs on line(s)' + results.get('badUrl') + '.\n');
       errorCount += 1;
     }
-    if (results.get('badImg') !== '') {
+    if (results.get('badImgUi') !== '') {
       error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badImg') + '.\n');
+          'Error occurs on line(s)' + results.get('badImgUi') + '.\n');
+      errorCount += 1;
+    }
+    if (results.get('badImgPx') !== '') {
+      error = error.concat((errorCount + 1) + '. Contains an image that is smaller than 200 x 200 px. ' + // eslint-disable-line
+          'Error occurs on line(s)' + results.get('badImgPx') + '.\n');
+      errorCount += 1;
+    }
+    if (results.get('badImgSize') !== '') {
+      error = error.concat((errorCount + 1) + '. Contains an image that is larger than 500kb. ' + // eslint-disable-line
+          'Error occurs on line(s)' + results.get('badImgSize') + '.\n');
+      errorCount += 1;
+    }
+    if (results.get('imageNotSquare') === true) {
+      error = error.concat(`${errorCount + 1}. Project image is not square.\n`);
       errorCount += 1;
     }
     if (results.get('noSubsection') === true) {
@@ -361,6 +430,7 @@ export default class TechFolioEditor extends React.Component {
       calledMessage = '\nYour file has been saved anyway, but it is in your best interest to correct these errors.';
     }
     if (error !== '') {
+      console.log(results);
       dialog.showErrorBox('TFLint Results',
             errorCount + ' errors were found in your file.\nTFLint detects the following errors: \n\n' // eslint-disable-line
           + error + calledMessage + ' These errors may interfere with Techfolio Designer\'s preview mode or the quality of your writeup.'); // eslint-disable-line
