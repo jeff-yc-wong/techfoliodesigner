@@ -99,7 +99,6 @@ export default class TechFolioEditor extends React.Component {
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
-
     this.handleClick = this.handleClick.bind(this);
   }
 

@@ -28,7 +28,9 @@ class FileExplorer extends React.Component {
       resolve();
     });
 
-    promise.then(() => { this.setState({ fileData: this.state.fileData }); });
+    promise.then(() => {
+      this.setState({ fileData: this.state.fileData });
+    });
   }
 
   /**
@@ -40,7 +42,6 @@ class FileExplorer extends React.Component {
    * @returns {*}
    */
   handleClick(action, fileType, fileName) {
-    console.log(mainStore.getState());
     if (action === 'edit') return createTechFolioWindow({ fileType, fileName });
     else if (action === 'delete') {
       deleteFile(fileType, fileName).then(

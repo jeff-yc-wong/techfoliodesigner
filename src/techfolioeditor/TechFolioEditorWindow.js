@@ -6,6 +6,7 @@ import moment from 'moment';
 import buildMainMenu from '../main/MainMenu';
 import { runAddFile } from '../main/Git';
 import mainStore from '../redux/mainstore';
+import { addFileData } from '../redux/actions';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 import TechFolioFiles from '../shared/TechFolioFiles';
 
@@ -150,6 +151,11 @@ labels:
 ---
 Essay goes here.`;
 
+/**
+ *
+ * @param fileType
+ * @returns {Promise<null>}
+ */
 export async function newTechFolioWindow({ fileType }) {
   let fileName = null;
   try {
@@ -180,12 +186,17 @@ export async function newTechFolioWindow({ fileType }) {
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const techFolioFiles = new TechFolioFiles(directory);
-  techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
-    () => {
-      createTechFolioWindow({ fileType, fileName });
-      if (!(process && process.type === 'renderer')) buildMainMenu();
-      runAddFile(filePath);
-    });
+  const promise = new Promise((resolve) => {
+    techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
+        () => {
+          createTechFolioWindow({ fileType, fileName });
+          if (!(process && process.type === 'renderer')) buildMainMenu();
+          runAddFile(filePath);
+        });
+    resolve();
+  });
+  promise.then(() => mainStore.dispatch(addFileData(fileName)));
+
   return null;
 }
 
