@@ -217,7 +217,7 @@ export default class TechFolioEditor extends React.Component {
   }
 
   callTfLint(calledBySave) {
-    const results;
+    let results = new Map();
     if (this.mode !== 'application/json') {
       results = this.tfLint();
     } else {
@@ -372,6 +372,17 @@ export default class TechFolioEditor extends React.Component {
       }
     }
     return results;
+  }
+
+  tfBioLint() {
+    const results = new Map();
+    const lineByLine = this.state.value.split(/\n+/);
+
+    for (let i = 1; i < lineByLine.length - 1; i += 1) {
+      if ([i].includes('"picture":')) {
+        const imageUrl = lineByLine[i].split('');
+      }
+    }
   }
 
   printResultsBox(results, calledBySave) { // eslint-disable-line class-methods-use-this
