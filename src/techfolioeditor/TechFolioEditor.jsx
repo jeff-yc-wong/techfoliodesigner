@@ -218,12 +218,14 @@ export default class TechFolioEditor extends React.Component {
 
   callTfLint(calledBySave) {
     let results = new Map();
+    let isBio = false;
     if (this.mode !== 'application/json') {
       results = this.tfLint();
     } else {
       results = this.tfBioLint();
+      isBio = true;
     }
-    this.printResultsBox(results, calledBySave);
+    this.printResultsBox(results, calledBySave, isBio);
   }
 
   tfLint() {
@@ -378,64 +380,83 @@ export default class TechFolioEditor extends React.Component {
     const results = new Map();
     const lineByLine = this.state.value.split(/\n+/);
 
+    results.set('profileNotSquare', false);
     for (let i = 1; i < lineByLine.length - 1; i += 1) {
-      if ([i].includes('"picture":')) {
-        const imageUrl = lineByLine[i].split('');
+      // Check if profile picture is square
+      if (lineByLine[i].includes('"picture":')) {
+        let imageUrl = lineByLine[i].split(': ');
+        imageUrl = imageUrl[1].split('"');
+        console.log(imageUrl[1]);
+
+        const img = new Image(); // eslint-disable-line
+        img.src = imageUrl[1];
+        img.onload = function () {
+          if (this.width !== this.height) results.set('profileNotSquare', true);
+        };
       }
+
     }
+    return results;
   }
 
-  printResultsBox(results, calledBySave) { // eslint-disable-line class-methods-use-this
+  printResultsBox(results, calledBySave, isBio) { // eslint-disable-line class-methods-use-this
     let error = '';
     let errorCount = 0;
     let calledMessage = '\nIt is in your best interest to correct these errors.';
-    if (results.get('lessThan50Words') === true) {
-      error = error.concat(`${errorCount + 1}. Word Count is less than 50.\n`);
-      errorCount += 1;
-    }
-    if (results.get('singleParagraph') === true) {
-      error = error.concat(`${errorCount + 1}. Only a single paragraph.\n`);
-      errorCount += 1;
-    }
-    if (results.get('badUrl') !== '') {
-      error = error.concat((errorCount + 1) + '. Contains a URL not in Markdown format. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badUrl') + '.\n');
-      errorCount += 1;
-    }
-    if (results.get('badImgUi') !== '') {
-      error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badImgUi') + '.\n');
-      errorCount += 1;
-    }
-    if (results.get('badImgPx') !== '') {
-      error = error.concat((errorCount + 1) + '. Contains an image that is smaller than 200 x 200 px. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badImgPx') + '.\n');
-      errorCount += 1;
-    }
-    if (results.get('badImgSize') !== '') {
-      error = error.concat((errorCount + 1) + '. Contains an image that is larger than 500kb. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badImgSize') + '.\n');
-      errorCount += 1;
-    }
-    if (results.get('imageNotSquare') === true) {
-      error = error.concat(`${errorCount + 1}. Project image is not square.\n`);
-      errorCount += 1;
-    }
-    if (results.get('noSubsection') === true) {
-      error = error.concat(`${errorCount + 1}. Does not contain a subsection header.\n`);
-      errorCount += 1;
-    }
-    if (results.get('titleContainsReflect') === true) {
-      error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
-      errorCount += 1;
-    }
-    if (results.get('titleMissingQuotes') === true) {
-      error = error.concat(`${errorCount + 1}. Title is missing quotes around it.\n`);
-      errorCount += 1;
-    }
-    if (results.get('dateNotProperFormat') === true) {
-      error = error.concat(`${errorCount + 1}. Date is not in YYYY-MM-DD format.\n`);
-      errorCount += 1;
+    if (isBio) {
+      if (results.get('profileNotSquare') === true) {
+        error = error.concat(`${errorCount + 1}. Profile image is not square.\n`);
+        errorCount += 1;
+      }
+    } else {
+      if (results.get('lessThan50Words') === true) {
+        error = error.concat(`${errorCount + 1}. Word Count is less than 50.\n`);
+        errorCount += 1;
+      }
+      if (results.get('singleParagraph') === true) {
+        error = error.concat(`${errorCount + 1}. Only a single paragraph.\n`);
+        errorCount += 1;
+      }
+      if (results.get('badUrl') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains a URL not in Markdown format. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badUrl') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('badImgUi') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badImgUi') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('badImgPx') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains an image that is smaller than 200 x 200 px. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badImgPx') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('badImgSize') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains an image that is larger than 500kb. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badImgSize') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('imageNotSquare') === true) {
+        error = error.concat(`${errorCount + 1}. Project image is not square.\n`);
+        errorCount += 1;
+      }
+      if (results.get('noSubsection') === true) {
+        error = error.concat(`${errorCount + 1}. Does not contain a subsection header.\n`);
+        errorCount += 1;
+      }
+      if (results.get('titleContainsReflect') === true) {
+            error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
+        errorCount += 1;
+      }
+      if (results.get('titleMissingQuotes') === true) {
+        error = error.concat(`${errorCount + 1}. Title is missing quotes around it.\n`);
+        errorCount += 1;
+      }
+      if (results.get('dateNotProperFormat') === true) {
+        error = error.concat(`${errorCount + 1}. Date is not in YYYY-MM-DD format.\n`);
+        errorCount += 1;
+      }
     }
     if (calledBySave) {
       calledMessage = '\nYour file has been saved anyway, but it is in your best interest to correct these errors.';
