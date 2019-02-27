@@ -378,24 +378,50 @@ export default class TechFolioEditor extends React.Component {
 
   tfBioLint() {
     const results = new Map();
-    const lineByLine = this.state.value.split(/\n+/);
+    // const lineByLine = this.state.value.split(/\n+/);
 
     results.set('profileNotSquare', false);
-    for (let i = 1; i < lineByLine.length - 1; i += 1) {
-      // Check if profile picture is square
-      if (lineByLine[i].includes('"picture":')) {
-        let imageUrl = lineByLine[i].split(': ');
-        imageUrl = imageUrl[1].split('"');
-        console.log(imageUrl[1]);
+    const bio = JSON.parse(this.state.value);
+    console.log(bio);
 
-        const img = new Image(); // eslint-disable-line
-        img.src = imageUrl[1];
-        img.onload = function () {
-          if (this.width !== this.height) results.set('profileNotSquare', true);
-        };
+    const img = new Image(); // eslint-disable-line
+    img.src = bio.basics.picture;
+    img.onload = function () {
+      if (this.width !== this.height) results.get('profileNotSquare', true);
+    };
+
+    for (const key in bio) {  // eslint-disable-line
+      // if (bio.hasOwnProperty(key) && typeof bio[key] === 'object') {
+      // console.log(bio[key]);
+      // console.log(bio[key].value);
+      if (this.isEmpty(bio[key])) {
+        console.log(`"${key}" section is missing.`);
       }
-
+      // } else {
+      //   console.log(bio[key]);
+      // }
+      // console.log(x.value);
     }
+
+
+    // for (let i = 1; i < lineByLine.length - 1; i += 1) {
+    //   // Check if profile picture is square
+    //   if (lineByLine[i].includes('"picture":')) {
+    //     let imageUrl = lineByLine[i].split(': ');
+    //     imageUrl = imageUrl[1].split('"');
+    //     console.log(imageUrl[1]);
+    //
+    //     const img = new Image(); // eslint-disable-line
+    //     img.src = imageUrl[1];
+    //     img.onload = function () {
+    //       if (this.width !== this.height) results.set('profileNotSquare', true);
+    //     };
+    //   }
+    // }
+
+      // const bio = JSON.parse(this.state.value);
+      // console.log(bio);
+
     return results;
   }
 
@@ -406,6 +432,10 @@ export default class TechFolioEditor extends React.Component {
     if (isBio) {
       if (results.get('profileNotSquare') === true) {
         error = error.concat(`${errorCount + 1}. Profile image is not square.\n`);
+        errorCount += 1;
+      }
+      if (results.get('missingInformation') === true) {
+        error = error.concat(`${errorCount + 1}. Missing information. A section of your resume has not been filled out.\n`);
         errorCount += 1;
       }
     } else {
@@ -469,6 +499,13 @@ export default class TechFolioEditor extends React.Component {
     } else {
       dialog.showMessageBox({ type: 'info', title: 'TFLint Results', message: 'No errors were found in your file.' });
     }
+  }
+
+  isEmpty(Object){
+    for(const key in Object){
+      if(Object.hasOwnProperty(key)) return false;
+    }
+    return true;
   }
 
   spellCheck() {
