@@ -135,6 +135,9 @@ export default class TechFolioEditor extends React.Component {
     }
   }
 
+  /**
+   * Saves the current file that is open, calling various lints to check if the file is formatted correctly.
+   */
   saveFile() {
     // console.log('saveFile called'); //eslint-disable-line
     // console.log(this.filePath);
@@ -216,6 +219,10 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
+  /**
+   * Helper function to call tfLint or tfBioLint depending on if the file is a project/essay, or bio.json, respectively.
+   * @param calledBySave Let the function know to change the results printing based on how tfLint was called
+   */
   callTfLint(calledBySave) {
     let results = new Map();
     let isBio = false;
@@ -228,6 +235,10 @@ export default class TechFolioEditor extends React.Component {
     this.printResultsBox(results, calledBySave, isBio);
   }
 
+  /**
+   * Basic tfLint for projects/essays. Checks a variety of factors throughout the file to ensure high quality write-ups.
+   * @returns {Map} Returns a results mapping that is used to print the results box.
+   */
   tfLint() {
     const results = new Map();
     const actualText = this.state.value.split('---');
@@ -376,6 +387,10 @@ export default class TechFolioEditor extends React.Component {
     return results;
   }
 
+  /**
+   * The version of tfLint that checks the bio.json for any errors.
+   * @returns {Map} Returns a results mapping that is used to print the results box.
+   */
   tfBioLint() {
     const results = new Map();
     let missingSectionResults = '';
@@ -397,34 +412,25 @@ export default class TechFolioEditor extends React.Component {
     };
 
     for (const key in bio) {  // eslint-disable-line
-      if (this.isEmpty(bio[key])) {
-        console.log(`"${key}" section is empty.`);
-        missingSectionResults = missingSectionResults.concat(`${key} `);
+      console.log(bio[key]);
+      for (const subKey in bio[key]) {  // eslint-disable-line
+        console.log(bio[key][subKey]);
+        if (this.isEmpty(bio[key][subKey])) {
+          missingSectionResults = missingSectionResults.concat(`${subKey} `);
+        }
       }
     }
     results.set('missingInformation', missingSectionResults);
 
-    // for (let i = 1; i < lineByLine.length - 1; i += 1) {
-    //   // Check if profile picture is square
-    //   if (lineByLine[i].includes('"picture":')) {
-    //     let imageUrl = lineByLine[i].split(': ');
-    //     imageUrl = imageUrl[1].split('"');
-    //     console.log(imageUrl[1]);
-    //
-    //     const img = new Image(); // eslint-disable-line
-    //     img.src = imageUrl[1];
-    //     img.onload = function () {
-    //       if (this.width !== this.height) results.set('profileNotSquare', true);
-    //     };
-    //   }
-    // }
-
-      // const bio = JSON.parse(this.state.value);
-      // console.log(bio);
-
     return results;
   }
 
+  /**
+   * Prints the results from tfLint in a dialog box.
+   * @param results  Results mapping from tfLint.
+   * @param calledBySave  Whether the initial call to tfLint was made by saving or not determines the text.
+   * @param isBio  Whether the initial call was on a bio.json or not determines how to check the results for printing.
+   */
   printResultsBox(results, calledBySave, isBio) { // eslint-disable-line class-methods-use-this
     let error = '';
     let errorCount = 0;
@@ -503,9 +509,14 @@ export default class TechFolioEditor extends React.Component {
     }
   }
 
-  isEmpty(Object) {
-    for (const key in Object) {
-      if (Object.hasOwnProperty(key)) return false;
+  /**
+   * Helper method to check if an object given is empty (i.e. has no value).
+   * @param Object  Object to check for emptiness
+   * @returns {boolean}  Returns true if empty, false otherwise.
+   */
+  isEmpty(Object) {  // eslint-disable-line
+    for (const key in Object) {  // eslint-disable-line
+      if (Object.hasOwnProperty(key)) return false;  // eslint-disable-line
     }
     return true;
   }
