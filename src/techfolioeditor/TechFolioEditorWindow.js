@@ -11,6 +11,7 @@ import TechFolioFiles from '../shared/TechFolioFiles';
 
 const fs = require('fs');
 
+
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
@@ -27,8 +28,8 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     const window = new BrowserWindow({
       x: techFolioWindowManager.getXOffset(),
       y: techFolioWindowManager.getYOffset(),
-      width: 1080,
-      minWidth: 680,
+      width: 750,  //1080 window.screen.width
+      maxWidth: 1400,
       height: 840,
       title: 'TechFolio Designer',
     });
