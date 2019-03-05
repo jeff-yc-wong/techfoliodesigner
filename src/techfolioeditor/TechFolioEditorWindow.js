@@ -13,7 +13,15 @@ import TechFolioFiles from '../shared/TechFolioFiles';
 const fs = require('fs');
 const electron = require('electron');
 
-
+/**
+ *
+ * Opens a editor window and displays the contents of the file.
+ *
+ * @param isDevMode
+ * @param fileType - Type of file to be shown in editor window
+ * @param fileName - Name of file to be shwon in editor window
+ * @returns {Promise<void>} - Returns nothing
+ */
 export async function createTechFolioWindow({ isDevMode = true, fileType = '', fileName = '' }) {
   const isRenderer = (process && process.type === 'renderer');
   // console.log(isRenderer);
@@ -105,6 +113,12 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
   }
 }
 
+/**
+ * Checks if the file has a valid name.
+ * @param fileName - Name of the file to check
+ * @param fileType - Type of the file to check
+ * @returns {boolean} - Returns true if the name is valid. Returns false if the name is not valid.
+ */
 function validFileName(fileName, fileType) {
   if (!fileName) {
     return false;
@@ -153,8 +167,11 @@ Essay goes here.`;
 
 /**
  *
- * @param fileType
- * @returns {Promise<null>}
+ * Creates a new Editor window as well as write a new file in the corresponding folder,
+ * depending on whether the file created is an 'essay' or 'project'.
+ *
+ * @param fileType - Type of the file that is trying to be created.
+ * @returns {Promise<*>} - Returns object of file, includes key, fileType, and fileName.
  */
 export async function newTechFolioWindow({ fileType }) {
   let fileName = null;
@@ -208,6 +225,14 @@ export async function newTechFolioWindow({ fileType }) {
   return fileObject;
 }
 
+/**
+ *
+ * Promises to prompt user to make sure if they want to delete a file, and if so, removes the file from mainStore.
+ *
+ * @param fileType - Type of the file that is trying to be deleted
+ * @param fileName - Name of the file to delete
+ * @returns {Promise} - Promise to delete file
+ */
 export function deleteFile(fileType, fileName) {
   return new Promise((resolve) => {
     if (process && process.type === 'renderer') {
