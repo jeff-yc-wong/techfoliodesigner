@@ -4,7 +4,6 @@ import { Table, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { createTechFolioWindow, deleteFile, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import { setFileData } from '../redux/actions';
-import mainStore from '../redux/mainstore';
 
 class FileExplorer extends React.Component {
   constructor(props) {
@@ -24,12 +23,16 @@ class FileExplorer extends React.Component {
   newClick(fileType) {
     // TODO create a way to update state when creating new file
     const promise = new Promise((resolve) => {
-      newTechFolioWindow(fileType);
-      resolve();
+      const newFile = newTechFolioWindow(fileType);
+      resolve(newFile);
     });
 
-    promise.then(() => {
+    promise.then((file) => {
+
+      setFileData(this.state.fileData);
+      this.state.fileData.push(file);
       this.setState({ fileData: this.state.fileData });
+      this.forceUpdate();
     });
   }
 
@@ -60,6 +63,7 @@ class FileExplorer extends React.Component {
   // TODO make 'commit' column functional
   render() {
     const fileData = this.state.fileData;
+    console.log(fileData);
     return (
       <div>
         <Table unstackable striped sortable basic>
@@ -105,6 +109,8 @@ class FileExplorer extends React.Component {
     );
   }
 }
+
+// forceUpdate
 
 FileExplorer.defaultProps = {
   fileData: [],

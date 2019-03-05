@@ -158,6 +158,10 @@ Essay goes here.`;
  */
 export async function newTechFolioWindow({ fileType }) {
   let fileName = null;
+  let fileObject = {
+    fileName: null,
+    fileType: null,
+  };
   try {
     fileName = await prompt({
       title: `Create new ${fileType.slice(0, -1)}`,
@@ -197,7 +201,11 @@ export async function newTechFolioWindow({ fileType }) {
   });
   promise.then(() => mainStore.dispatch(addFileData(fileName)));
 
-  return null;
+  let key;
+  if (fileType === 'essays') { key = `essay-${fileName}`; } else { key = `project-${fileName}`; }
+
+  fileObject = { key, fileName, fileType };
+  return fileObject;
 }
 
 export function deleteFile(fileType, fileName) {
