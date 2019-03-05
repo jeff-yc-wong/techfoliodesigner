@@ -378,11 +378,17 @@ export default class TechFolioEditor extends React.Component {
 
   tfBioLint() {
     const results = new Map();
-    // const lineByLine = this.state.value.split(/\n+/);
+    let missingSectionResults = '';
+    let bio;
+
+    try {
+      bio = JSON.parse(this.state.value);
+    } catch (e) {
+      dialog.showErrorBox('JSON File is not in a valid format!', 'There is at least one JSON error!');
+    }
 
     results.set('profileNotSquare', false);
-    const bio = JSON.parse(this.state.value);
-    console.log(bio);
+    // console.log(bio);
 
     const img = new Image(); // eslint-disable-line
     img.src = bio.basics.picture;
@@ -391,18 +397,12 @@ export default class TechFolioEditor extends React.Component {
     };
 
     for (const key in bio) {  // eslint-disable-line
-      // if (bio.hasOwnProperty(key) && typeof bio[key] === 'object') {
-      // console.log(bio[key]);
-      // console.log(bio[key].value);
       if (this.isEmpty(bio[key])) {
-        console.log(`"${key}" section is missing.`);
+        console.log(`"${key}" section is empty.`);
+        missingSectionResults = missingSectionResults.concat(`${key} `);
       }
-      // } else {
-      //   console.log(bio[key]);
-      // }
-      // console.log(x.value);
     }
-
+    results.set('missingInformation', missingSectionResults);
 
     // for (let i = 1; i < lineByLine.length - 1; i += 1) {
     //   // Check if profile picture is square
@@ -429,13 +429,15 @@ export default class TechFolioEditor extends React.Component {
     let error = '';
     let errorCount = 0;
     let calledMessage = '\nIt is in your best interest to correct these errors.';
+    console.log(results);
     if (isBio) {
       if (results.get('profileNotSquare') === true) {
         error = error.concat(`${errorCount + 1}. Profile image is not square.\n`);
         errorCount += 1;
       }
-      if (results.get('missingInformation') === true) {
-        error = error.concat(`${errorCount + 1}. Missing information. A section of your resume has not been filled out.\n`);
+      if (results.get('missingInformation') !== '') {
+        error = error.concat(`${errorCount + 1}. These sections of your bio have not been filled out: 
+        ${results.get('missingInformation')}\n`);
         errorCount += 1;
       }
     } else {
@@ -501,9 +503,9 @@ export default class TechFolioEditor extends React.Component {
     }
   }
 
-  isEmpty(Object){
-    for(const key in Object){
-      if(Object.hasOwnProperty(key)) return false;
+  isEmpty(Object) {
+    for (const key in Object) {
+      if (Object.hasOwnProperty(key)) return false;
     }
     return true;
   }
