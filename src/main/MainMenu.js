@@ -6,6 +6,7 @@ import { createImgEditorWindow } from '../imgeditor/ImgEditorWindow';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
+import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
@@ -168,6 +169,19 @@ function buildConfigMenu(template) {
   template[indexOfMenuItem(template, 'Config')].submenu = buildConfigSubMenu();
 }
 
+function buildFileData(techFolioFiles) {
+  const projectFiles = techFolioFiles.projectFileNames();
+  const essayFiles = techFolioFiles.essayFileNames();
+  const projectObjects = projectFiles.map((project) => {
+    return ({ key: `project-${project}`, fileName: project, fileType: 'projects' });
+  });
+  const essayObjects = essayFiles.map((essay) => {
+    return ({ key: `essay-${essay}`, fileName: essay, fileType: 'essays' });
+  });
+  const fileData = projectObjects.concat(essayObjects);
+  mainStore.dispatch(action.setFileData(fileData));
+}
+
 function buildEditMenu(template) {
   const editSubMenu = [
     {
@@ -252,6 +266,7 @@ function buildMainMenu() {
       buildProjectsMenu(template, techFolioFiles);
       buildEssaysMenu(template, techFolioFiles);
       buildBioMenu(template);
+      buildFileData(techFolioFiles);
     }
   }
   const menu = Menu.buildFromTemplate(template);
@@ -259,4 +274,3 @@ function buildMainMenu() {
 }
 
 export default buildMainMenu;
-export const imgFile = imgPath;
