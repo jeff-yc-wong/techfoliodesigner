@@ -50,15 +50,15 @@ export default class SimpleBioEditorTabPreview extends React.Component {
         <div style={{ marginBottom: '20px' }} className="ui stackable grid container">
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">Interests</h3>
+              {this.props.bio.interests ? <h3 className="ui left aligned header no-bottom">Interests</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
               <p className="ui no-bottom">
                 {_.map(this.props.bio.interests, (entry, index) => (
                     index === 0 ?
-                  `${entry.name}${entry.keywords[0] ? ` (${_.map(entry.keywords, keyword => `${keyword}`)})` : ''}` :
-                  `, ${entry.name}${entry.keywords[0] ? ` (${_.map(entry.keywords, keyword => `${keyword}`)})` : ''}`
+                        `${entry.name}${entry.keywords[0] ? ` (${_.map(entry.keywords, keyword => `${keyword}`)})` : ''}` :
+                        `, ${entry.name}${entry.keywords[0] ? ` (${_.map(entry.keywords, keyword => `${keyword}`)})` : ''}`
                 ))}
               </p>
             </div>
@@ -66,7 +66,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
 
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">Skills</h3>
+              {this.props.bio.skills ? <h3 className="ui left aligned header no-bottom">Skills</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
@@ -81,7 +81,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
 
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">Education</h3>
+              {this.props.bio.education ? <h3 className="ui left aligned header no-bottom">Education</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
@@ -109,7 +109,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
 
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">Work</h3>
+              {this.props.bio.work ? <h3 className="ui left aligned header no-bottom">Work</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
@@ -140,7 +140,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
 
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">Activities</h3>
+              {this.props.bio.volunteer ? <h3 className="ui left aligned header no-bottom">Activities</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
@@ -174,7 +174,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
 
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">Awards</h3>
+              {this.props.bio.awards ? <h3 className="ui left aligned header no-bottom">Awards</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
@@ -193,7 +193,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
 
           <div className="row">
             <div className="two wide column">
-              <h3 className="ui left aligned header no-bottom">References</h3>
+              {this.props.bio.references ? <h3 className="ui left aligned header no-bottom">References</h3> : '' }
             </div>
 
             <div className="fourteen wide column no-bottom">
