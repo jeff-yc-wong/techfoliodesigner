@@ -28,7 +28,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     const window = new BrowserWindow({
       x: techFolioWindowManager.getXOffset(),
       y: techFolioWindowManager.getYOffset(),
-      width: 750,  //1080 window.screen.width
+      width: 750,
       maxWidth: 1400,
       height: 840,
       title: 'TechFolio Designer',
