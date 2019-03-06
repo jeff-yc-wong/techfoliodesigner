@@ -38,28 +38,14 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     currWindow.show();
   } else if (fs.existsSync(filePath)) {
     // Create the browser window.
-    let window;
-    if (isRenderer) {
-      const RemoteBrowserWindow = electron.remote.BrowserWindow;
-      window = new RemoteBrowserWindow({
-        x: techFolioWindowManager.getXOffset(),
-        y: techFolioWindowManager.getYOffset(),
-        width: 1080,
-        minWidth: 680,
-        height: 840,
-        title: 'TechFolio Designer',
-      });
-    } else {
-      window = new BrowserWindow({
-        x: techFolioWindowManager.getXOffset(),
-        y: techFolioWindowManager.getYOffset(),
-        width: 1080,
-        minWidth: 680,
-        height: 840,
-        title: 'TechFolio Designer',
-      });
-    }
-
+    const window = new BrowserWindow({
+      x: techFolioWindowManager.getXOffset(),
+      y: techFolioWindowManager.getYOffset(),
+      width: 750,
+      maxWidth: 1400,
+      height: 840,
+      title: 'TechFolio Designer',
+    });
 
     // Tell the window manager that this window has been created.
     techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');

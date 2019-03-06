@@ -121,17 +121,9 @@ export default class TechFolioEditor extends React.Component {
   }
 
   handleClick() {
-    const titleBarHeight = 22;
     this.setState(({
       previewMode: !this.state.previewMode,
     }));
-    if (this.state.previewMode) {
-      // preview mode is on, which means it was just toggled off
-      this.window.setSize(this.codeMirrorDiv.offsetWidth, this.codeMirrorDiv.offsetHeight + titleBarHeight);
-    } else {
-      // preview mode is off, which means it was just toggled on
-      this.window.setSize(this.codeMirrorDiv.offsetWidth + 700, this.codeMirrorDiv.offsetHeight + titleBarHeight);
-    }
   }
 
   /**
@@ -622,7 +614,7 @@ export default class TechFolioEditor extends React.Component {
     let editorJSX;
     // preview conditionally rendered
     if (this.state.previewMode) {
-      const codeMirrorWidth = this.codeMirrorDiv.offsetWidth;
+      const codeMirrorWidth = this.codeMirrorDiv.offsetWidth / 2;
       let markdown = this.state.value;
       const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
       markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');

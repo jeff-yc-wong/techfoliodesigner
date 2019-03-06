@@ -9,6 +9,7 @@ import SimpleBioEditorTabSkills from './SimpleBioEditorTabSkills';
 import SimpleBioEditorTabInterests from './SimpleBioEditorTabInterests';
 import SimpleBioEditorTabAwards from './SimpleBioEditorTabAwards';
 import SimpleBioEditorTabActivities from './SimpleBioEditorTabActivities';
+import SimpleBioEditorTabPreview from './SimpleBioEditorTabPreview';
 import { getBioAsJson } from './SimpleBioEditorWindow';
 
 
@@ -36,6 +37,7 @@ export default class SimpleBioEditor extends React.Component {
       { menuItem: 'Interests', render: () => <Tab.Pane><SimpleBioEditorTabInterests directory={this.props.directory} bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Awards', render: () => <Tab.Pane><SimpleBioEditorTabAwards directory={this.props.directory} bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
       { menuItem: 'Activities', render: () => <Tab.Pane><SimpleBioEditorTabActivities directory={this.props.directory} bio={this.state.bio} handleBioChange={this.handleBioChange} /></Tab.Pane> },
+      { menuItem: 'Preview', render: () => <Tab.Pane><SimpleBioEditorTabPreview directory={this.props.directory} bio={this.state.bio} /></Tab.Pane> },
     ];
     return (
       <div>
