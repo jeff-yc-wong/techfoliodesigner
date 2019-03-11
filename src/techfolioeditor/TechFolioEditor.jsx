@@ -173,7 +173,8 @@ export default class TechFolioEditor extends React.Component {
             if (isValidYAML) {
               try {
                 yamlFront.loadFront(this.state.value);
-                mdLintOptions.strings.mdString = this.state.value;
+                const actualText = this.state.value.split('---');
+                mdLintOptions.strings.mdString = actualText[2];
                 const mdResult = markdownlint.sync(mdLintOptions);
                 if (mdResult.mdString.length === 0) {
                   // Result is correct, no errors
