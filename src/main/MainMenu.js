@@ -11,6 +11,8 @@ import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 import buildHelpSubMenu from './HelpMenu';
+import path from 'path';
+import moment from 'moment';
 
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -112,20 +114,7 @@ function removeImage() {
 
 function cropImage() {
   createImgEditorWindow({ fileType: 'images' });
-  // dialog.showOpenDialog({
-  //   title: 'Select an Image',
-  //   properties: ['openFile'],
-  //   defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
-  //   buttonLabel: 'Crop',
-  // }, (fullPath) => {
-  //   if (fullPath === undefined) {
-  //     dialog.showErrorBox('Error', 'No image selected.');
-  //   } else {
-  //     // let fileName = fullPath.toString();
-  //     // fileName = fileName.split('/');
-  //     // createImgEditorWindow({ fileType: 'images', filename: fileName });
-  //   }
-  // });
+
 }
 
 function buildProjectsMenu(template, techFolioFiles) {
@@ -173,10 +162,13 @@ function buildFileData(techFolioFiles) {
   const projectFiles = techFolioFiles.projectFileNames();
   const essayFiles = techFolioFiles.essayFileNames();
   const projectObjects = projectFiles.map((project) => {
-    return ({ key: `project-${project}`, fileName: project, fileType: 'projects' });
+    // const modified = fs.stat(mainStore.getState().dir.concat(`/projects/${project}`));
+    const mtime = fs.statSync(mainStore.getState().dir.concat(`/projects/${project}`)).mtime;
+    return ({ key: `project-${project}`, fileName: project, fileType: 'projects', modified: moment(mtime).fromNow() });
   });
   const essayObjects = essayFiles.map((essay) => {
-    return ({ key: `essay-${essay}`, fileName: essay, fileType: 'essays' });
+    const mtime = fs.statSync(mainStore.getState().dir.concat(`/essays/${essay}`)).mtime;
+    return ({ key: `essay-${essay}`, fileName: essay, fileType: 'essays', modified: moment(mtime).fromNow() });
   });
   const fileData = projectObjects.concat(essayObjects);
   mainStore.dispatch(action.setFileData(fileData));
