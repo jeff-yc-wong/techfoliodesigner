@@ -211,11 +211,7 @@ export async function newTechFolioWindow({ fileType }) {
 
   let key;
   if (fileType === 'essays') { key = `essay-${fileName}`; } else { key = `project-${fileName}`; }
-  const day = new Date().getDate();
-  const month = new Date().getMonth();
-  const hour = new Date().getHours();
-  const minute = new Date().getMinutes();
-  const modified = `${month}/${day} ${hour}:${minute}`;
+  const modified = moment().fromNow();
   fileObject = { key, fileName, fileType, modified };
 
   const promise = new Promise((resolve) => {

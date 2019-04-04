@@ -68,7 +68,6 @@ class FileExplorer extends React.Component {
     return -1; // this should never happen
   }
 
-  // TODO make 'commit' column functional
   render() {
     const fileData = this.state.fileData;
     console.log(fileData);
@@ -121,8 +120,6 @@ class FileExplorer extends React.Component {
     );
   }
 }
-
-// forceUpdate
 
 FileExplorer.defaultProps = {
   fileData: [],
