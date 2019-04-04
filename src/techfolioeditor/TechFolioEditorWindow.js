@@ -164,6 +164,7 @@ export async function newTechFolioWindow({ fileType }) {
   let fileObject = {
     fileName: null,
     fileType: null,
+    modified: null,
   };
   try {
     fileName = await prompt({
@@ -193,6 +194,12 @@ export async function newTechFolioWindow({ fileType }) {
   const directory = mainStore.getState().dir;
   const filePath = path.join(directory, fileType, fileName);
   const techFolioFiles = new TechFolioFiles(directory);
+
+  let key;
+  if (fileType === 'essays') { key = `essay-${fileName}`; } else { key = `project-${fileName}`; }
+  const modified = moment().fromNow();
+  fileObject = { key, fileName, fileType, modified };
+
   const promise = new Promise((resolve) => {
     techFolioFiles.writeFile(fileType, fileName, (fileType === 'essays') ? templateEssay : templateProject,
         () => {
@@ -202,12 +209,8 @@ export async function newTechFolioWindow({ fileType }) {
         });
     resolve();
   });
-  promise.then(() => mainStore.dispatch(addFileData(fileName)));
+  promise.then(() => mainStore.dispatch(addFileData(fileObject)));
 
-  let key;
-  if (fileType === 'essays') { key = `essay-${fileName}`; } else { key = `project-${fileName}`; }
-
-  fileObject = { key, fileName, fileType };
   return fileObject;
 }
 

@@ -54,6 +54,10 @@ class TechFolioFiles {
     return _.filter(fs.readdirSync(path.join(this.directory, 'projects')), fileName => fileName.endsWith('.md'));
   }
 
+  /**
+   *
+   * @returns An array of all images in the images/ directory.
+   */
   imageNames() {
     return _.filter(fs.readdirSync(path.join(this.directory, 'images')), fileName => fileName.endsWith('.png'));
   }
