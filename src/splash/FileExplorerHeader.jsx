@@ -7,6 +7,7 @@ import mainStore from '../redux/mainstore';
 import * as action from '../redux/actions';
 import { getBioAsJson } from '../simplebioeditor/SimpleBioEditorWindow';
 
+
 class FileExplorerHeader extends React.Component {
 
   constructor(props) {
@@ -43,21 +44,21 @@ class FileExplorerHeader extends React.Component {
           <Table.Row>
             <Table.HeaderCell
               textAlign={'center'}
+              width={2}
+              sorted={this.props.column === 'type' ? this.props.direction : null}
+              onClick={() => this.handleSort('type')}
+            >
+              Type
+            </Table.HeaderCell>
+            <Table.HeaderCell
+              textAlign={'center'}
               width={6}
               sorted={this.props.column === 'name' ? this.props.direction : null}
               onClick={() => this.handleSort('name')}
             >
               File Name
             </Table.HeaderCell>
-            <Table.HeaderCell
-              textAlign={'center'}
-              width={2}
-              sorted={this.props.column === 'type' ? this.props.direction : null}
 
-              onClick={() => this.handleSort('type')}
-            >
-              Type
-            </Table.HeaderCell>
             <Table.HeaderCell textAlign={'center'} width={2}>
               Edit
             </Table.HeaderCell>
@@ -70,7 +71,7 @@ class FileExplorerHeader extends React.Component {
               sorted={this.props.column === 'commit' ? this.props.direction : null}
               onClick={() => this.handleSort('commit')}
             >
-              Committed
+              Modified
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
