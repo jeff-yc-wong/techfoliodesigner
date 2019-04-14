@@ -581,6 +581,11 @@ export default class TechFolioEditor extends React.Component {
             stream.next();
           }
 
+          const value = parseInt(word, 10);
+          if (!isNaN(value)) {
+            return null;
+          }
+
           if (typo && !typo.check(word)) {
           // console.log(word);
             return 'spell-error'; // CSS class: cm-spell-error
