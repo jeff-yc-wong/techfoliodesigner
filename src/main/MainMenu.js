@@ -6,10 +6,13 @@ import { createImgEditorWindow } from '../imgeditor/ImgEditorWindow';
 import createSimpleBioEditorWindow from '../simplebioeditor/SimpleBioEditorWindow';
 import makeMenuTemplate from './MenuTemplate';
 import buildConfigSubMenu from './ConfigSubMenu';
+import * as action from '../redux/actions';
 import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 import buildHelpSubMenu from './HelpMenu';
+import path from 'path';
+import moment from 'moment';
 
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -111,20 +114,7 @@ function removeImage() {
 
 function cropImage() {
   createImgEditorWindow({ fileType: 'images' });
-  // dialog.showOpenDialog({
-  //   title: 'Select an Image',
-  //   properties: ['openFile'],
-  //   defaultPath: techFolioGitHubManager.getSavedState().dir.concat('/images/'),
-  //   buttonLabel: 'Crop',
-  // }, (fullPath) => {
-  //   if (fullPath === undefined) {
-  //     dialog.showErrorBox('Error', 'No image selected.');
-  //   } else {
-  //     // let fileName = fullPath.toString();
-  //     // fileName = fileName.split('/');
-  //     // createImgEditorWindow({ fileType: 'images', filename: fileName });
-  //   }
-  // });
+
 }
 
 function buildProjectsMenu(template, techFolioFiles) {
@@ -166,6 +156,22 @@ function buildBioMenu(template) {
 
 function buildConfigMenu(template) {
   template[indexOfMenuItem(template, 'Config')].submenu = buildConfigSubMenu();
+}
+
+function buildFileData(techFolioFiles) {
+  const projectFiles = techFolioFiles.projectFileNames();
+  const essayFiles = techFolioFiles.essayFileNames();
+  const projectObjects = projectFiles.map((project) => {
+    // const modified = fs.stat(mainStore.getState().dir.concat(`/projects/${project}`));
+    const mtime = fs.statSync(mainStore.getState().dir.concat(`/projects/${project}`)).mtime;
+    return ({ key: `project-${project}`, fileName: project, fileType: 'projects', modified: moment(mtime).fromNow() });
+  });
+  const essayObjects = essayFiles.map((essay) => {
+    const mtime = fs.statSync(mainStore.getState().dir.concat(`/essays/${essay}`)).mtime;
+    return ({ key: `essay-${essay}`, fileName: essay, fileType: 'essays', modified: moment(mtime).fromNow() });
+  });
+  const fileData = projectObjects.concat(essayObjects);
+  mainStore.dispatch(action.setFileData(fileData));
 }
 
 function buildEditMenu(template) {
@@ -252,6 +258,7 @@ function buildMainMenu() {
       buildProjectsMenu(template, techFolioFiles);
       buildEssaysMenu(template, techFolioFiles);
       buildBioMenu(template);
+      buildFileData(techFolioFiles);
     }
   }
   const menu = Menu.buildFromTemplate(template);
@@ -259,4 +266,3 @@ function buildMainMenu() {
 }
 
 export default buildMainMenu;
-export const imgFile = imgPath;

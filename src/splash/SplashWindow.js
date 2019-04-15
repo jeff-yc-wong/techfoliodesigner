@@ -1,11 +1,11 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 
 async function createSplashWindow(path) {
   // Create the browser window.
   const window = new BrowserWindow({
-    width: 700,
-    height: 600,
+    width: 1200,
+    height: 720,
     title: 'TechFolio Designer',
 
     icon: path.join(__dirname, 'assets/icons/png/64x64.png'),

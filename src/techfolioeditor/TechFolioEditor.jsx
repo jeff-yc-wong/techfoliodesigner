@@ -18,6 +18,8 @@ const md = require('markdown-it')({
   linkify: true,
   typographer: true,
 });
+// const Jimp = require('jimp');
+const sizeOf = require('image-size');
 
 const mdLintOptions = {
   'strings': { // eslint-disable-line
@@ -99,7 +101,6 @@ export default class TechFolioEditor extends React.Component {
     }
     this.options.gutters = ['note-gutter', 'CodeMirror-lint-markers'];
     this.options.lint = true;
-
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -120,19 +121,14 @@ export default class TechFolioEditor extends React.Component {
   }
 
   handleClick() {
-    const titleBarHeight = 22;
     this.setState(({
       previewMode: !this.state.previewMode,
     }));
-    if (this.state.previewMode) {
-      // preview mode is on, which means it was just toggled off
-      this.window.setSize(this.codeMirrorDiv.offsetWidth, this.codeMirrorDiv.offsetHeight + titleBarHeight);
-    } else {
-      // preview mode is off, which means it was just toggled on
-      this.window.setSize(this.codeMirrorDiv.offsetWidth + 700, this.codeMirrorDiv.offsetHeight + titleBarHeight);
-    }
   }
 
+  /**
+   * Saves the current file that is open, calling various lints to check if the file is formatted correctly.
+   */
   saveFile() {
     // console.log('saveFile called'); //eslint-disable-line
     // console.log(this.filePath);
@@ -177,7 +173,8 @@ export default class TechFolioEditor extends React.Component {
             if (isValidYAML) {
               try {
                 yamlFront.loadFront(this.state.value);
-                mdLintOptions.strings.mdString = this.state.value;
+                const actualText = this.state.value.split('---');
+                mdLintOptions.strings.mdString = actualText[2];
                 const mdResult = markdownlint.sync(mdLintOptions);
                 if (mdResult.mdString.length === 0) {
                   // Result is correct, no errors
@@ -214,13 +211,26 @@ export default class TechFolioEditor extends React.Component {
     });
   }
 
+  /**
+   * Helper function to call tfLint or tfBioLint depending on if the file is a project/essay, or bio.json, respectively.
+   * @param calledBySave Let the function know to change the results printing based on how tfLint was called
+   */
   callTfLint(calledBySave) {
+    let results = new Map();
+    let isBio = false;
     if (this.mode !== 'application/json') {
-      const results = this.tfLint();
-      this.printResultsBox(results, calledBySave);
+      results = this.tfLint();
+    } else {
+      results = this.tfBioLint();
+      isBio = true;
     }
+    this.printResultsBox(results, calledBySave, isBio);
   }
 
+  /**
+   * Basic tfLint for projects/essays. Checks a variety of factors throughout the file to ensure high quality write-ups.
+   * @returns {Map} Returns a results mapping that is used to print the results box.
+   */
   tfLint() {
     const results = new Map();
     const actualText = this.state.value.split('---');
@@ -247,24 +257,64 @@ export default class TechFolioEditor extends React.Component {
       results.set('singleParagraph', true);
     } else results.set('singleParagraph', false);
 
+    // Check img html
     // Check if img html uses ui image class
     // Sets badImg value to line numbers of errors over true/false
-    let lineNumberImage = '';
+    let lineNumberImageUi = '';
+    let lineNumberImagePx = '';
+    let lineNumberImageSize = '';
     for (let i = 0; i < lineByLine.length; i += 1) {
       if (lineByLine[i].includes('<img')) {
         if (!lineByLine[i].includes('ui image')) {
-          lineNumberImage = lineNumberImage.concat(` ${(i + yaml.length).toString()}`);
+          lineNumberImageUi = lineNumberImageUi.concat(` ${(i + yaml.length).toString()}`);
+        }
+        // Check image size and other stuff
+        // Isolate image path and join it to base directory to get total image path
+        let imagePath = lineByLine[i].match(/<img.*>/).input;
+        imagePath = imagePath.match(/src=".*images.*"/)[0];
+        imagePath = imagePath.split('"');
+        imagePath = imagePath[1];
+        imagePath = imagePath.substring(2);
+        imagePath = path.join(this.props.directory, imagePath);
+        // console.log(imagePath);
+
+        // todo Can I extract image properties from the function
+          // todo Use different+simpler npm package probably might be easier
+        // Use Jimp to open image and pull data from it using given path
+        // Jimp.read(imagePath, (err, image) => {
+        //   if (err) throw err;
+        //   // console.log(image.bitmap.height);
+        //   // console.log(image.bitmap.width);
+        //
+        //   if (image.bitmap.height < 200 && image.bitmap.width < 200) {
+        //     lineNumberImagePx = lineNumberImagePx.concat(` ${(i + yaml.length).toString()}`);
+        //   }
+        // });
+
+        const imageDimensions = sizeOf(imagePath);
+        // console.log(imageDimensions);
+
+        if (imageDimensions.height < 200 && imageDimensions.width < 200) {
+          lineNumberImagePx = lineNumberImagePx.concat(` ${(i + yaml.length).toString()}`);
+          console.log(lineNumberImagePx);
+        }
+
+        const imageStats = fs.statSync(imagePath);
+        if (imageStats.size > 500000) {
+          lineNumberImageSize = lineNumberImageSize.concat(` ${(i + yaml.length).toString()}`);
         }
       }
     }
-    results.set('badImg', lineNumberImage);
+    results.set('badImgUi', lineNumberImageUi);
+    results.set('badImgPx', lineNumberImagePx);
+    results.set('badImgSize', lineNumberImageSize);
 
     // Check if URL used proper MD format
     // Sets badUrl value to line numbers of errors over true/false
     let lineNumberUrl = '';
     for (let i = 0; i < lineByLine.length; i += 1) {
       if (lineByLine[i].includes('http://') || lineByLine[i].includes('https://')) {
-        if (!lineByLine[i].match(/.*\[.+\]\(https?:\/\/.*\/?\).*/)) {
+        if (!lineByLine[i].match(/.*\[.+]\(https?:\/\/.*\/?\).*/)) {
           lineNumberUrl = lineNumberUrl.concat(` ${(i + yaml.length).toString()}`);
         }
       }
@@ -284,13 +334,34 @@ export default class TechFolioEditor extends React.Component {
     results.set('dateNotProperFormat', true);
     let type = '';
     for (let i = 1; i < yaml.length - 1; i += 1) {
-      // Check if title contains the word "reflect"
+      // Check type (essay or project)
       if (yaml[i].includes('type:') && yaml[i].includes('essay')) {
         type = 'essay';
+      } else {
+        type = 'project';
       }
+
+        // Check if title contains the word "reflect"
       if (type === 'essay' && yaml[i].includes('title:') && yaml[i].toUpperCase().includes('reflect'.toUpperCase())) {
         results.set('titleContainsReflect', true);
       }
+
+      // Check if project image is square
+      if (type === 'project' && yaml[i].includes('image:')) {
+        // Get image path
+        let imagePath = yaml[i];
+        imagePath = imagePath.split(' ');
+        imagePath = imagePath[1];
+        imagePath = `/${imagePath}`;
+        imagePath = path.join(this.props.directory, imagePath);
+
+        const imageDimensions = sizeOf(imagePath);
+
+        if (imageDimensions.height !== imageDimensions.width) {
+          results.set('imageNotSquare', true);
+        }
+      }
+
       // Check if title is surrounded by quotes
       if (yaml[i].includes('title')) {
         if (yaml[i].match(/title: ".*"/)) {
@@ -305,68 +376,123 @@ export default class TechFolioEditor extends React.Component {
         }
       }
     }
-
-    // Check if title contains the word "reflect"
-    // results.set('titleContainsReflect', false);
-    // if (yaml[2].includes('essay')) {
-    //   if (yaml[3].toUpperCase().includes('reflect'.toUpperCase())) {
-    //     results.set('titleContainsReflect', true);
-    //   }
-    // }
-
-    // Check if title is in quotes
-    // yaml[]
-
-    // Check if date is YYYY-MM-DD format
-
-    // console.log(results);
     return results;
   }
 
-  printResultsBox(results, calledBySave) { // eslint-disable-line class-methods-use-this
+  /**
+   * The version of tfLint that checks the bio.json for any errors.
+   * @returns {Map} Returns a results mapping that is used to print the results box.
+   */
+  tfBioLint() {
+    const results = new Map();
+    let missingSectionResults = '';
+    let bio;
+
+    try {
+      bio = JSON.parse(this.state.value);
+    } catch (e) {
+      dialog.showErrorBox('JSON File is not in a valid format!', 'There is at least one JSON error!');
+    }
+
+    results.set('profileNotSquare', false);
+    // console.log(bio);
+
+    const img = new Image(); // eslint-disable-line
+    img.src = bio.basics.picture;
+    img.onload = function () {
+      if (this.width !== this.height) results.get('profileNotSquare', true);
+    };
+
+    for (const key in bio) {  // eslint-disable-line
+      console.log(bio[key]);
+      for (const subKey in bio[key]) {  // eslint-disable-line
+        console.log(bio[key][subKey]);
+        if (this.isEmpty(bio[key][subKey])) {
+          missingSectionResults = missingSectionResults.concat(`${subKey} `);
+        }
+      }
+    }
+    results.set('missingInformation', missingSectionResults);
+
+    return results;
+  }
+
+  /**
+   * Prints the results from tfLint in a dialog box.
+   * @param results  Results mapping from tfLint.
+   * @param calledBySave  Whether the initial call to tfLint was made by saving or not determines the text.
+   * @param isBio  Whether the initial call was on a bio.json or not determines how to check the results for printing.
+   */
+  printResultsBox(results, calledBySave, isBio) { // eslint-disable-line class-methods-use-this
     let error = '';
     let errorCount = 0;
     let calledMessage = '\nIt is in your best interest to correct these errors.';
-    if (results.get('lessThan50Words') === true) {
-      error = error.concat(`${errorCount + 1}. Word Count is less than 50.\n`);
-      errorCount += 1;
-    }
-    if (results.get('singleParagraph') === true) {
-      error = error.concat(`${errorCount + 1}. Only a single paragraph.\n`);
-      errorCount += 1;
-    }
-    if (results.get('badUrl') !== '') {
-      error = error.concat((errorCount + 1) + '. Contains a URL not in Markdown format. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badUrl') + '.\n');
-      errorCount += 1;
-    }
-    if (results.get('badImg') !== '') {
-      error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
-          'Error occurs on line(s)' + results.get('badImg') + '.\n');
-      errorCount += 1;
-    }
-    if (results.get('noSubsection') === true) {
-      error = error.concat(`${errorCount + 1}. Does not contain a subsection header.\n`);
-      errorCount += 1;
-    }
-    if (results.get('titleContainsReflect') === true) {
-      error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
-      errorCount += 1;
-    }
-      // results.set('titleMissingQuotes', true);
-      // results.set('dateNotProperFormat', true);
-    if (results.get('titleMissingQuotes') === true) {
-      error = error.concat(`${errorCount + 1}. Title is missing quotes around it.\n`);
-      errorCount += 1;
-    }
-    if (results.get('dateNotProperFormat') === true) {
-      error = error.concat(`${errorCount + 1}. Date is not in YYYY-MM-DD format.\n`);
-      errorCount += 1;
+    console.log(results);
+    if (isBio) {
+      if (results.get('profileNotSquare') === true) {
+        error = error.concat(`${errorCount + 1}. Profile image is not square.\n`);
+        errorCount += 1;
+      }
+      if (results.get('missingInformation') !== '') {
+        error = error.concat(`${errorCount + 1}. These sections of your bio have not been filled out: 
+        ${results.get('missingInformation')}\n`);
+        errorCount += 1;
+      }
+    } else {
+      if (results.get('lessThan50Words') === true) {
+        error = error.concat(`${errorCount + 1}. Word Count is less than 50.\n`);
+        errorCount += 1;
+      }
+      if (results.get('singleParagraph') === true) {
+        error = error.concat(`${errorCount + 1}. Only a single paragraph.\n`);
+        errorCount += 1;
+      }
+      if (results.get('badUrl') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains a URL not in Markdown format. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badUrl') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('badImgUi') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains an img tag without the responsive ui image class. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badImgUi') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('badImgPx') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains an image that is smaller than 200 x 200 px. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badImgPx') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('badImgSize') !== '') {
+            error = error.concat((errorCount + 1) + '. Contains an image that is larger than 500kb. ' + // eslint-disable-line
+                'Error occurs on line(s)' + results.get('badImgSize') + '.\n');
+        errorCount += 1;
+      }
+      if (results.get('imageNotSquare') === true) {
+        error = error.concat(`${errorCount + 1}. Project image is not square.\n`);
+        errorCount += 1;
+      }
+      if (results.get('noSubsection') === true) {
+        error = error.concat(`${errorCount + 1}. Does not contain a subsection header.\n`);
+        errorCount += 1;
+      }
+      if (results.get('titleContainsReflect') === true) {
+            error = error.concat(`${errorCount + 1}. Title contains the string "reflect". Consider something more original!\n`); // eslint-disable-line
+        errorCount += 1;
+      }
+      if (results.get('titleMissingQuotes') === true) {
+        error = error.concat(`${errorCount + 1}. Title is missing quotes around it.\n`);
+        errorCount += 1;
+      }
+      if (results.get('dateNotProperFormat') === true) {
+        error = error.concat(`${errorCount + 1}. Date is not in YYYY-MM-DD format.\n`);
+        errorCount += 1;
+      }
     }
     if (calledBySave) {
       calledMessage = '\nYour file has been saved anyway, but it is in your best interest to correct these errors.';
     }
     if (error !== '') {
+      console.log(results);
       dialog.showErrorBox('TFLint Results',
             errorCount + ' errors were found in your file.\nTFLint detects the following errors: \n\n' // eslint-disable-line
           + error + calledMessage + ' These errors may interfere with Techfolio Designer\'s preview mode or the quality of your writeup.'); // eslint-disable-line
@@ -375,8 +501,20 @@ export default class TechFolioEditor extends React.Component {
     }
   }
 
+  /**
+   * Helper method to check if an object given is empty (i.e. has no value).
+   * @param Object  Object to check for emptiness
+   * @returns {boolean}  Returns true if empty, false otherwise.
+   */
+  isEmpty(Object) {  // eslint-disable-line
+    for (const key in Object) {  // eslint-disable-line
+      if (Object.hasOwnProperty(key)) return false;  // eslint-disable-line
+    }
+    return true;
+  }
+
   spellCheck() {
-  // Define the new mode
+    // Define the new mode
     let numLoaded = 0;
     let affLoading = false;
     let dicLoading = false;
@@ -477,44 +615,64 @@ export default class TechFolioEditor extends React.Component {
     let editorJSX;
     // preview conditionally rendered
     if (this.state.previewMode) {
-      const codeMirrorWidth = this.codeMirrorDiv.offsetWidth;
+      const codeMirrorWidth = this.codeMirrorDiv.offsetWidth / 2;
       let markdown = this.state.value;
-      const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
-      markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
-
+      if (markdown.match(/---((.|\n)*?)---\n/gi) === null) {
+        dialog.showErrorBox('Preview Error', 'There is nothing to preview!');
+        editorJSX = (
+          <div
+            className="editor"
+            ref={(div) => { this.codeMirrorDiv = div; }}
+          >
+            <CodeMirror
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => { this.instance = editor; }}
+              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+            />
+          </div>);
+      } else {
+        const yaml = markdown.match(/---((.|\n)*?)---\n/gi)[0];
+        markdown = markdown.replace(/---((.|\n)*?)---\n/gi, '');
         // date and title header
-      let title = yaml.match(/title:[^\n]*/g)[0];
-      title = title.replace('title: ', '');
-      let date = yaml.match(/date:[^\n]*/g)[0];
-      date = date.replace('date: ', '');
+        let title = yaml.match(/title:[^\n]*/g)[0];
+        title = title.replace('title: ', '');
+        let date = yaml.match(/date:[^\n]*/g)[0];
+        date = date.replace('date: ', '');
 
-      let finalResult = `<h1>${title}</h1><span>${date}</span><hr>`;
+        let finalResult = `<h1>${title}</h1><span>${date}</span><hr>`;
 
-      const absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
-      markdown = markdown.replace(/src="\.\./gi, `src="${absPath}`);
-      markdown = md.render(markdown);
-      finalResult = finalResult.concat(markdown);
+        const absPath = this.filePath.replace(/github\.io\/.*/, 'github.io');
+        markdown = markdown.replace(/src="\.\./gi, `src="${absPath}`);
+        markdown = md.render(markdown);
+        finalResult = finalResult.concat(markdown);
 
-      editorJSX = (<SplitPane
-        split="vertical"
-        defaultSize={codeMirrorWidth}
-      >
-        <div
-          className="editor"
-          ref={(div) => { this.codeMirrorDiv = div; }}
+        editorJSX = (<SplitPane
+          split="vertical"
+          defaultSize={codeMirrorWidth}
         >
-          <CodeMirror
-            value={this.state.value}
-            onBeforeChange={this.onBeforeChange}
-            options={this.options}
-            editorDidMount={(editor) => { this.instance = editor; }}
-            defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
-          />
-        </div>
-        <div className="scroll">
-          <div className="preview" dangerouslySetInnerHTML={{ __html: finalResult }} />
-        </div>
-      </SplitPane>);
+          <div
+            className="editor"
+            ref={(div) => {
+              this.codeMirrorDiv = div;
+            }}
+          >
+            <CodeMirror
+              value={this.state.value}
+              onBeforeChange={this.onBeforeChange}
+              options={this.options}
+              editorDidMount={(editor) => {
+                this.instance = editor;
+              }}
+              defineMode={{ name: 'spell-check', fn: this.spellCheck() }}
+            />
+          </div>
+          <div className="scroll">
+            <div className="preview" dangerouslySetInnerHTML={{ __html: finalResult }} />
+          </div>
+        </SplitPane>);
+      }
     } else {
       editorJSX = (
         <div

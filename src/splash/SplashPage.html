@@ -5,21 +5,29 @@
   <link rel="stylesheet" href="../../node_modules/semantic-ui-css/semantic.css">
 </head>
 <body>
-<div id="SplashPage"></div>
+<div id="SplashPage" style="position: absolute; width: 49%; left: 0"></div>
+<div id="FileExplorerHeader" style="position: absolute; width: 50%; height: 10%; right: 10px; top: 10px"></div>
+<div id="FileExplorer"
+     style="position: absolute; width: 50%; height: 80%; right: 10px; top: 57px; overflow-y: scroll; overflow-x: hidden"></div>
+<div id="FileExplorerFooter" style="position: absolute; width: 50%; height: 10%; right: 10px; bottom: 0;"></div>
 </body>
 
 <script type="text/jsx">
   import React from 'react';
   import ReactDOM from 'react-dom';
-  import { Provider } from "react-redux"
+  import { Provider } from 'react-redux';
   // import logger from 'redux-logger';
   import { createStore, applyMiddleware } from 'redux';
-  import { Grid, Header } from 'semantic-ui-react';
+  import { Grid, Header, Table } from 'semantic-ui-react';
   import { forwardToMain, replayActionRenderer, getInitialStateRenderer } from 'electron-redux';
   import reducer from '../redux/reducer';
   import SplashTable from './SplashTable';
   import SplashLogs from './SplashLogs';
-  const app = require('electron').remote.app
+  import FileExplorer from './FileExplorer';
+  import FileExplorerHeader from './FileExplorerHeader';
+  import { newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
+
+  const app = require('electron').remote.app;
 
   // Set up renderer-side redux
   const initialState = getInitialStateRenderer();
@@ -30,16 +38,37 @@
   const render = () => {
     ReactDOM.render(
       <Provider store={store}>
-        <Grid style={{padding: "20px"}}>
+        <Grid style={{ padding: '20px' }}>
           <Grid.Column textAlign="center">
             <Header as="h1">Welcome to TechFolio Designer</Header>
-            <SplashTable />
-            <SplashLogs />
+            <SplashTable/>
+            <SplashLogs/>
           </Grid.Column>
         </Grid>
       </Provider>,
       document.getElementById('SplashPage'));
-  }
+
+    ReactDOM.render(
+      <Provider store={store}>
+        <Grid>
+          <Grid.Column textAlign="center">
+            <FileExplorerHeader/>
+          </Grid.Column>
+        </Grid>
+      </Provider>,
+      document.getElementById('FileExplorerHeader'));
+
+    ReactDOM.render(
+      <Provider store={store}>
+        <Grid>
+          <Grid.Column textAlign="center">
+            <FileExplorer/>
+          </Grid.Column>
+        </Grid>
+      </Provider>,
+      document.getElementById('FileExplorer'));
+
+  };
   render();
 </script>
 </html>

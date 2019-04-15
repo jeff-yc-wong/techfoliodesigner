@@ -37,6 +37,24 @@ export function clearAll() {
   return { type: 'CLEAR_ALL', payload: null };
 }
 
+export function setFileData(files) {
+  return { type: 'SET_FILE_DATA', payload: files };
+}
+
+export function addFileData(file) {
+  return { type: 'ADD_FILE_DATA', payload: file };
+}
+
+export function deleteFileData(file) {
+  return { type: 'REMOVE_FILE_DATA', payload: file };
+}
+
+/*
+export function setChanged(changed) {
+  return { type: 'SET_FILE_CHANGED', payload: changed };
+}
+*/
+
 // Overload console.log so that it prints to the Command Log window instead
 // No, never overload console.log.
 // console.log = function (text) { mainStore.dispatch(addLog(text)); };
