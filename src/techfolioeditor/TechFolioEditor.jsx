@@ -86,8 +86,10 @@ export default class TechFolioEditor extends React.Component {
     const extraKeys = {};
     const saveKeyBinding = (process.platform === 'darwin') ? 'Cmd-S' : 'Ctrl-S';
     const lintKeyBinding = (process.platform === 'darwin') ? 'Cmd-L' : 'Ctrl-L';
+    const addToDictionaryKeyBinding = (process.platform === 'darwin') ? 'Cmd-D' : 'Ctrl-D';
     extraKeys[saveKeyBinding] = () => this.saveFile();
     extraKeys[lintKeyBinding] = () => this.callTfLint(false);
+    extraKeys[addToDictionaryKeyBinding] = () => this.addToDictionary('GitHub');
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -586,7 +588,13 @@ export default class TechFolioEditor extends React.Component {
             return null;
           }
 
-          const dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
+          let dictionary = '';
+          try {
+            dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
+          } catch (err) {
+            console.log('No dictionary exists.');
+            fs.writeFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', '');
+          }
           const dictionaryArray = dictionary.split('\n');
 
           for (let i = 0; i < dictionaryArray.length; i += 1) {
@@ -612,8 +620,14 @@ export default class TechFolioEditor extends React.Component {
   }
 
   addToDictionary(word) {
-    const dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
-    dictionary.concat(`${word}\n`);
+    console.log(`Adding ${word}`);
+    let dictionary = '';
+    try {
+      dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
+    } catch (err) {
+      console.log('No Dictionary exists to add to');
+    }
+    dictionary = dictionary.concat(`${word}\n`);
     fs.writeFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', dictionary);
   }
 
