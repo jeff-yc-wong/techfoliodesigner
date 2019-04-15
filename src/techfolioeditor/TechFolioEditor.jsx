@@ -586,6 +586,15 @@ export default class TechFolioEditor extends React.Component {
             return null;
           }
 
+          const dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
+          const dictionaryArray = dictionary.split('\n');
+
+          for (let i = 0; i < dictionaryArray.length; i += 1) {
+            if (dictionaryArray[i] === word) {
+              return null;
+            }
+          }
+
           if (typo && !typo.check(word)) {
           // console.log(word);
             return 'spell-error'; // CSS class: cm-spell-error
@@ -600,6 +609,12 @@ export default class TechFolioEditor extends React.Component {
       // console.log(mode);
       return cm.overlayMode(mode, overlay, true);
     });
+  }
+
+  addToDictionary(word) {
+    const dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
+    dictionary.concat(`${word}\n`);
+    fs.writeFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', dictionary);
   }
 
   render() {
