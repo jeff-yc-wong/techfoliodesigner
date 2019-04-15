@@ -128,6 +128,7 @@ export default class TechFolioEditor extends React.Component {
       previewMode: !this.state.previewMode,
     }));
   }
+
   /**
    * Saves the current file that is open, calling various lints to check if the file is formatted correctly.
    */
@@ -583,8 +584,12 @@ export default class TechFolioEditor extends React.Component {
             stream.next();
           }
 
-          const value = parseInt(word, 10);
-          if (!isNaN(value)) {
+          // const value = parseInt(word, 10);
+          // if (!isNaN(value)) {
+          //   return null;
+          // }
+
+          if (word.match(/\d+\w*/g) !== null || word.match(/\w*\d+/g) !== null) {
             return null;
           }
 
