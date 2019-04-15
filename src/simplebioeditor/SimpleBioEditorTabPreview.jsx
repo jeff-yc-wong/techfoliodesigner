@@ -26,8 +26,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
               {this.props.bio.basics.website.replace(/^https?:\/\//, '')} <br />
               <i className="large mail outline icon " />
               {this.props.bio.basics.email} <br />
-              {_.map(this.props.bio.basics.profiles, entry => (
-                <div>
+              {_.map(this.props.bio.basics.profiles, (entry, i) => (
+                <div key={i}>
                   <i className={`large icon ${entry.network.toLowerCase()}`} />
                   {entry.username}
                 </div>
@@ -70,8 +70,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
             </div>
 
             <div className="fourteen wide column no-bottom">
-              {_.map(this.props.bio.skills, entry => (
-                <p className="ui no-bottom">
+              {_.map(this.props.bio.skills, (entry, i) => (
+                <p key={i} className="ui no-bottom">
                   <b>{entry.name}: </b>
                   {_.map(entry.keywords, (keyword, index) => (index === 0 ? `${keyword}` : `, ${keyword}`))}
                 </p>
@@ -85,14 +85,14 @@ export default class SimpleBioEditorTabPreview extends React.Component {
             </div>
 
             <div className="fourteen wide column no-bottom">
-              {_.map(this.props.bio.education, entry => (
-                <div className="ui grid">
+              {_.map(this.props.bio.education, (entry, i) => (
+                <div key={i} className="ui grid">
                   <div className="twelve wide column no-bottom">
                     <p className="ui no-bottom"><b>{ entry.institution }</b></p>
                     <p className="ui no-bottom">{ entry.studyType }, { entry.area }</p>
                     <ul style={{ margin: '0px' }}>
-                      {_.map(entry.courses, course => (
-                        <li>{ course }</li>
+                      {_.map(entry.courses, (course, index) => (
+                        <li key={index}>{ course }</li>
                       ))}
                     </ul>
                   </div>
@@ -113,8 +113,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
             </div>
 
             <div className="fourteen wide column no-bottom">
-              {_.map(this.props.bio.work, entry => (
-                <div className="ui grid">
+              {_.map(this.props.bio.work, (entry, i) => (
+                <div key={i} className="ui grid">
                   <div className="twelve wide column no-bottom">
                     <p className="ui no-bottom">
                       <b>{ entry.position }, { entry.company }</b> <br />
@@ -122,8 +122,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                       { entry.summary }
                     </p>
                     <ul style={{ margin: '0px' }}>
-                      {_.map(entry.highlights, highlight => (
-                        <li>{ highlight }</li>
+                      {_.map(entry.highlights, (highlight, index) => (
+                        <li key={index}>{ highlight }</li>
                       ))}
                     </ul>
                   </div>
@@ -144,8 +144,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
             </div>
 
             <div className="fourteen wide column no-bottom">
-              {_.map(this.props.bio.volunteer, entry => (
-                <div className="ui grid">
+              {_.map(this.props.bio.volunteer, (entry, i) => (
+                <div key={i} className="ui grid">
                   <div className="twelve wide column no-bottom">
                     <p className="ui no-bottom">
                       <b>{ entry.position }, { entry.organization }</b> <br />
@@ -153,8 +153,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                       { entry.summary }
                     </p>
                     <ul style={{ margin: '0px' }}>
-                      {_.map(entry.highlights, highlight => (
-                        <li>{ highlight }</li>
+                      {_.map(entry.highlights, (highlight, index) => (
+                        <li key={index}>{ highlight }</li>
                       ))}
                     </ul>
                   </div>
@@ -178,8 +178,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
             </div>
 
             <div className="fourteen wide column no-bottom">
-              {_.map(this.props.bio.awards, entry => (
-                <div className="ui grid">
+              {_.map(this.props.bio.awards, (entry, i) => (
+                <div key={i} className="ui grid">
                   <div className="sixteen wide column no-bottom">
                     <p className="ui no-bottom">
                       <b>{ entry.title }</b>, { entry.awarder }, { entry.date } <br />
@@ -197,8 +197,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
             </div>
 
             <div className="fourteen wide column no-bottom">
-              {_.map(this.props.bio.references, entry => (
-                <p className="ui no-bottom">
+              {_.map(this.props.bio.references, (entry, i) => (
+                <p key={i} className="ui no-bottom">
                   { entry.name }
                   <em>{ entry.reference }</em>
                 </p>
