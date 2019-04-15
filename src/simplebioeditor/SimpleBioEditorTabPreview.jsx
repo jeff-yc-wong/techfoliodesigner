@@ -98,8 +98,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                   </div>
                   <div className="four wide right aligned column no-bottom">
                     <p className="ui no-bottom"><b>
-                      { entry.startDate.slice(0, 4) }&nbsp;-&nbsp;
-                      { entry.endDate !== 'Present' ? entry.endDate.slice(0, 4) : entry.endDate }
+                      { entry.startDate ? entry.startDate.slice(0, 4) : '' }&nbsp;-&nbsp;
+                      { entry.endDate ? (entry.endDate !== 'Present' ? entry.endDate.slice(0, 4) : entry.endDate) : '' }
                     </b></p>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                   <div className="twelve wide column no-bottom">
                     <p className="ui no-bottom">
                       <b>{ entry.position }, { entry.company }</b> <br />
-                      { entry.website.replace(/^https?:\/\//, '') } <br />
+                      { entry.website ? entry.website.replace(/^https?:\/\//, '') : '' } <br />
                       { entry.summary }
                     </p>
                     <ul style={{ margin: '0px' }}>
@@ -129,8 +129,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                   </div>
                   <div className="four wide right aligned column no-bottom">
                     <p className="ui no-bottom"><b>
-                      { entry.startDate.slice(0, 4) }&nbsp;-&nbsp;
-                      { entry.endDate !== 'Present' ? entry.endDate.slice(0, 4) : entry.endDate }
+                      { entry.startDate ? entry.startDate.slice(0, 4) : '' }&nbsp;-&nbsp;
+                      { entry.endDate ? (entry.endDate !== 'Present' ? entry.endDate.slice(0, 4) : entry.endDate) : '' }
                     </b></p>
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                   <div className="twelve wide column no-bottom">
                     <p className="ui no-bottom">
                       <b>{ entry.position }, { entry.organization }</b> <br />
-                      { entry.website.replace(/^https?:\/\//, '') } <br />
+                      { entry.webiste ? entry.website.replace(/^https?:\/\//, '') : '' } <br />
                       { entry.summary }
                     </p>
                     <ul style={{ margin: '0px' }}>
@@ -160,8 +160,8 @@ export default class SimpleBioEditorTabPreview extends React.Component {
                   </div>
                   <div className="four wide right aligned column no-bottom">
                     <p className="ui no-bottom"><b>
-                      { entry.startDate.slice(0, 4) }&nbsp;-&nbsp;
-                      { entry.endDate !== 'Present' ? entry.endDate.slice(0, 4) : entry.endDate }
+                      { entry.startDate ? entry.startDate.slice(0, 4) : '' }&nbsp;-&nbsp;
+                      { entry.endDate ? (entry.endDate !== 'Present' ? entry.endDate.slice(0, 4) : entry.endDate) : '' }
                     </b></p>
                   </div>
                 </div>
