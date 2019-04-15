@@ -67,6 +67,7 @@ export default class TechFolioEditor extends React.Component {
       value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '',
       previewMode: false,
+      word: '',
     };
     const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     switch (fileExtension[0]) {
@@ -89,7 +90,7 @@ export default class TechFolioEditor extends React.Component {
     const addToDictionaryKeyBinding = (process.platform === 'darwin') ? 'Cmd-D' : 'Ctrl-D';
     extraKeys[saveKeyBinding] = () => this.saveFile();
     extraKeys[lintKeyBinding] = () => this.callTfLint(false);
-    extraKeys[addToDictionaryKeyBinding] = () => this.addToDictionary('GitHub');
+    extraKeys[addToDictionaryKeyBinding] = () => this.addToDictionary(this.state.word);
     this.options = {
       lineNumbers: true,
       lineWrapping: true,
@@ -127,7 +128,6 @@ export default class TechFolioEditor extends React.Component {
       previewMode: !this.state.previewMode,
     }));
   }
-
   /**
    * Saves the current file that is open, calling various lints to check if the file is formatted correctly.
    */
