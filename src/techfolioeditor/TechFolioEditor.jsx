@@ -67,7 +67,7 @@ export default class TechFolioEditor extends React.Component {
       value: fs.existsSync(this.filePath) ? fs.readFileSync(this.filePath, 'utf8') : `no ${this.filePath}`,
       fileChangedMarker: '',
       previewMode: false,
-      word: '',
+      word: getSelection(), //eslint-disable-line
     };
     const fileExtension = this.props.fileName.match(/\.(.*)/gi);
     switch (fileExtension[0]) {
@@ -625,15 +625,17 @@ export default class TechFolioEditor extends React.Component {
   }
 
   addToDictionary(word) {
-    console.log(`Adding ${word}`);
-    let dictionary = '';
-    try {
-      dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
-    } catch (err) {
-      console.log('No Dictionary exists to add to');
+    if (confirm(`Do you want to add ${word} to the dictionary?`)) { //eslint-disable-line
+      console.log(`Adding ${word}`);
+      let dictionary = '';
+      try {
+        dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
+      } catch (err) {
+        console.log('No Dictionary exists to add to');
+      }
+      dictionary = dictionary.concat(`${word}\n`);
+      fs.writeFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', dictionary);
     }
-    dictionary = dictionary.concat(`${word}\n`);
-    fs.writeFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', dictionary);
   }
 
   render() {
