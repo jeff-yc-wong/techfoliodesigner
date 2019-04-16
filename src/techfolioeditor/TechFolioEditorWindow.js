@@ -67,6 +67,7 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     }
     currWindow.show();
   } else if (fs.existsSync(filePath)) {
+
     const window = getWindow(isRenderer);
 
     techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');
