@@ -13,6 +13,36 @@ import TechFolioFiles from '../shared/TechFolioFiles';
 const fs = require('fs');
 const electron = require('electron');
 
+function getWindow(renderer) {
+  if (renderer) {
+    const BrowserWindowR = electron.remote.BrowserWindow;
+    const window = new BrowserWindowR({
+      x: techFolioWindowManager.getXOffset(),
+      y: techFolioWindowManager.getYOffset(),
+      width: 750,
+      maxWidth: 1400,
+      height: 840,
+      title: 'TechFolio Designer',
+    });
+
+    return window;
+  }
+
+  const window = new BrowserWindow({
+    x: techFolioWindowManager.getXOffset(),
+    y: techFolioWindowManager.getYOffset(),
+    width: 750,
+    maxWidth: 1400,
+    height: 840,
+    title: 'TechFolio Designer',
+  });
+
+  return window;
+}
+
+// const BrowserWindow = electron.remote.BrowserWindow;
+
+
 /**
  *
  * Opens a editor window and displays the contents of the file.
@@ -37,17 +67,9 @@ export async function createTechFolioWindow({ isDevMode = true, fileType = '', f
     }
     currWindow.show();
   } else if (fs.existsSync(filePath)) {
-    // Create the browser window.
-    const window = new BrowserWindow({
-      x: techFolioWindowManager.getXOffset(),
-      y: techFolioWindowManager.getYOffset(),
-      width: 750,
-      maxWidth: 1400,
-      height: 840,
-      title: 'TechFolio Designer',
-    });
 
-    // Tell the window manager that this window has been created.
+    const window = getWindow(isRenderer);
+
     techFolioWindowManager.addWindowWithName(fileType, fileName, window, 'TechfolioWindow');
     techFolioWindowManager.addWindow(fileType, fileName, window);
 

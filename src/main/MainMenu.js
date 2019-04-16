@@ -1,5 +1,7 @@
 import { Menu, dialog } from 'electron';
 import { _ } from 'underscore';
+// import path from 'path';
+import moment from 'moment';
 import TechFolioFiles from '../shared/TechFolioFiles';
 import { createTechFolioWindow, newTechFolioWindow } from '../techfolioeditor/TechFolioEditorWindow';
 import { createImgEditorWindow } from '../imgeditor/ImgEditorWindow';
@@ -11,13 +13,12 @@ import mainStore from '../redux/mainstore';
 import techFolioGitHubManager from '../shared/TechFolioGitHubManager';
 import techFolioWindowManager from '../shared/TechFolioWindowManager';
 import buildHelpSubMenu from './HelpMenu';
-import path from 'path';
-import moment from 'moment';
+
 
 const fs = require('fs');
 const Jimp = require('jimp');
 
-let imgPath;
+// let imgPath;
 
 /** Helper function to return the index of the element in template with the passed label. */
 function indexOfMenuItem(template, label) {
