@@ -565,7 +565,7 @@ export default class TechFolioEditor extends React.Component {
       }
 
       // Define what separates a word
-      const rxWord = '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ';
+      const rxWord = '\'!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ';
 
       // Create the overlay and such
       const overlay = {
