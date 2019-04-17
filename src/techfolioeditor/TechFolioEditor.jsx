@@ -603,7 +603,7 @@ export default class TechFolioEditor extends React.Component {
           const dictionaryArray = dictionary.split('\n');
 
           for (let i = 0; i < dictionaryArray.length; i += 1) {
-            if (dictionaryArray[i] === word) {
+            if (dictionaryArray[i].toUpperCase() === word.toUpperCase()) {
               return null;
             }
           }
