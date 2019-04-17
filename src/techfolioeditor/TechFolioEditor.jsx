@@ -565,7 +565,8 @@ export default class TechFolioEditor extends React.Component {
       }
 
       // Define what separates a word
-      const rxWord = '\'!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ';
+      // Note single quote is not included here as it messes with contractions
+      const rxWord = '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~ ';
 
       // Create the overlay and such
       const overlay = {
@@ -589,10 +590,21 @@ export default class TechFolioEditor extends React.Component {
           //   return null;
           // }
 
+          // Check to see if word is single-quoted or part of a single-quoted string, and if so, use the un-quoted word
+          let splitWord;
+          if (word.startsWith('\'')) {
+            splitWord = word.split('\'');
+            word = splitWord[1];
+          } else if (word.endsWith('\'')) {
+            splitWord = word.split('\'');
+            word = splitWord[0];
+          }
+          // Allows if word is a number, or some combination of letters and numbers
           if (word.match(/\d+\w*/g) !== null || word.match(/\w*\d+/g) !== null) {
             return null;
           }
 
+          // Check if word is in dictionary
           let dictionary = '';
           try {
             dictionary = fs.readFileSync('../techfoliodesigner/src/techfolioeditor/dictionaryAdditions', 'utf-8');
@@ -602,12 +614,16 @@ export default class TechFolioEditor extends React.Component {
           }
           const dictionaryArray = dictionary.split('\n');
 
+          // console.log(dictionaryArray);
           for (let i = 0; i < dictionaryArray.length; i += 1) {
-            if (dictionaryArray[i].toUpperCase() === word.toUpperCase()) {
+            // console.log(dictionaryArray[i] + ' compared to ' + word);
+            if (dictionaryArray[i].toLowerCase().trim() === (word.toLowerCase().trim())) {
+              // console.log('Match');
               return null;
             }
           }
 
+          // Check word against imported dictionary
           if (typo && !typo.check(word)) {
           // console.log(word);
             return 'spell-error'; // CSS class: cm-spell-error
