@@ -1,0 +1,1 @@
+The Techfolio Editor comes with it's own spell checker that will mark any words that may be potentially misspelled. To add a word you don't think is misspelled to the dictionary, highlight it, then use the hotkey Ctrl/Cmd + D to add it. Note that you may have to type something in the file to refresh the spell checker.

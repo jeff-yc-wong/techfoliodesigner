@@ -49,6 +49,17 @@ export default function buildHelpSubMenu() {
       type: 'separator',
     },
     {
+      label: 'TF Lint',
+      click: () => showHelpDialog('TfLint', '../techfoliodesigner/src/help/TfLint.md'),
+    },
+    {
+      label: 'Spell Checker',
+      click: () => showHelpDialog('Spell Checker', '../techfoliodesigner/src/help/SpellChecker.md'),
+    },
+    {
+      type: 'separator',
+    },
+    {
       label: 'Shortcuts',
       click: () => showHelpDialog('Shortcuts', '../techfoliodesigner/src/help/Shortcuts.md'),
     },
